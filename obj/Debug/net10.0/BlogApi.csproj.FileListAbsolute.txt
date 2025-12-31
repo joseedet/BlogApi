@@ -169,3 +169,4 @@
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/bin/Debug/net10.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/bin/Debug/net10.0/Microsoft.IdentityModel.Tokens.dll
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/bin/Debug/net10.0/System.IdentityModel.Tokens.Jwt.dll
+/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/obj/Debug/net10.0/BlogApi.sourcelink.json

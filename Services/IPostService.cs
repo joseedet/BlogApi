@@ -10,7 +10,10 @@ public interface IPostService
 {
     Task<IEnumerable<Post>> GetAllAsync();
     Task<Post?> GetByIdAsync(int id);
-    Task<Post> CreateAsync(Post post);
-    Task<bool> UpdateAsync(int id, Post post);
+
+    //Task<Post> CreateAsync(Post post);
+    //Task<bool> UpdateAsync(int id, Post post);
     Task<bool> DeleteAsync(int id);
+    Task<Post> CreateAsync(Post post, List<int> tagIds);
+    Task<bool> UpdateAsync(int id, Post post, List<int> tagIds);
 }

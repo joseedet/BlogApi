@@ -16,4 +16,5 @@ public interface IGenericRepository<T>
     void Update(T entity);
     void Remove(T entity);
     Task SaveChangesAsync();
+    IQueryable<T> Query();
 }

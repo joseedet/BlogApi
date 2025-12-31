@@ -23,7 +23,6 @@ public class PostsController : ControllerBase
     {
         var posts = await _service.GetAllAsync();
         return Ok(posts.Select(p => p.ToDto()));
-        //return Ok(posts);
     }
 
     [HttpGet("{id}")]
@@ -33,6 +32,7 @@ public class PostsController : ControllerBase
         var post = await _service.GetByIdAsync(id);
         if (post == null)
             return NotFound();
+
         return Ok(post.ToDto());
     }
 
@@ -49,7 +49,9 @@ public class PostsController : ControllerBase
             FechaCreacion = DateTime.UtcNow,
             FechaActualizacion = DateTime.UtcNow,
         };
-        var created = await _service.CreateAsync(post);
+
+        var created = await _service.CreateAsync(post, dto.TagIds);
+
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created.ToDto());
     }
 
@@ -64,9 +66,11 @@ public class PostsController : ControllerBase
             CategoriaId = dto.CategoriaId,
             UsuarioId = dto.UsuarioId,
         };
-        var ok = await _service.UpdateAsync(id, post);
+
+        var ok = await _service.UpdateAsync(id, post, dto.TagIds);
         if (!ok)
             return NotFound();
+
         var updated = await _service.GetByIdAsync(id);
         return Ok(updated!.ToDto());
     }
@@ -78,6 +82,7 @@ public class PostsController : ControllerBase
         var ok = await _service.DeleteAsync(id);
         if (!ok)
             return NotFound();
+
         return NoContent();
     }
 }

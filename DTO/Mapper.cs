@@ -8,8 +8,10 @@ namespace BlogApi.DTO;
 
 public static class Mapper
 {
-    public static CategoriaDto ToDto(this Categoria categoria) =>
-        new CategoriaDto { Id = categoria.Id, Nombre = categoria.Nombre };
+    public static CategoriaDto ToDto(this Categoria categoria)
+    {
+        return new() { Id = categoria.Id, Nombre = categoria.Nombre };
+    }
 
     public static UsuarioDto ToDto(this Usuario usuario) =>
         new UsuarioDto
@@ -46,5 +48,6 @@ public static class Mapper
             Comentarios = post.Comentarios.Select(c => c.ToDto()).ToList(),
             Tags = post.Tags.Select(t => t.ToDto()).ToList(),
         };
-    public static TagDto ToDto(this Tag tag) => new TagDto { Id = tag.Id, Nombre = tag.Nombre };
+
+    public static TagDto ToDto(this Tag tag) => new() { Id = tag.Id, Nombre = tag.Nombre };
 }
