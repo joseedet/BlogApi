@@ -15,4 +15,5 @@ public class PostDto
     public CategoriaDto Categoria { get; set; }
     public UsuarioDto Usuario { get; set; }
     public List<ComentarioDto> Comentarios { get; set; } = new();
+    public List<TagDto> Tags { get; set; } = new();
 }

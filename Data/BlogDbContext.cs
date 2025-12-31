@@ -18,14 +18,16 @@ public class BlogDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Relación Post → Categoria (muchos a uno)
-        modelBuilder.Entity<Post>()
+        modelBuilder
+            .Entity<Post>()
             .HasOne(p => p.Categoria)
             .WithMany(c => c.Posts)
             .HasForeignKey(p => p.CategoriaId)
             .OnDelete(DeleteBehavior.Restrict);
 
         // Relación Post → Usuario (muchos a uno)
-        modelBuilder.Entity<Post>()
+        modelBuilder
+            .Entity<Post>()
             .HasOne(p => p.Usuario)
             .WithMany()
             .HasForeignKey(p => p.UsuarioId)
@@ -33,11 +35,19 @@ public class BlogDbContext : DbContext
 
         // Comentarios anidados
 
-        modelBuilder.Entity<Comentario>()
+        modelBuilder
+            .Entity<Comentario>()
             .HasOne(c => c.ComentarioPadre)
             .WithMany(c => c.Respuestas)
             .HasForeignKey(c => c.ComentarioPadreId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder
+            .Entity<Post>()
+            .HasMany(p => p.Tags)
+            .WithMany(t => t.Posts)
+            .UsingEntity(j => j.ToTable("PostTags"));
+
         base.OnModelCreating(modelBuilder);
     }
 }

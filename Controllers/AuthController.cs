@@ -23,11 +23,25 @@ public class AuthController : ControllerBase
         var usuario = await _usuarioService.GetByEmailAsync(request.Email);
         if (usuario == null)
             return Unauthorized("Usuario no encontrado");
+
+        if (!BCrypt.Net.BCrypt.Verify(request.Password, usuario.PasswordHash))
+            return Unauthorized("Contraseña incorrecta");
+
+        var token = _tokenService.GenerateToken(usuario);
+
+        return Ok(new { token });
+    }
+
+    /*public async Task<IActionResult> Login(LoginRequest request)
+    {
+        var usuario = await _usuarioService.GetByEmailAsync(request.Email);
+        if (usuario == null)
+            return Unauthorized("Usuario no encontrado");
         if (!BCrypt.Net.BCrypt.Verify(request.Password, usuario.PasswordHash))
             return Unauthorized("Contraseña incorrecta");
         var token = _tokenService.GenerateToken(usuario);
         return Ok(new { token });
-    }
+    }*/
 
     [HttpPost("registro")]
     public async Task<IActionResult> Registro(Usuario usuario)

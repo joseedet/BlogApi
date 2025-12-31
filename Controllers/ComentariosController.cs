@@ -24,6 +24,7 @@ public class ComentariosController : ControllerBase
         var comentarios = await _service.GetComentariosDePostAsync(postId);
         return Ok(comentarios.Select(c => c.ToDto()));
     }
+
     // Crear comentario o respuesta
     [Authorize(Roles = "Administrador,Editor,Autor,Suscriptor")]
     [HttpPost]

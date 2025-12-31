@@ -17,4 +17,5 @@ public class Post
     public DateTime FechaCreacion { get; set; }
     public DateTime FechaActualizacion { get; set; }
     public List<Comentario> Comentarios { get; set; } = new();
+    public List<Tag> Tags { get; set; } = new();
 }

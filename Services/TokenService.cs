@@ -17,12 +17,18 @@ public class TokenService : ITokenService
 
     public string GenerateToken(Usuario usuario)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        var claims = new[]
+        var key = _config["Jwt:Key"];
+        if (string.IsNullOrEmpty(key))
+            throw new InvalidOperationException("JWT Key no configurada");
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+        var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+        var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, usuario.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, usuario.Email),
+            // Id del usuario para luego usar new ClaimTypes.NameIdentifier
+            new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
+            //Email
+            new Claim(ClaimTypes.Email, usuario.Email),
+            // Rol (para User.IsInRole("Administrador"), etc.)
             new Claim(ClaimTypes.Role, usuario.Rol.ToString()),
         };
         var token = new JwtSecurityToken(
@@ -30,7 +36,7 @@ public class TokenService : ITokenService
             audience: _config["Jwt:Audience"],
             claims: claims,
             expires: DateTime.UtcNow.AddHours(4),
-            signingCredentials: creds
+            signingCredentials: credentials
         );
         return new JwtSecurityTokenHandler().WriteToken(token);
     }

@@ -11,4 +11,5 @@ public class CreatePostDto
     public string Contenido { get; set; } = string.Empty;
     public int CategoriaId { get; set; }
     public int UsuarioId { get; set; }
+    public List<int> TagIds { get; set; } = new();
 }

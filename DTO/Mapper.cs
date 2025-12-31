@@ -39,8 +39,12 @@ public static class Mapper
             Contenido = post.Contenido,
             FechaCreacion = post.FechaCreacion,
             FechaActualizacion = post.FechaActualizacion,
+
             Categoria = post.Categoria.ToDto(),
             Usuario = post.Usuario.ToDto(),
+
             Comentarios = post.Comentarios.Select(c => c.ToDto()).ToList(),
+            Tags = post.Tags.Select(t => t.ToDto()).ToList(),
         };
+    public static TagDto ToDto(this Tag tag) => new TagDto { Id = tag.Id, Nombre = tag.Nombre };
 }
