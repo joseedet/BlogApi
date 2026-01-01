@@ -79,7 +79,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseStaticFiles();
 app.MapControllers();
 app.Run();
