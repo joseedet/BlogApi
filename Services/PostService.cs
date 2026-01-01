@@ -1,3 +1,4 @@
+using BlogApi.DTO;
 using BlogApi.Models;
 using BlogApi.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -103,7 +104,30 @@ public class PostService : IPostService
         return true;
     }
 
-    public Task<Post> CreateAsync(Post post)
+    // Implementación de paginación
+
+    public async Task<PaginationDto<Post>> GetPagedAsync(int pagina, int tamano)
+    {
+        var query = _repo
+            .Query()
+            .Include(p => p.Categoria)
+            .Include(p => p.Usuario)
+            .Include(p => p.Tags);
+
+        var total = await query.CountAsync();
+
+        var datos = await query.Skip((pagina - 1) * tamano).Take(tamano).ToListAsync();
+
+        return new PaginationDto<Post>
+        {
+            Pagina = pagina,
+            Tamano = tamano,
+            Total = total,
+            Datos = datos,
+        };
+    }
+
+    /*public Task<Post> CreateAsync(Post post)
     {
         throw new NotImplementedException();
     }
@@ -111,5 +135,5 @@ public class PostService : IPostService
     public Task<bool> UpdateAsync(int id, Post post)
     {
         throw new NotImplementedException();
-    }
+    }*/
 }

@@ -1,3 +1,4 @@
+using BlogApi.Data;
 using BlogApi.Models;
 using BlogApi.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -7,10 +8,14 @@ namespace BlogApi.Services;
 public class ComentarioService : IComentarioService
 {
     private readonly IComentarioRepository _repo;
+    private readonly INotificacionService _notificacionService;
+    private readonly BlogDbContext _context;
+    
 
-    public ComentarioService(IComentarioRepository repo)
+    public ComentarioService(IComentarioRepository repo, INotificacionService notificacionService)
     {
         _repo = repo;
+        _notificacionService = notificacionService;
     }
 
     public async Task<IEnumerable<Comentario>> GetComentariosDePostAsync(int postId)
@@ -36,6 +41,16 @@ public class ComentarioService : IComentarioService
 
         await _repo.AddAsync(comentario);
         await _repo.SaveChangesAsync();
+
+        var postAutorId = await _context
+            .Posts.Where(p => p.Id == comentario.PostId)
+            .Select(p => p.UsuarioId)
+            .FirstAsync(); // 🔥 Crear notificación
+
+        await _notificacionService.CrearAsync(
+            postAutorId,
+            $"Tu post ha recibido un nuevo comentario de {comentario.UsuarioId}"
+        );
 
         return comentario;
     }
@@ -79,5 +94,15 @@ public class ComentarioService : IComentarioService
         _repo.Remove(comentario);
         await _repo.SaveChangesAsync();
         return true;
+    }
+
+    public async Task<IEnumerable<Comentario>> GetByEstadoAsync(string estado)
+    {
+        return await _repo
+            .Query()
+            .Where(c => c.Estado == estado)
+            .Include(c => c.Usuario)
+            .Include(c => c.Respuestas)
+            .ToListAsync();
     }
 }

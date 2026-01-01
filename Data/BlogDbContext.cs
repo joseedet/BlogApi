@@ -14,6 +14,7 @@ public class BlogDbContext : DbContext
     public DbSet<Categoria> Categorias { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<Comentario> Comentarios { get; set; }
+    public DbSet<Notificacion> Notificaciones { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

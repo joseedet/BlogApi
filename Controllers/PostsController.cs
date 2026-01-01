@@ -54,6 +54,7 @@ public class PostsController : ControllerBase
 
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created.ToDto());
     }
+
     [Authorize(Policy = "PuedeEditarPost")]
     [HttpPut("{id}")]
     //[Authorize(Roles = "Administrador,Editor,Autor")]
@@ -85,5 +86,20 @@ public class PostsController : ControllerBase
             return NotFound();
 
         return NoContent();
+    }
+
+    [HttpGet("paged")]
+    public async Task<IActionResult> GetPaged(int pagina = 1, int tamano = 10)
+    {
+        var result = await _service.GetPagedAsync(pagina, tamano);
+        return Ok(
+            new PaginationDto<PostDto>
+            {
+                Pagina = result.Pagina,
+                Tamano = result.Tamano,
+                Total = result.Total,
+                Datos = result.Datos.Select(p => p.ToDto()),
+            }
+        );
     }
 }

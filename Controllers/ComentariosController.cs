@@ -73,4 +73,11 @@ public class ComentariosController : ControllerBase
             return NotFound();
         return NoContent();
     }
+    [HttpGet("estado/{estado}")]
+    [Authorize(Roles = "Administrador,Editor")]
+    public async Task<IActionResult> GetByEstado(string estado)
+    {
+        var comentarios = await _service.GetByEstadoAsync(estado);
+        return Ok(comentarios.Select(c => c.ToDto()));
+    }
 }
