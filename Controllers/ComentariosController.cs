@@ -62,7 +62,8 @@ public class ComentariosController : ControllerBase
         return NoContent();
     }
 
-    // Moderación
+    // Moderar comentario (solo Admin/Editor)
+
     [Authorize(Roles = "Administrador,Editor")]
     [HttpPatch("{id}/estado")]
     public async Task<IActionResult> CambiarEstado(int id, [FromBody] string estado)

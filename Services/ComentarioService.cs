@@ -1,5 +1,6 @@
 using BlogApi.Models;
 using BlogApi.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Services;
 
@@ -12,15 +13,30 @@ public class ComentarioService : IComentarioService
         _repo = repo;
     }
 
-    public async Task<IEnumerable<Comentario>> GetComentariosDePostAsync(int postId) =>
-        await _repo.GetByPostIdAsync(postId);
+    public async Task<IEnumerable<Comentario>> GetComentariosDePostAsync(int postId)
+    {
+        // Comentarios raíz con respuestas y usuario
+        return await _repo
+            .Query()
+            .Where(c => c.PostId == postId && c.ComentarioPadreId == null)
+            .Include(c => c.Usuario)
+            .Include(c => c.Respuestas)
+                .ThenInclude(r => r.Usuario)
+            .Include(c => c.Respuestas)
+                .ThenInclude(r => r.Respuestas)
+            .ToListAsync();
+    }
+
+    // await _repo.GetByPostIdAsync(postId);
 
     public async Task<Comentario> CrearComentarioAsync(Comentario comentario)
     {
         comentario.Fecha = DateTime.UtcNow;
         comentario.Estado = "pendiente";
+
         await _repo.AddAsync(comentario);
         await _repo.SaveChangesAsync();
+
         return comentario;
     }
 
@@ -41,14 +57,25 @@ public class ComentarioService : IComentarioService
         bool puedeBorrarTodo
     )
     {
-        var comentario = await _repo.GetByIdAsync(comentarioId);
+        var comentario = await _repo
+            .Query()
+            .Include(c => c.Respuestas)
+            .FirstOrDefaultAsync(c => c.Id == comentarioId);
         if (comentario == null)
             return false;
 
-        // Si no es admin/editor, solo puede borrar su propio comentario
+        // Si no es admin/editor, solo puede borrar sus propios comentarios
+
         if (!puedeBorrarTodo && comentario.UsuarioId != usuarioId)
             return false;
 
+        // Si tiene respuestas, las borramos también (estilo WordPress)
+
+        if (comentario.Respuestas.Any())
+        {
+            foreach (var respuesta in comentario.Respuestas)
+                _repo.Remove(respuesta);
+        }
         _repo.Remove(comentario);
         await _repo.SaveChangesAsync();
         return true;
