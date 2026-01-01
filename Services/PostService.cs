@@ -56,7 +56,7 @@ public class PostService : IPostService
         return post;
     }
 
-    public async Task<bool> UpdateAsync(int id, Post post, List<int> tagIds)
+    public async Task<bool> UpdateAsync(int id, Post post, List<int> tagIds, bool puedeEditarTodo)
     {
         var existing = await _repo
             .Query()
@@ -64,6 +64,11 @@ public class PostService : IPostService
             .FirstOrDefaultAsync(p => p.Id == id);
 
         if (existing == null)
+            return false;
+
+        // 🔥 VALIDACIÓN DE PERMISOS
+        // Autor solo puede editar sus posts
+        if (existing.UsuarioId != post.UsuarioId && !puedeEditarTodo)
             return false;
 
         // Actualizar campos básicos

@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 using BlogApi.Data;
 using BlogApi.Repositories;
@@ -13,6 +14,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<BlogDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
@@ -41,8 +43,35 @@ builder
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key!)),
         };
     });
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(
+        "PuedeEditarPost",
+        policy =>
+            policy.RequireAssertion(context =>
+            {
+                var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var rol = context.User.FindFirst(ClaimTypes.Role)?.Value;
+
+                // Admin y Editor pueden editar cualquier post
+                if (rol == "Administrador" || rol == "Editor")
+                    return true;
+
+                // Autor solo puede editar sus posts
+                if (rol == "Autor" && userId != null)
+                    return true;
+
+                return false;
+            })
+    );
+});
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
+    DbSeeder.SeedAdmin(db);
+}
 
 if (app.Environment.IsDevelopment())
 {

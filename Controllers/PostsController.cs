@@ -54,10 +54,10 @@ public class PostsController : ControllerBase
 
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created.ToDto());
     }
-
+    [Authorize(Policy = "PuedeEditarPost")]
     [HttpPut("{id}")]
-    [Authorize(Roles = "Administrador,Editor,Autor")]
-    public async Task<IActionResult> Update(int id, CreatePostDto dto)
+    //[Authorize(Roles = "Administrador,Editor,Autor")]
+    public async Task<IActionResult> Update(int id, CreatePostDto dto, bool puedeEditarTodo)
     {
         var post = new Post
         {
@@ -66,8 +66,9 @@ public class PostsController : ControllerBase
             CategoriaId = dto.CategoriaId,
             UsuarioId = dto.UsuarioId,
         };
-
-        var ok = await _service.UpdateAsync(id, post, dto.TagIds);
+        bool esAdmin = User.IsInRole("Administrador");
+        bool esEditor = User.IsInRole("Editor");
+        var ok = await _service.UpdateAsync(id, post, dto.TagIds, esAdmin || esEditor);
         if (!ok)
             return NotFound();
 
