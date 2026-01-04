@@ -140,6 +140,7 @@ public class PostService : IPostService
             Datos = datos,
         };
     }
+
     public async Task<Post?> GetBySlugAsync(string slug)
     {
         return await _repo
@@ -149,6 +150,55 @@ public class PostService : IPostService
             .Include(p => p.Tags)
             .Include(p => p.Comentarios)
             .FirstOrDefaultAsync(p => p.Slug == slug);
+    }
+
+    public async Task<IEnumerable<Post>> SearchAsync(string texto)
+    {
+        texto = texto.ToLower().Trim();
+
+        return await _repo
+            .Query()
+            .Include(p => p.Categoria)
+            .Include(p => p.Usuario)
+            .Include(p => p.Tags)
+            .Where(p =>
+                p.Titulo.ToLower().Contains(texto)
+                || p.Contenido.ToLower().Contains(texto)
+                || p.Categoria.Nombre.ToLower().Contains(texto)
+                || p.Usuario.Nombre.ToLower().Contains(texto)
+                || p.Tags.Any(t => t.Nombre.ToLower().Contains(texto))
+            )
+            .ToListAsync();
+    }
+
+    public async Task<PaginationDto<Post>> SearchPagedAsync(string texto, int pagina, int tamano)
+    {
+        texto = texto.ToLower().Trim();
+
+        var query = _repo
+            .Query()
+            .Include(p => p.Categoria)
+            .Include(p => p.Usuario)
+            .Include(p => p.Tags)
+            .Where(p =>
+                p.Titulo.ToLower().Contains(texto)
+                || p.Contenido.ToLower().Contains(texto)
+                || p.Categoria.Nombre.ToLower().Contains(texto)
+                || p.Usuario.Nombre.ToLower().Contains(texto)
+                || p.Tags.Any(t => t.Nombre.ToLower().Contains(texto))
+            );
+
+        var total = await query.CountAsync();
+
+        var datos = await query.Skip((pagina - 1) * tamano).Take(tamano).ToListAsync();
+
+        return new PaginationDto<Post>
+        {
+            Pagina = pagina,
+            Tamano = tamano,
+            Total = total,
+            Datos = datos,
+        };
     }
 
     /*public Task<Post> CreateAsync(Post post)

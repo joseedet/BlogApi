@@ -102,6 +102,7 @@ public class PostsController : ControllerBase
             }
         );
     }
+
     [HttpGet("slug/{slug}")]
     public async Task<IActionResult> GetBySlug(string slug)
     {
@@ -110,5 +111,16 @@ public class PostsController : ControllerBase
             return NotFound();
 
         return Ok(post.ToDto());
+    }
+
+    [HttpGet("buscar")]
+    public async Task<IActionResult> Buscar([FromQuery] string q)
+    {
+        if (string.IsNullOrWhiteSpace(q))
+            return BadRequest("Debe proporcionar un texto de búsqueda");
+
+        var posts = await _service.SearchAsync(q);
+
+        return Ok(posts.Select(p => p.ToDto()));
     }
 }
