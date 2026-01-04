@@ -113,4 +113,12 @@ public interface IPostService
     /// <param name="nombre"></param>
     /// <returns>IEnumerable<Post></returns>
     Task<IEnumerable<Post>> GetByAutorNombreAsync(string nombre);
+
+    /// <summary>
+    /// Obtiene los posts paginados con paginación por cursor
+    /// </summary>
+    /// <param name="after"></param>
+    /// <param name="limit"></param>
+    /// <returns>CursorPaginationDto<Post></returns>
+    Task<CursorPaginationDto<Post>> GetCursorPagedAsync(int? after, int limit);
 }

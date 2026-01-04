@@ -363,4 +363,37 @@ public class PostService : IPostService
             .Include(p => p.Tags)
             .ToListAsync();
     }
+
+    /// <summary>
+    /// Obtiene los posts con paginación por cursor
+    /// </summary>
+    /// <param name="after"></param>
+    /// <param name="limit"></param>
+    /// <returns>CursorPaginationDto<Post></returns>
+    public async Task<CursorPaginationDto<Post>> GetCursorPagedAsync(int? after, int limit)
+    {
+        var query = _repo
+            .Query()
+            .Include(p => p.Categoria)
+            .Include(p => p.Usuario)
+            .Include(p => p.Tags)
+            .OrderBy(p => p.Id);
+
+        if (after.HasValue)
+            query = (IOrderedQueryable<Post>)query.Where(p => p.Id > after.Value);
+
+        var datos = await query
+            .Take(limit + 1) // +1 para saber si hay más
+            .ToListAsync();
+
+        int? nextCursor = null;
+
+        if (datos.Count > limit)
+        {
+            nextCursor = datos.Last().Id;
+            datos.RemoveAt(datos.Count - 1); // quitar el extra
+        }
+
+        return new CursorPaginationDto<Post> { Datos = datos, NextCursor = nextCursor };
+    }
 }
