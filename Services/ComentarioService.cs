@@ -10,12 +10,25 @@ public class ComentarioService : IComentarioService
     private readonly IComentarioRepository _repo;
     private readonly INotificacionService _notificacionService;
     private readonly BlogDbContext _context;
-    
+    private readonly IEmailService _emailService;
 
-    public ComentarioService(IComentarioRepository repo, INotificacionService notificacionService)
+    /*public ComentarioService(IComentarioRepository repo, INotificacionService notificacionService)
     {
         _repo = repo;
         _notificacionService = notificacionService;
+    }*/
+
+    public ComentarioService(
+        IComentarioRepository repo,
+        BlogDbContext context,
+        INotificacionService notificacionService,
+        IEmailService emailService
+    )
+    {
+        _repo = repo;
+        _context = context;
+        _notificacionService = notificacionService;
+        _emailService = emailService;
     }
 
     public async Task<IEnumerable<Comentario>> GetComentariosDePostAsync(int postId)
@@ -42,14 +55,37 @@ public class ComentarioService : IComentarioService
         await _repo.AddAsync(comentario);
         await _repo.SaveChangesAsync();
 
-        var postAutorId = await _context
-            .Posts.Where(p => p.Id == comentario.PostId)
-            .Select(p => p.UsuarioId)
-            .FirstAsync(); // 🔥 Crear notificación
+        var postAutor = await _context
+            .Posts.Include(p => p.Usuario)
+            // ← NECESARIO
+            .Where(p => p.Id == comentario.PostId)
+            .Select(p => new
+            {
+                p.UsuarioId,
+                Email = p.Usuario.Email,
+                p.Titulo,
+            })
+            .FirstAsync();
+
+        /* var postAutorId = await _context
+             .Posts.Where(p => p.Id == comentario.PostId)
+             .Select(p => p.UsuarioId)
+             .FirstAsync();*/
+        // 🔥 Crear notificación
+
+        var autorComentario = await _context
+            .Usuarios.Where(u => u.Id == comentario.UsuarioId)
+            .Select(u => u.Nombre)
+            .FirstAsync();
 
         await _notificacionService.CrearAsync(
-            postAutorId,
-            $"Tu post ha recibido un nuevo comentario de {comentario.UsuarioId}"
+            postAutor.UsuarioId,
+            $"Tu post ha recibido un nuevo comentario de {autorComentario}"
+        );
+        await _emailService.EnviarAsync(
+            postAutor.Email,
+            "Nuevo comentario en tu post",
+            $"Has recibido un nuevo comentario en tu post: {postAutor.Titulo}"
         );
 
         return comentario;
