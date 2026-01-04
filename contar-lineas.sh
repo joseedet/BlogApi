@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 
 # Contar líneas de código C# ignorando bin y obj
 total=$(find . -type f -name "*.cs" \
