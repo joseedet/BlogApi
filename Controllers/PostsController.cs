@@ -171,4 +171,18 @@ public class PostsController : ControllerBase
         var posts = await _service.GetByAutorNombreAsync(nombre);
         return Ok(posts.Select(p => p.ToDto()));
     }
+
+    [HttpGet("cursor")]
+    public async Task<IActionResult> GetCursorPaged(int? after = null, int limit = 10)
+    {
+        var result = await _service.GetCursorPagedAsync(after, limit);
+
+        return Ok(
+            new CursorPaginationDto<PostDto>
+            {
+                Datos = result.Datos.Select(p => p.ToDto()),
+                NextCursor = result.NextCursor,
+            }
+        );
+    }
 }
