@@ -15,6 +15,8 @@ public class Post
     public int CategoriaId { get; set; }
     public Categoria Categoria { get; set; }
     public DateTime FechaCreacion { get; set; }
+    public string Slug { get; set; } = string.Empty;
+
     public DateTime FechaActualizacion { get; set; }
     public List<Comentario> Comentarios { get; set; } = new();
     public List<Tag> Tags { get; set; } = new();

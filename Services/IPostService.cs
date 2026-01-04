@@ -20,4 +20,5 @@ public interface IPostService
     //Task<bool> UpdateAsync(int id, Post post, List<int> tagIds);
     Task<bool> UpdateAsync(int id, Post post, List<int> tagIds, bool puedeEditarTodo);
     Task<PaginationDto<Post>> GetPagedAsync(int pagina, int tamano);
+    Task<Post?> GetBySlugAsync(string slug);
 }

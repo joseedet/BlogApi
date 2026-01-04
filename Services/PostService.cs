@@ -1,6 +1,7 @@
 using BlogApi.DTO;
 using BlogApi.Models;
 using BlogApi.Repositories;
+using BlogApi.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Services;
@@ -46,6 +47,19 @@ public class PostService : IPostService
 
     public async Task<Post> CreateAsync(Post post, List<int> tagIds)
     {
+        // Generar slug base
+        var baseSlug = SlugHelper.GenerateSlug(post.Titulo);
+
+        // Asegurar que sea único
+        var slug = baseSlug;
+        int contador = 1;
+        while (await _repo.Query().AnyAsync(p => p.Slug == slug))
+        {
+            slug = $"{baseSlug}-{contador}";
+            contador++;
+        }
+        post.Slug = slug;
+
         // Cargar tags desde la BD
         var tags = await _tagRepo.Query().Where(t => tagIds.Contains(t.Id)).ToListAsync();
 
@@ -125,6 +139,16 @@ public class PostService : IPostService
             Total = total,
             Datos = datos,
         };
+    }
+    public async Task<Post?> GetBySlugAsync(string slug)
+    {
+        return await _repo
+            .Query()
+            .Include(p => p.Categoria)
+            .Include(p => p.Usuario)
+            .Include(p => p.Tags)
+            .Include(p => p.Comentarios)
+            .FirstOrDefaultAsync(p => p.Slug == slug);
     }
 
     /*public Task<Post> CreateAsync(Post post)

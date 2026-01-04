@@ -102,4 +102,13 @@ public class PostsController : ControllerBase
             }
         );
     }
+    [HttpGet("slug/{slug}")]
+    public async Task<IActionResult> GetBySlug(string slug)
+    {
+        var post = await _service.GetBySlugAsync(slug);
+        if (post == null)
+            return NotFound();
+
+        return Ok(post.ToDto());
+    }
 }
