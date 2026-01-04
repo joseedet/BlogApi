@@ -123,4 +123,52 @@ public class PostsController : ControllerBase
 
         return Ok(posts.Select(p => p.ToDto()));
     }
+
+    // Filtrar por categoría (ID)
+    [HttpGet("categoria/{categoriaId:int}")]
+    public async Task<IActionResult> GetByCategoria(int categoriaId)
+    {
+        var posts = await _service.GetByCategoriaAsync(categoriaId);
+        return Ok(posts.Select(p => p.ToDto()));
+    }
+
+    // Filtrar por categoría (slug)
+    [HttpGet("categoria/slug/{slug}")]
+    public async Task<IActionResult> GetByCategoriaSlug(string slug)
+    {
+        var posts = await _service.GetByCategoriaSlugAsync(slug);
+        return Ok(posts.Select(p => p.ToDto()));
+    }
+
+    // Filtrar por tag (ID)
+    [HttpGet("tag/{tagId:int}")]
+    public async Task<IActionResult> GetByTag(int tagId)
+    {
+        var posts = await _service.GetByTagAsync(tagId);
+        return Ok(posts.Select(p => p.ToDto()));
+    }
+
+    // Filtrar por tag (nombre)
+    [HttpGet("tag/nombre/{nombre}")]
+    public async Task<IActionResult> GetByTagNombre(string nombre)
+    {
+        var posts = await _service.GetByTagNombreAsync(nombre);
+        return Ok(posts.Select(p => p.ToDto()));
+    }
+
+    // Filtrar por autor (ID)
+    [HttpGet("autor/{usuarioId:int}")]
+    public async Task<IActionResult> GetByAutor(int usuarioId)
+    {
+        var posts = await _service.GetByAutorAsync(usuarioId);
+        return Ok(posts.Select(p => p.ToDto()));
+    }
+
+    // Filtrar por autor (nombre)
+    [HttpGet("autor/nombre/{nombre}")]
+    public async Task<IActionResult> GetByAutorNombre(string nombre)
+    {
+        var posts = await _service.GetByAutorNombreAsync(nombre);
+        return Ok(posts.Select(p => p.ToDto()));
+    }
 }
