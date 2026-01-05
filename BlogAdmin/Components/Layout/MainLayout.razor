@@ -2,6 +2,8 @@
 @inject NotificacionesHubClient HubClient
 @inject AuthService Auth
 @inherits LayoutComponentBase
+@inject ToastService ToastService
+
 
 <div class="topbar">
     <div class="notificaciones-icono" @onclick="ToggleMenu">
@@ -26,32 +28,52 @@
         @Body
     </main>
 </div>
+<ToastContainer />
 
 @code {
     private int contadorNotificaciones = 0;
     private bool mostrarMenu = false;
     private List<NotificacionDto> ultimasNotificaciones = new();
 
+    /// <summary>
+    /// Inicializa el componente y configura la conexión al hub de notificaciones si el usuario está autenticado.
+    /// </summary>
+    /// <returns></returns>
     protected override async Task OnInitializedAsync()
     {
         if (Auth.IsAuthenticated)
         {
+            /*HubClient.OnNotificacion += noti =>
+            {
+            contadorNotificaciones++;
+
+            // Guardamos las últimas 10 notificaciones
+            ultimasNotificaciones.Insert(0, noti);
+            if (ultimasNotificaciones.Count > 10)
+            ultimasNotificaciones.RemoveAt(ultimasNotificaciones.Count - 1);
+
+            StateHasChanged();
+            };*/
             HubClient.OnNotificacion += noti =>
             {
                 contadorNotificaciones++;
-
-                // Guardamos las últimas 10 notificaciones
                 ultimasNotificaciones.Insert(0, noti);
-                if (ultimasNotificaciones.Count > 10)
-                    ultimasNotificaciones.RemoveAt(ultimasNotificaciones.Count - 1);
+
+                ToastService.ShowToast(noti.Mensaje);
 
                 StateHasChanged();
             };
 
+
             await HubClient.IniciarAsync(Auth.GetToken()!);
         }
     }
-
+    /// <summary>
+    /// Alterna la visibilidad del menú de notificaciones.
+    /// </summary>
     void ToggleMenu() => mostrarMenu = !mostrarMenu;
+    /// <summary>
+    /// Cierra el menú de notificaciones.
+    /// </summary>
     void CerrarMenu() => mostrarMenu = false;
 }
