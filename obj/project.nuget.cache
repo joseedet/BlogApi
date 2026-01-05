@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "p5sASDjS2Js=",
+  "dgSpecHash": "1uaFbNlbBuE=",
   "success": true,
   "projectFilePath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogApi.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,8 @@
     "/home/tedekeya/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.aspnetcore.authentication.jwtbearer/10.0.1/microsoft.aspnetcore.authentication.jwtbearer.10.0.1.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.aspnetcore.openapi/10.0.1/microsoft.aspnetcore.openapi.10.0.1.nupkg.sha512",
+    "/home/tedekeya/.nuget/packages/microsoft.aspnetcore.signalr/1.2.0/microsoft.aspnetcore.signalr.1.2.0.nupkg.sha512",
+    "/home/tedekeya/.nuget/packages/microsoft.aspnetcore.signalr.core/1.2.0/microsoft.aspnetcore.signalr.core.1.2.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.build/17.7.2/microsoft.build.17.7.2.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.build.framework/17.14.28/microsoft.build.framework.17.14.28.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.build.tasks.core/17.14.28/microsoft.build.tasks.core.17.14.28.nupkg.sha512",
@@ -66,5 +68,30 @@
     "/home/tedekeya/.nuget/packages/system.security.permissions/9.0.0/system.security.permissions.9.0.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/system.windows.extensions/9.0.0/system.windows.extensions.9.0.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1510",
+      "level": "Warning",
+      "message": "PackageReference Microsoft.AspNetCore.SignalR will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "projectPath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogApi.csproj",
+      "warningLevel": 1,
+      "filePath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogApi.csproj",
+      "libraryId": "Microsoft.AspNetCore.SignalR",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    },
+    {
+      "code": "NU1510",
+      "level": "Warning",
+      "message": "PackageReference Microsoft.AspNetCore.SignalR.Core will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "projectPath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogApi.csproj",
+      "warningLevel": 1,
+      "filePath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogApi.csproj",
+      "libraryId": "Microsoft.AspNetCore.SignalR.Core",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    }
+  ]
 }

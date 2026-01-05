@@ -1,6 +1,8 @@
 using BlogApi.Data;
+using BlogApi.Hubs;
 using BlogApi.Models;
 using BlogApi.Repositories;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Services;
@@ -11,6 +13,8 @@ public class ComentarioService : IComentarioService
     private readonly INotificacionService _notificacionService;
     private readonly BlogDbContext _context;
     private readonly IEmailService _emailService;
+    private readonly EmailTemplateService _emailTemplateService = new();
+    private readonly IHubContext<NotificacionesHub> _hub;
 
     /*public ComentarioService(IComentarioRepository repo, INotificacionService notificacionService)
     {
@@ -22,13 +26,15 @@ public class ComentarioService : IComentarioService
         IComentarioRepository repo,
         BlogDbContext context,
         INotificacionService notificacionService,
-        IEmailService emailService
+        IEmailService emailService,
+        IHubContext<NotificacionesHub> hub
     )
     {
         _repo = repo;
         _context = context;
         _notificacionService = notificacionService;
         _emailService = emailService;
+        _hub = hub;
     }
 
     public async Task<IEnumerable<Comentario>> GetComentariosDePostAsync(int postId)
@@ -63,25 +69,45 @@ public class ComentarioService : IComentarioService
             {
                 p.UsuarioId,
                 Email = p.Usuario.Email,
+                Nombre = p.Usuario.Nombre,
                 p.Titulo,
             })
             .FirstAsync();
 
-        /* var postAutorId = await _context
-             .Posts.Where(p => p.Id == comentario.PostId)
-             .Select(p => p.UsuarioId)
-             .FirstAsync();*/
-        // 🔥 Crear notificación
+        // Enviar notificación al autor del post
 
         var autorComentario = await _context
             .Usuarios.Where(u => u.Id == comentario.UsuarioId)
             .Select(u => u.Nombre)
             .FirstAsync();
 
+        // Crear notificación en la base de datos
         await _notificacionService.CrearAsync(
             postAutor.UsuarioId,
             $"Tu post ha recibido un nuevo comentario de {autorComentario}"
         );
+        // Enviar notificación en tiempo real vía SignalR
+        await _hub
+            .Clients.User(postAutor.UsuarioId.ToString())
+            .SendAsync(
+                "NuevaNotificacion",
+                new
+                {
+                    mensaje = $"Tu post '{postAutor.Titulo}' ha recibido un nuevo comentario.",
+                    fecha = DateTime.UtcNow,
+                }
+            );
+        // Enviar email al autor del post
+        var plantilla = _emailTemplateService.CargarPlantilla("NuevoComentario.html");
+        var html = _emailTemplateService.ReemplazarVariables(
+            plantilla,
+            new Dictionary<string, string>
+            {
+                { "NOMBRE_USUARIO", postAutor.Nombre },
+                { "TITULO_POST", postAutor.Titulo },
+            }
+        );
+        // 🔥 Enviar email
         await _emailService.EnviarAsync(
             postAutor.Email,
             "Nuevo comentario en tu post",
@@ -102,6 +128,13 @@ public class ComentarioService : IComentarioService
         return true;
     }
 
+    /// <summary>
+    /// Elimina un comentario por su ID
+    /// </summary>
+    /// <param name="comentarioId"></param>
+    /// <param name="usuarioId"></param>
+    /// <param name="puedeBorrarTodo"></param>
+    /// <returns>bool</returns>
     public async Task<bool> EliminarComentarioAsync(
         int comentarioId,
         int usuarioId,
@@ -132,6 +165,11 @@ public class ComentarioService : IComentarioService
         return true;
     }
 
+    /// <summary>
+    /// Obtiene los comentarios por estado
+    /// </summary>
+    /// <param name="estado"></param>
+    /// <returns>IEnumerable<Comentario></returns>
     public async Task<IEnumerable<Comentario>> GetByEstadoAsync(string estado)
     {
         return await _repo

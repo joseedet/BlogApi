@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using System.Text;
 using BlogApi.Data;
+using BlogApi.Hubs;
 using BlogApi.Repositories;
 using BlogApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSignalR();
 builder.Services.AddDbContext<BlogDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
@@ -30,7 +32,7 @@ builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<INotificacionService, NotificacionService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
-
+builder.Services.AddSingleton<EmailTemplateService>();
 
 var key = builder.Configuration["Jwt:Key"];
 builder
@@ -46,6 +48,23 @@ builder
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key!)),
+        };
+        // 🔥 Necesario para SignalR
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+                if (
+                    !string.IsNullOrEmpty(accessToken)
+                    && path.StartsWithSegments("/hubs/notificaciones")
+                )
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            },
         };
     });
 builder.Services.AddAuthorization(options =>
@@ -77,6 +96,7 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
     DbSeeder.SeedAdmin(db);
 }
+app.MapHub<NotificacionesHub>("/hubs/notificaciones");
 
 if (app.Environment.IsDevelopment())
 {
