@@ -1,0 +1,52 @@
+@page "/login"
+@using System.Net.Http.Json
+
+@inject IHttpClientFactory HttpFactory
+@inject AuthService Auth
+@inject NavigationManager Nav
+
+<h3>Login</h3>
+
+<input @bind="email" placeholder="Email" />
+<br />
+<input @bind="password" placeholder="Password" type="password" />
+<br />
+<button @onclick="Login">Entrar</button>
+
+@if (!string.IsNullOrEmpty(error))
+{
+    <p style="color:red">@error</p>
+}
+
+@code {
+    private string email = "";
+    private string password = "";
+    private string? error;
+
+    private async Task Login()
+    {
+        var client = HttpFactory.CreateClient("api");
+
+        var response = await client.PostAsJsonAsync("api/auth/login", new
+        {
+            Email = email,
+            Password = password
+        });
+
+        if (!response.IsSuccessStatusCode)
+        {
+            error = "Credenciales incorrectas";
+            return;
+        }
+
+        var result = await response.Content.ReadFromJsonAsync<LoginResponse>();
+        Auth.SetToken(result!.Token);
+
+        Nav.NavigateTo("/");
+    }
+
+    public class LoginResponse
+    {
+        public string Token { get; set; }
+    }
+}

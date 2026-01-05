@@ -1,0 +1,9 @@
+/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/obj/Debug/net10.0/EmbeddedAttribute.cs
+/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/obj/Debug/net10.0/ValidatableTypeAttribute.cs
+/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/obj/Debug/net10.0/rpswa.dswa.cache.json
+/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/obj/Debug/net10.0/BlogAdmin.GeneratedMSBuildEditorConfig.editorconfig
+/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/obj/Debug/net10.0/BlogAdmin.AssemblyInfoInputs.cache
+/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/obj/Debug/net10.0/BlogAdmin.AssemblyInfo.cs
+/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/obj/Debug/net10.0/BlogAdmin.csproj.CoreCompileInputs.cache
+/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/obj/Debug/net10.0/BlogAdmin.MvcApplicationPartsAssemblyInfo.cache
+/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/obj/Debug/net10.0/BlogAdmin.sourcelink.json

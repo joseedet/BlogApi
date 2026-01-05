@@ -29,3 +29,55 @@ build_property.MSBuildProjectDirectory = /home/tedekeya/Documentos/ProyectosCSha
 build_property._RazorSourceGeneratorDebug = 
 build_property.EffectiveAnalysisLevelStyle = 10.0
 build_property.EnableCodeStyleSeverity = 
+
+[/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/Components/App.razor]
+build_metadata.AdditionalFiles.TargetPath = QmxvZ0FkbWluL0NvbXBvbmVudHMvQXBwLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/Components/Pages/Counter.razor]
+build_metadata.AdditionalFiles.TargetPath = QmxvZ0FkbWluL0NvbXBvbmVudHMvUGFnZXMvQ291bnRlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/Components/Pages/Entrar.razor]
+build_metadata.AdditionalFiles.TargetPath = QmxvZ0FkbWluL0NvbXBvbmVudHMvUGFnZXMvRW50cmFyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/Components/Pages/Error.razor]
+build_metadata.AdditionalFiles.TargetPath = QmxvZ0FkbWluL0NvbXBvbmVudHMvUGFnZXMvRXJyb3IucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/Components/Pages/Home.razor]
+build_metadata.AdditionalFiles.TargetPath = QmxvZ0FkbWluL0NvbXBvbmVudHMvUGFnZXMvSG9tZS5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/Components/Pages/NotFound.razor]
+build_metadata.AdditionalFiles.TargetPath = QmxvZ0FkbWluL0NvbXBvbmVudHMvUGFnZXMvTm90Rm91bmQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/Components/Pages/Weather.razor]
+build_metadata.AdditionalFiles.TargetPath = QmxvZ0FkbWluL0NvbXBvbmVudHMvUGFnZXMvV2VhdGhlci5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/Components/Routes.razor]
+build_metadata.AdditionalFiles.TargetPath = QmxvZ0FkbWluL0NvbXBvbmVudHMvUm91dGVzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/Components/Shared/AuthGuard.razor]
+build_metadata.AdditionalFiles.TargetPath = QmxvZ0FkbWluL0NvbXBvbmVudHMvU2hhcmVkL0F1dGhHdWFyZC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/Components/_Imports.razor]
+build_metadata.AdditionalFiles.TargetPath = QmxvZ0FkbWluL0NvbXBvbmVudHMvX0ltcG9ydHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/Components/Layout/MainLayout.razor]
+build_metadata.AdditionalFiles.TargetPath = QmxvZ0FkbWluL0NvbXBvbmVudHMvTGF5b3V0L01haW5MYXlvdXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-d684lvu6o0
+
+[/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/Components/Layout/NavMenu.razor]
+build_metadata.AdditionalFiles.TargetPath = QmxvZ0FkbWluL0NvbXBvbmVudHMvTGF5b3V0L05hdk1lbnUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = b-ztzack4l5u
+
+[/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/Components/Layout/ReconnectModal.razor]
+build_metadata.AdditionalFiles.TargetPath = QmxvZ0FkbWluL0NvbXBvbmVudHMvTGF5b3V0L1JlY29ubmVjdE1vZGFsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-5nt3obxagr

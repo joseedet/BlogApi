@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "1uaFbNlbBuE=",
+  "dgSpecHash": "hraMtKDIVoE=",
   "success": true,
   "projectFilePath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogApi.csproj",
   "expectedPackageFiles": [
     "/home/tedekeya/.nuget/packages/bcrypt.net-next/4.0.3/bcrypt.net-next.4.0.3.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
+    "/home/tedekeya/.nuget/packages/microsoft.aspnetcore.app.internal.assets/10.0.1/microsoft.aspnetcore.app.internal.assets.10.0.1.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.aspnetcore.authentication.jwtbearer/10.0.1/microsoft.aspnetcore.authentication.jwtbearer.10.0.1.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.aspnetcore.openapi/10.0.1/microsoft.aspnetcore.openapi.10.0.1.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.aspnetcore.signalr/1.2.0/microsoft.aspnetcore.signalr.1.2.0.nupkg.sha512",

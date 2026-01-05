@@ -1,0 +1,10 @@
+﻿@using BlogAdmin.Components.Pages
+
+<Router AppAssembly="@typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" />
+    </Found>
+    <NotFound>
+        <NotFound />
+    </NotFound>
+</Router>

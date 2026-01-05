@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "eg3s/CabquA=",
+  "success": true,
+  "projectFilePath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogAdmin/BlogAdmin.csproj",
+  "expectedPackageFiles": [
+    "/home/tedekeya/.nuget/packages/microsoft.aspnetcore.app.internal.assets/10.0.1/microsoft.aspnetcore.app.internal.assets.10.0.1.nupkg.sha512",
+    "/home/tedekeya/.nuget/packages/microsoft.aspnetcore.http.connections.client/10.0.1/microsoft.aspnetcore.http.connections.client.10.0.1.nupkg.sha512",
+    "/home/tedekeya/.nuget/packages/microsoft.aspnetcore.signalr.client/10.0.1/microsoft.aspnetcore.signalr.client.10.0.1.nupkg.sha512",
+    "/home/tedekeya/.nuget/packages/microsoft.aspnetcore.signalr.client.core/10.0.1/microsoft.aspnetcore.signalr.client.core.10.0.1.nupkg.sha512"
+  ],
+  "logs": []
+}
