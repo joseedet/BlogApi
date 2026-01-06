@@ -30,9 +30,11 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<INotificacionService, NotificacionService>();
-builder.Services.AddScoped<IEmailService, EmailService>();
+//builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 builder.Services.AddSingleton<EmailTemplateService>();
+builder.Services.AddScoped<INotificacionesService, NotificacionesService>();
+builder.Services.AddSignalR();
 builder.Services.AddScoped<INotificacionesService, NotificacionesService>();
 
 var key = builder.Configuration["Jwt:Key"];
@@ -97,7 +99,6 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
     DbSeeder.SeedAdmin(db);
 }
-app.MapHub<NotificacionesHub>("/hubs/notificaciones");
 
 if (app.Environment.IsDevelopment())
 {
@@ -113,4 +114,6 @@ app.UseAuthorization();
 
 app.UseStaticFiles();
 app.MapControllers();
+app.MapHub<NotificacionesHub>("/hubs/notificaciones");
+
 app.Run();

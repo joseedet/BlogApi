@@ -1,3 +1,4 @@
+using BlogApi.Domain.Factories;
 using BlogApi.DTO;
 using BlogApi.Models;
 using BlogApi.Services;
@@ -11,10 +12,12 @@ namespace BlogApi.Controllers;
 public class PostsController : ControllerBase
 {
     private readonly IPostService _service;
+    private readonly INotificacionesService _notificaciones;
 
-    public PostsController(IPostService service)
+    public PostsController(IPostService service, INotificacionesService notificaciones)
     {
         _service = service;
+        _notificaciones = notificaciones;
     }
 
     [HttpGet]
@@ -51,6 +54,13 @@ public class PostsController : ControllerBase
         };
 
         var created = await _service.CreateAsync(post, dto.TagIds);
+
+        // 🔥 Crear notificación usando la Factory del dominio 
+        
+        var notificacion = NotificacionFactory.NuevoPost(usuarioId: created.UsuarioId, postId: created.Id, titulo: created.Titulo); 
+        // 🔥 Guardar y enviar por SignalR
+        
+         await _notificaciones.CrearAsync(notificacion);
 
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created.ToDto());
     }

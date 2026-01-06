@@ -1,4 +1,5 @@
 using BlogApi.DTO;
+using BlogApi.Models;
 
 namespace BlogApi.Services;
 
@@ -11,4 +12,6 @@ public interface INotificacionesService
         int page,
         int pageSize
     );
+    Task CrearAsync(Notificacion notificacion);
+
 }
