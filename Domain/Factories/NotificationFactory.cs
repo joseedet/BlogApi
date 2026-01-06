@@ -31,13 +31,18 @@ public static class NotificacionFactory
     /// <param name="contenido"></param>
     /// <returns>Notificación de nuevo comentario</returns>
     /// </summary>
-    public static Notificacion NuevoComentario(int usuarioId, int postId, string contenido) =>
+    public static Notificacion NuevoComentario(
+        int usuarioId,
+        int postId,
+        string contenido,
+        int comentarioId
+    ) =>
         new Notificacion
         {
             UsuarioId = usuarioId,
             Tipo = TipoNotificacion.NuevoComentario,
             Mensaje = $"Nuevo comentario en tu post: {contenido}",
-            Payload = JsonSerializer.Serialize(new { postId }),
+            Payload = JsonSerializer.Serialize(new { postId, comentarioId }),
         };
 
     /// <summary>
@@ -47,13 +52,17 @@ public static class NotificacionFactory
     /// <param name="comentarioId"></param>
     /// <returns>Notificación de respuesta a comentario</returns>
     /// </summary>
-    public static Notificacion RespuestaComentario(int usuarioId, int comentarioId) =>
+    public static Notificacion RespuestaComentario(
+        int usuarioId,
+        int comentarioId,
+        string contenido
+    ) =>
         new Notificacion
         {
             UsuarioId = usuarioId,
             Tipo = TipoNotificacion.RespuestaComentario,
             Mensaje = "Alguien respondió a tu comentario",
-            Payload = JsonSerializer.Serialize(new { comentarioId }),
+            Payload = JsonSerializer.Serialize(new { comentarioId, contenido }),
         };
 
     /// <summary>

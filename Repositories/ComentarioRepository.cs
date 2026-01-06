@@ -30,4 +30,5 @@ public class ComentarioRepository : GenericRepository<Comentario>, IComentarioRe
             .OrderBy(c => c.Fecha)
             .ToListAsync();
     }
+    public async Task<Comentario?> GetByIdAsync(int id) { return await _dbSet.FirstOrDefaultAsync(c => c.Id == id); }
 }

@@ -1,22 +1,59 @@
 using System.Security.Claims;
+using BlogApi.Domain.Factories;
 using BlogApi.DTO;
 using BlogApi.Models;
 using BlogApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+/// <summary>
+/// Controlador para gestionar comentarios en el blog.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class ComentariosController : ControllerBase
 {
+    /// <summary>
+    /// Servicio de comentarios.
+    /// </summary>
     private readonly IComentarioService _service;
 
-    public ComentariosController(IComentarioService service)
+    /// <summary>
+    /// Servicio de posts.
+    /// </summary>
+    private readonly IPostService _postService;
+
+    /// <summary>
+    /// Servicio de notificaciones.
+    /// </summary>
+    private readonly INotificacionesService _notificaciones;
+
+    /// <summary>
+    /// Constructor del controlador de comentarios.
+    /// </summary>
+    /// <param name="service"></param>
+    /// <param name="postService"></param>
+    /// <param name="notificaciones"></param>
+    /// <returns></returns>
+    /// </summary>
+    public ComentariosController(
+        IComentarioService service,
+        IPostService postService,
+        INotificacionesService notificaciones
+    )
     {
         _service = service;
+        _postService = postService;
+        _notificaciones = notificaciones;
     }
 
     //Obtener comentarios raíz de un post
+    /// <summary>
+    /// Obtiene los comentarios raíz de un post específico.
+    /// </summary>
+    /// <param name="postId"></param>
+    /// <returns></returns>
+    /// </summary>
     [Authorize(Roles = "Administrador,Editor,Autor")]
     [HttpGet("post/{postId}")]
     public async Task<IActionResult> GetByPost(int postId)
@@ -26,6 +63,12 @@ public class ComentariosController : ControllerBase
     }
 
     // Crear comentario o respuesta
+    /// <summary>
+    /// Crea un nuevo comentario o respuesta a un comentario existente.
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    /// </summary>
     [Authorize(Roles = "Administrador,Editor,Autor,Suscriptor")]
     [HttpPost]
     public async Task<IActionResult> Create(CreateComentarioDto dto)
@@ -38,10 +81,28 @@ public class ComentariosController : ControllerBase
             ComentarioPadreId = dto.ComentarioPadreId,
         };
         var created = await _service.CrearComentarioAsync(comentario);
+
+        // 🔥 Notificación si es respuesta a un comentario
+        if (dto.ComentarioPadreId != null)
+        {
+            var comentarioPadre = await _service.GetByIdAsync(dto.ComentarioPadreId.Value);
+            var notificacion = NotificacionFactory.RespuestaComentario(
+                usuarioId: comentarioPadre.UsuarioId.Value, // autor del comentario original
+                comentarioId: comentarioPadre.Id,
+                contenido: created.Contenido
+            );
+            await _notificaciones.CrearAsync(notificacion);
+        }
         return Ok(created.ToDto());
     }
 
     // Eliminar comentario
+    /// <summary>
+    /// Elimina un comentario específico.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    /// </summary>
     [Authorize(Roles = "Administrador,Editor")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
@@ -63,7 +124,13 @@ public class ComentariosController : ControllerBase
     }
 
     // Moderar comentario (solo Admin/Editor)
-
+    /// <summary>
+    /// Cambia el estado de un comentario específico.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="estado"></param>
+    /// <returns></returns>
+    /// </summary>
     [Authorize(Roles = "Administrador,Editor")]
     [HttpPatch("{id}/estado")]
     public async Task<IActionResult> CambiarEstado(int id, [FromBody] string estado)
@@ -73,6 +140,13 @@ public class ComentariosController : ControllerBase
             return NotFound();
         return NoContent();
     }
+
+    /// <summary>
+    /// Obtiene comentarios por estado.
+    /// </summary>
+    /// <param name="estado"></param>
+    /// <returns></returns>
+    /// </summary>
     [HttpGet("estado/{estado}")]
     [Authorize(Roles = "Administrador,Editor")]
     public async Task<IActionResult> GetByEstado(string estado)

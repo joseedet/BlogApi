@@ -224,4 +224,11 @@ public class ComentarioService : IComentarioService
             .Include(c => c.Respuestas)
             .ToListAsync();
     }
+
+    public async Task<Comentario?> GetByIdAsync(int id)
+    {
+        return await _context.Comentarios.FindAsync(id);
+        // o con Include si necesitas navegación:
+        // // return await _db.Co_repomentarios.FirstOrDefaultAsync(c => c.Id == id);
+    }
 }
