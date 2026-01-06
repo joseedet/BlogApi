@@ -1,222 +1,308 @@
-📘 BlogApi – Backend del Sistema de Blog con Notificaciones en Tiempo Real
-Bienvenido a BlogApi, una API REST modular, limpia y extensible diseñada para gestionar un sistema de blog profesional con:
+📘 BlogApi – Backend Modular para Plataforma de Blog Profesional
+BlogApi es una API REST robusta, modular y extensible diseñada para gestionar un sistema de blog profesional con:
 
-Posts
+Autenticación JWT
 
-Comentarios y respuestas (comentarios anidados)
+Roles y permisos
 
-Notificaciones en tiempo real vía SignalR
+Posts con slugs SEO
 
-Paginación
+Categorías y etiquetas
 
-Arquitectura por capas (Models, DTOs, Repositories, Services, Controllers, Domain/Factories)
+Comentarios y respuestas (anidados)
 
-Este backend está pensado para ser consumido por un frontend moderno, como un panel de administración en Blazor Server, aunque puede integrarse con cualquier cliente.
+Notificaciones en tiempo real y por email
+
+Búsqueda avanzada y filtros
+
+Arquitectura limpia por capas
+
+Paginación, ordenación y extensibilidad total
+
+Este backend está optimizado para ser consumido por un frontend moderno como Blazor Server, aunque puede integrarse con cualquier cliente.
 
 🚀 Características principales
-📝 Gestión de Posts
-Crear posts
+🔐 Autenticación JWT
+Login con email/usuario + contraseña.
 
-Asociar posts a usuarios
+Tokens JWT firmados.
 
-Extensible para listados, filtros, slugs SEO, etc.
+Refresh tokens (si se desea).
 
-💬 Gestión de Comentarios
-Comentar posts
+Endpoints protegidos con [Authorize].
 
-Responder a comentarios (comentarios anidados)
+Roles integrados en el token.
 
-Estructura lista para hilos profundos
+🛡 Roles y permisos
+Roles disponibles:
 
-🔔 Sistema de Notificaciones
-Notificaciones automáticas cuando:
+Admin
 
-Un usuario comenta un post → notificación al autor del post
-
-Un usuario responde a un comentario → notificación al autor del comentario original
-
-Cada notificación:
-
-Se guarda en base de datos
-
-Se envía en tiempo real vía SignalR
-
-Incluye un Payload JSON con datos relevantes (postId, comentarioId, contenido, etc.)
-
-Puede consultarse (no leídas, paginadas)
-
-Puede marcarse como leída
-
-⚡ Tiempo real con SignalR
-Hub dedicado: /hubs/notificaciones
-
-El cliente recibe eventos NuevaNotificacion
-
-Ideal para campanitas de notificaciones en Blazor o SPA
-
-🧱 Arquitectura limpia
-Separación clara por capas:
-
-Código
-BlogApi/
- ├── Controllers/
- ├── Services/
- ├── Repositories/
- ├── Domain/
- │    └── Factories/
- ├── DTO/
- ├── Models/
- ├── Hubs/
- └── Data/
-🧩 Tecnologías utilizadas
-ASP.NET Core 8
-
-Entity Framework Core
-
-SignalR
-
-SQL Server (o cualquier provider compatible)
-
-C# 12
-
-Arquitectura por capas y principios SOLID
-
-📂 Estructura del proyecto
-Models
-Entidades principales:
+Editor
 
 Usuario
 
-Post
+Control de acceso granular:
 
-Comentario
+Admin → acceso total.
 
-Notificacion
+Editor → gestión de posts y comentarios.
 
-TipoNotificacion (enum)
+Usuario → creación de contenido propio.
 
-DTO
-Objetos de transferencia:
+Middleware de autorización por rol.
 
-PostDto, CreatePostDto
+Decoradores como:
 
-ComentarioDto, CreateComentarioDto
+csharp
+[Authorize(Roles = "Admin,Editor")]
+📝 Gestión de Posts
+✔ Crear, editar, eliminar posts
+✔ Slugs SEO automáticos
+Ejemplo:
 
-NotificacionDto
+Código
+"Mi Primer Post" → "mi-primer-post"
+✔ Categorías
+Un post pertenece a una categoría.
 
-PaginacionResultado<T>
+Las categorías pueden listarse, filtrarse y administrarse.
 
-Extensiones .ToDto()
+✔ Etiquetas (tags)
+Un post puede tener múltiples etiquetas.
 
-Domain / Factories
-NotificacionFactory  
-Genera notificaciones tipadas:
+Las etiquetas permiten búsquedas más precisas.
 
+Sistema many-to-many con tabla intermedia.
+
+✔ Búsqueda avanzada
+Por título
+
+Por contenido
+
+Por slug
+
+Por categoría
+
+Por etiquetas
+
+Por autor
+
+Por fecha
+
+Combinación de filtros
+
+✔ Ordenación
+Por fecha
+
+Por relevancia
+
+Por popularidad (si lo implementas más adelante)
+
+💬 Comentarios y respuestas
+✔ Comentarios directos al post
+✔ Respuestas a comentarios (comentarios anidados)
+✔ Estructura lista para hilos profundos
+✔ Paginación opcional
+Cada comentario incluye:
+
+Autor
+
+Fecha
+
+Contenido
+
+PostId
+
+ComentarioPadreId (si es respuesta)
+
+🔔 Sistema de notificaciones
+✔ Notificaciones automáticas
+Nuevo comentario en un post → notificación al autor del post.
+
+Respuesta a un comentario → notificación al autor del comentario original.
+
+Nuevo post (opcional) → notificación a seguidores o administradores.
+
+✔ Tipos de notificación
 NuevoPost
 
 NuevoComentario
 
 RespuestaComentario
 
-Repositories
-IComentarioRepository, ComentarioRepository
+✔ Canales
+Base de datos
 
-IPostRepository, PostRepository
+Tiempo real (SignalR)
 
-Acceso a datos encapsulado
+Email (opcional)
 
-Services
-ComentarioService
+✔ Payload JSON
+Incluye datos como:
 
-PostService
-
-NotificacionesService  
-(guarda + emite notificaciones vía SignalR)
-
-Hubs
-NotificacionesHub
-
-Controllers
-ComentariosController
-
-PostsController (si lo tienes)
-
-Endpoints REST
-
-🔄 Flujo funcional resumido
-1. Crear un post
-El usuario envía CreatePostDto
-
-Se guarda en BD
-
-Se devuelve PostDto
-
-2. Comentar un post
-El usuario envía CreateComentarioDto sin ComentarioPadreId
-
-Se guarda el comentario
-
-Se notifica al autor del post
-
-3. Responder a un comentario
-El usuario envía CreateComentarioDto con ComentarioPadreId
-
-Se guarda el comentario hijo
-
-Se notifica:
-
-al autor del post (nuevo comentario)
-
-al autor del comentario original (respuesta)
-
-4. Notificaciones
-Se guardan en BD
-
-Se envían por SignalR
-
-Se pueden consultar:
-
-No leídas
-
-Paginadas
-
-Se pueden marcar como leídas
-
-📡 SignalR – Tiempo real
+json
+{
+  "postId": 10,
+  "comentarioId": 55,
+  "contenido": "Texto del comentario"
+}
+📡 Notificaciones en tiempo real (SignalR)
 Hub:
-
 Código
 /hubs/notificaciones
-Evento emitido por el servidor:
-
+Evento:
 Código
 NuevaNotificacion
-El cliente debe:
+Flujo:
+Se crea una notificación.
 
-Conectarse al hub
+Se guarda en BD.
 
-Escuchar NuevaNotificacion
+Se envía por SignalR al usuario destinatario.
 
-Actualizar UI en tiempo real
+El frontend actualiza la UI en tiempo real.
 
-📘 Configuración básica (Program.cs)
-Incluye:
+📧 Notificaciones por email
+✔ Emails automáticos en:
+Nuevo comentario en tu post
 
-DbContext
+Respuesta a tu comentario
 
-Repositorios
+Nuevo post (opcional)
 
-Servicios
+✔ Plantillas HTML
+Personalizables
 
-SignalR
+Variables dinámicas (nombre del usuario, título del post, etc.)
 
-Swagger
+✔ Integración SMTP
+Compatible con:
+
+Gmail
+
+Outlook
+
+SendGrid
+
+Cualquier servidor SMTP
+
+🧩 Categorías y Etiquetas
+Categorías
+Un post pertenece a una categoría.
+
+CRUD completo.
+
+Filtros por categoría.
+
+Etiquetas (Tags)
+Un post puede tener múltiples etiquetas.
+
+CRUD completo.
+
+Filtros por etiquetas.
+
+Búsqueda combinada:
+
+Código
+posts?tag=aspnet&tag=backend&categoria=programacion
+🔍 Búsqueda y filtros avanzados
+✔ Búsqueda por texto completo
+Título
+
+Contenido
+
+Slug
+
+Etiquetas
+
+Categoría
+
+✔ Filtros combinados
+Ejemplo:
+
+Código
+/api/posts?search=blazor&categoria=frontend&tag=signalr&page=1&pageSize=10
+✔ Ordenación
+sort=fecha_desc
+
+sort=fecha_asc
+
+sort=popularidad
+
+🧱 Arquitectura del proyecto
+Código
+BlogApi/
+ ├── Controllers/        → Endpoints REST
+ ├── Services/           → Lógica de negocio
+ ├── Repositories/       → Acceso a datos
+ ├── Domain/
+ │    └── Factories/     → Creación de entidades (ej. Notificaciones)
+ ├── DTO/                → Transferencia de datos
+ ├── Models/             → Entidades EF Core
+ ├── Hubs/               → SignalR
+ ├── Data/               → DbContext
+ ├── Auth/               → JWT, roles, permisos
+ ├── Email/              → Servicio de email + plantillas
+ └── Utils/              → Helpers (slug generator, filtros, etc.)
+🔄 Flujos funcionales
+1. Crear un post
+Se genera slug SEO.
+
+Se asigna categoría.
+
+Se asignan etiquetas.
+
+Se guarda en BD.
+
+Se notifica (opcional).
+
+2. Comentar un post
+Se guarda comentario.
+
+Se notifica al autor del post.
+
+Se envía email (opcional).
+
+Se envía SignalR.
+
+3. Responder a un comentario
+Se guarda respuesta.
+
+Se notifica al autor del post.
+
+Se notifica al autor del comentario original.
+
+Se envía email (opcional).
+
+Se envía SignalR.
+
+4. Búsqueda avanzada
+Se combinan filtros.
+
+Se aplica paginación.
+
+Se devuelve resultado optimizado.
 
 🧪 Estado actual del proyecto
-✔ Posts funcionando
-✔ Comentarios funcionando
-✔ Respuestas funcionando
-✔ Notificaciones funcionando
-✔ SignalR funcionando
-✔ Paginación funcionando
-✔ Arquitectura limpia y modular
+✔ Autenticación JWT
+✔ Roles y permisos
+✔ Slugs SEO
+✔ Categorías
+✔ Etiquetas
+✔ Posts
+✔ Comentarios
+✔ Respuestas
+✔ Notificaciones en BD
+✔ Notificaciones en tiempo real
+✔ Notificaciones por email
+✔ Búsqueda avanzada
+✔ Filtros avanzados
+✔ Paginación
+✔ Arquitectura limpia
+✔ Factories
+✔ Repositorios
+✔ Servicios
+✔ SignalR
+✔ Sistema modular y extensible
+
