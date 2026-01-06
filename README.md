@@ -1,4 +1,5 @@
 📘 BlogApi – Backend Modular para Plataforma de Blog Profesional
+
 BlogApi es una API REST robusta, modular y extensible diseñada para gestionar un sistema de blog profesional con:
 
 Autenticación JWT
@@ -22,6 +23,7 @@ Paginación, ordenación y extensibilidad total
 Este backend está optimizado para ser consumido por un frontend moderno como Blazor Server, aunque puede integrarse con cualquier cliente.
 
 🚀 Características principales
+
 🔐 Autenticación JWT
 Login con email/usuario + contraseña.
 
@@ -34,6 +36,7 @@ Endpoints protegidos con [Authorize].
 Roles integrados en el token.
 
 🛡 Roles y permisos
+
 Roles disponibles:
 
 Admin
@@ -57,6 +60,7 @@ Decoradores como:
 csharp
 [Authorize(Roles = "Admin,Editor")]
 📝 Gestión de Posts
+
 ✔ Crear, editar, eliminar posts
 ✔ Slugs SEO automáticos
 Ejemplo:
@@ -100,6 +104,7 @@ Por relevancia
 Por popularidad (si lo implementas más adelante)
 
 💬 Comentarios y respuestas
+
 ✔ Comentarios directos al post
 ✔ Respuestas a comentarios (comentarios anidados)
 ✔ Estructura lista para hilos profundos
@@ -117,6 +122,7 @@ PostId
 ComentarioPadreId (si es respuesta)
 
 🔔 Sistema de notificaciones
+
 ✔ Notificaciones automáticas
 Nuevo comentario en un post → notificación al autor del post.
 
@@ -148,6 +154,7 @@ json
   "contenido": "Texto del comentario"
 }
 📡 Notificaciones en tiempo real (SignalR)
+
 Hub:
 Código
 /hubs/notificaciones
@@ -164,6 +171,7 @@ Se envía por SignalR al usuario destinatario.
 El frontend actualiza la UI en tiempo real.
 
 📧 Notificaciones por email
+
 ✔ Emails automáticos en:
 Nuevo comentario en tu post
 
@@ -188,6 +196,7 @@ SendGrid
 Cualquier servidor SMTP
 
 🧩 Categorías y Etiquetas
+
 Categorías
 Un post pertenece a una categoría.
 
@@ -206,6 +215,7 @@ Búsqueda combinada:
 
 Código
 posts?tag=aspnet&tag=backend&categoria=programacion
+
 🔍 Búsqueda y filtros avanzados
 ✔ Búsqueda por texto completo
 Título
