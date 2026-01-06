@@ -33,6 +33,7 @@ builder.Services.AddScoped<INotificacionService, NotificacionService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 builder.Services.AddSingleton<EmailTemplateService>();
+builder.Services.AddScoped<INotificacionesService, NotificacionesService>();
 
 var key = builder.Configuration["Jwt:Key"];
 builder

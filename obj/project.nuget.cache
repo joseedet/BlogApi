@@ -1,12 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "hraMtKDIVoE=",
+  "dgSpecHash": "1uaFbNlbBuE=",
   "success": true,
   "projectFilePath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogApi.csproj",
   "expectedPackageFiles": [
     "/home/tedekeya/.nuget/packages/bcrypt.net-next/4.0.3/bcrypt.net-next.4.0.3.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
-    "/home/tedekeya/.nuget/packages/microsoft.aspnetcore.app.internal.assets/10.0.1/microsoft.aspnetcore.app.internal.assets.10.0.1.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.aspnetcore.authentication.jwtbearer/10.0.1/microsoft.aspnetcore.authentication.jwtbearer.10.0.1.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.aspnetcore.openapi/10.0.1/microsoft.aspnetcore.openapi.10.0.1.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.aspnetcore.signalr/1.2.0/microsoft.aspnetcore.signalr.1.2.0.nupkg.sha512",
@@ -73,7 +72,7 @@
     {
       "code": "NU1510",
       "level": "Warning",
-      "message": "PackageReference Microsoft.AspNetCore.SignalR will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "message": "PackageReference Microsoft.AspNetCore.SignalR no se eliminará. Considere la posibilidad de quitar este paquete de las dependencias, ya que es probable que no sea necesario.",
       "projectPath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogApi.csproj",
       "warningLevel": 1,
       "filePath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogApi.csproj",
@@ -85,7 +84,7 @@
     {
       "code": "NU1510",
       "level": "Warning",
-      "message": "PackageReference Microsoft.AspNetCore.SignalR.Core will not be pruned. Consider removing this package from your dependencies, as it is likely unnecessary.",
+      "message": "PackageReference Microsoft.AspNetCore.SignalR.Core no se eliminará. Considere la posibilidad de quitar este paquete de las dependencias, ya que es probable que no sea necesario.",
       "projectPath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogApi.csproj",
       "warningLevel": 1,
       "filePath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogApi.csproj",

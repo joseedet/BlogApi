@@ -11,9 +11,9 @@ public class Post
     public string Titulo { get; set; } = string.Empty;
     public string Contenido { get; set; } = string.Empty;
     public int UsuarioId { get; set; }
-    public Usuario Usuario { get; set; }
+    public Usuario Usuario { get; set; } = null;
     public int CategoriaId { get; set; }
-    public Categoria Categoria { get; set; }
+    public Categoria Categoria { get; set; } = null;
     public DateTime FechaCreacion { get; set; }
     public string Slug { get; set; } = string.Empty;
 
