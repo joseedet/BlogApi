@@ -8,13 +8,27 @@ namespace BlogApi.Services;
 
 public class TokenService : ITokenService
 {
+    /// <summary>
+    /// Configuración de la aplicación
+    /// </summary>
     private readonly IConfiguration _config;
 
+    /// <summary>
+    /// Constructor de TokenService
+    /// </summary>
+    /// <param name="config"></param>
     public TokenService(IConfiguration config)
     {
         _config = config;
     }
 
+    /// <summary>
+    /// Genera un token JWT para un usuario
+    /// </summary>
+    /// <param name="usuario"></param>
+    /// <returns>Token JWT generado</returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// </summary>
     public string GenerateToken(Usuario usuario)
     {
         var key = _config["Jwt:Key"];

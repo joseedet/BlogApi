@@ -9,15 +9,32 @@ namespace BlogApi.Services;
 
 public class NotificacionesService : INotificacionesService
 {
+    /// <summary>
+    /// Constructor de NotificacionesService
+    /// </summary>
     private readonly BlogDbContext _db;
+
+    /// <summary>
+    /// Hub de notificaciones para SignalR
+    /// </summary>
     private readonly IHubContext<NotificacionesHub> _hub;
 
+    /// <summary>
+    /// Constructor de NotificacionesService
+    /// </summary>
+    /// <param name="db"></param>
+    /// <param name="hub"></param>
     public NotificacionesService(BlogDbContext db, IHubContext<NotificacionesHub> hub)
     {
         _db = db;
         _hub = hub;
     }
 
+    /// <summary>
+    /// Crea una nueva notificación
+    /// </summary>
+    /// <param name="notificacion"></param>
+    /// <returns></returns>
     public async Task CrearAsync(Notificacion notificacion)
     {
         _db.Notificaciones.Add(notificacion);
@@ -29,6 +46,11 @@ public class NotificacionesService : INotificacionesService
             .SendAsync("NuevaNotificacion", notificacion);
     }
 
+    /// <summary>
+    /// Marca una notificación como leída
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
     public async Task MarcarTodasComoLeidasAsync(int userId)
     {
         var notis = await _db
@@ -39,6 +61,11 @@ public class NotificacionesService : INotificacionesService
         await _db.SaveChangesAsync();
     }
 
+    /// <summary>
+    /// Obtiene las notificaciones no leídas de un usuario
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Lista de notificaciones no leídas</returns>
     public async Task<List<NotificacionDto>> ObtenerNoLeidasAsync(int id)
     {
         return await _db
@@ -55,6 +82,14 @@ public class NotificacionesService : INotificacionesService
             .ToListAsync();
     }
 
+    /// <summary>
+    /// Obtiene notificaciones paginadas de un usuario
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    // <returns>Paginación de notificaciones</returns>
+    /// </summary>
     public async Task<PaginacionResultado<NotificacionDto>> GetPaginadasAsync(
         int userId,
         int page,

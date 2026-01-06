@@ -12,11 +12,19 @@ public class NotificacionesController : ControllerBase
 {
     private readonly INotificacionService _service;
 
+    /// <summary>
+    /// Constructor de NotificacionesController
+    /// </summary>
+    /// <param name="service"></param>
     public NotificacionesController(INotificacionService service)
     {
         _service = service;
     }
 
+    /// <summary>
+    /// Obtiene las notificaciones del usuario autenticado
+    /// </summary>
+    /// <returns>Lista de notificaciones</returns>
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> Get()
@@ -26,6 +34,11 @@ public class NotificacionesController : ControllerBase
         return Ok(notificaciones);
     }
 
+    /// <summary>
+    /// Marca una notificación como leída
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpPatch("{id}/leer")]
     [Authorize]
     public async Task<IActionResult> MarcarComoLeida(int id)

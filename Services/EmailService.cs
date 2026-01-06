@@ -6,10 +6,33 @@ namespace BlogApi.Services;
 
 public class EmailService : IEmailService
 {
+    /// <summary>
+    /// Constructor de EmailService
+    /// </summary>
     private readonly string _apiKey;
+
+    /////// <summary>
+    /// Dirección de correo del remitente
+    /// </summary>
+    /// <param name="fromEmail"></param>
+    /// <param name="fromName"></param>
+    /// </summary>
     private readonly string _fromEmail;
+
+    /// <summary>
+    ///     Nombre del remitente
+    /// </summary>
+    /// <param name="fromName"></param>
+    /// <returns></returns>
+    /// </summary>
     private readonly string _fromName;
 
+    /// <summary>
+    /// Constructor de EmailService
+    /// </summary>
+    /// <param name="config"></param>
+    /// <returns></returns>
+    /// <summary>
     public EmailService(IConfiguration config)
     {
         _apiKey = config["SendGrid:ApiKey"];
@@ -17,6 +40,14 @@ public class EmailService : IEmailService
         _fromName = config["SendGrid:FromName"];
     }
 
+    /// <summary>
+    /// Envía un correo electrónico
+    /// </summary>
+    /// <param name="toEmail"></param>
+    /// <param name="subject"></param>
+    /// <param name="message"></param>
+    /// <returns></returns>
+    /// </summary>
     public async Task EnviarAsync(string toEmail, string subject, string message)
     {
         var client = new SendGridClient(_apiKey);

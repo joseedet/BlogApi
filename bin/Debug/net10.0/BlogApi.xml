@@ -1,0 +1,403 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BlogApi</name>
+    </assembly>
+    <members>
+        <member name="M:BlogApi.Controllers.NotificacionesController.#ctor(BlogApi.Services.INotificacionService)">
+            <summary>
+            Constructor de NotificacionesController
+            </summary>
+            <param name="service"></param>
+        </member>
+        <member name="M:BlogApi.Controllers.NotificacionesController.Get">
+            <summary>
+            Obtiene las notificaciones del usuario autenticado
+            </summary>
+            <returns>Lista de notificaciones</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.NotificacionesController.MarcarComoLeida(System.Int32)">
+            <summary>
+            Marca una notificación como leída
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="P:BlogApi.Data.BlogDbContext.Posts">
+            <summary>
+                Posts del blog
+            </summary>
+        </member>
+        <member name="P:BlogApi.Data.BlogDbContext.Categorias">
+            <summary>
+               Tags del blog
+            </summary>
+        </member>
+        <member name="P:BlogApi.Data.BlogDbContext.Usuarios">
+            <summary>
+              Usuarios del blog
+            </summary>
+        </member>
+        <member name="P:BlogApi.Data.BlogDbContext.Comentarios">
+            <summary>
+              Comentarios del blog
+            /// </summary>
+        </member>
+        <member name="P:BlogApi.Data.BlogDbContext.Notificaciones">
+            <summary>
+             Notificaciones del blog
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Data.BlogDbContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.NuevoPost(System.Int32,System.Int32,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.NuevoComentario(System.Int32,System.Int32,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.RespuestaComentario(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.Sistema(System.Int32,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Categoria)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Usuario)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Comentario)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Post)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Tag)" -->
+        <member name="M:BlogApi.Hubs.NotificacionesHub.OnConnectedAsync">
+            <summary>
+            Método llamado cuando un cliente se conecta al hub
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:BlogApi.Migrations.InitialCreate">
+            <inheritdoc />
+        </member>
+        <member name="M:BlogApi.Migrations.InitialCreate.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:BlogApi.Migrations.InitialCreate.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:BlogApi.Migrations.InitialCreate.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.#ctor(BlogApi.Repositories.ICategoriaRepository)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.GetAllAsync" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.GetByIdAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.CreateAsync(BlogApi.Models.Categoria)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.UpdateAsync(System.Int32,BlogApi.Models.Categoria)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.DeleteAsync(System.Int32)" -->
+        <member name="F:BlogApi.Services.ComentarioService._repo">
+            <summary>
+                Repositorio de comentarios
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.ComentarioService._notificacionService">
+            <summary>
+              Servicio de notificaciones
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.ComentarioService._context">
+            <summary>
+                Contexto de la base de datos
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.ComentarioService._emailService">
+            <summary>
+                Servicio de email
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "F:BlogApi.Services.ComentarioService._emailTemplateService" -->
+        <member name="F:BlogApi.Services.ComentarioService._hub">
+            <summary>
+               Hub de notificaciones para SignalR
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.ComentarioService.#ctor(BlogApi.Repositories.IComentarioRepository,BlogApi.Data.BlogDbContext,BlogApi.Services.INotificacionService,BlogApi.Services.IEmailService,Microsoft.AspNetCore.SignalR.IHubContext{BlogApi.Hubs.NotificacionesHub})" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.ComentarioService.GetComentariosDePostAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.ComentarioService.CrearComentarioAsync(BlogApi.Models.Comentario)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.ComentarioService.CambiarEstadoAsync(System.Int32,System.String)" -->
+        <member name="M:BlogApi.Services.ComentarioService.EliminarComentarioAsync(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Elimina un comentario por su ID
+            </summary>
+            <param name="comentarioId"></param>
+            <param name="usuarioId"></param>
+            <param name="puedeBorrarTodo"></param>
+            <returns>bool</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.ComentarioService.GetByEstadoAsync(System.String)" -->
+        <member name="F:BlogApi.Services.EmailService._apiKey">
+            <summary>
+            Constructor de EmailService
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "F:BlogApi.Services.EmailService._fromEmail" -->
+        <!-- Badly formed XML comment ignored for member "F:BlogApi.Services.EmailService._fromName" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.EmailService.#ctor(Microsoft.Extensions.Configuration.IConfiguration)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.EmailService.EnviarAsync(System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.EmailTemplateService.CargarPlantilla(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.EmailTemplateService.ReemplazarVariables(System.String,System.Collections.Generic.Dictionary{System.String,System.String})" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IPostService.GetAllAsync" -->
+        <member name="M:BlogApi.Services.IPostService.GetByIdAsync(System.Int32)">
+            <summary>
+            Obtiene un post por su id
+            </summary>
+            <param name="id"></param>
+            <returns>Post</returns>
+        </member>
+        <member name="M:BlogApi.Services.IPostService.DeleteAsync(System.Int32)">
+            <summary>
+            Elimina un post por su id
+            </summary>
+            <param name="id"></param>
+            <returns>bool</returns>
+        </member>
+        <member name="M:BlogApi.Services.IPostService.CreateAsync(BlogApi.Models.Post,System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Crea un nuevo post con tags asociados
+            </summary>
+            <param name="post"></param>
+            <param name="tagIds"></param>
+            <returns>Post</returns>
+        </member>
+        <member name="M:BlogApi.Services.IPostService.UpdateAsync(System.Int32,BlogApi.Models.Post,System.Collections.Generic.List{System.Int32},System.Boolean)">
+            <summary>
+            Actualiza un post existente
+            </summary>
+            <param name="id"></param>
+            <param name="post"></param>
+            <param name="tagIds"></param>
+            <param name="puedeEditarTodo"></param>
+            <returns>bool</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IPostService.GetPagedAsync(System.Int32,System.Int32)" -->
+        <member name="M:BlogApi.Services.IPostService.GetBySlugAsync(System.String)">
+            <summary>
+            Obtiene un post por su slug
+            </summary>
+            <param name="slug"></param>
+            <returns>Post</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IPostService.SearchAsync(System.String)" -->
+        <member name="M:BlogApi.Services.IPostService.GetByCategoriaAsync(System.Int32)">
+            <summary>
+            Obtiene los posts de una categoría específica
+            </summary>
+            <param name="categoriaId"></param>
+            <returns>Post</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IPostService.GetByCategoriaSlugAsync(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IPostService.GetByTagAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IPostService.GetByTagNombreAsync(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IPostService.GetByAutorAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IPostService.GetByAutorNombreAsync(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IPostService.GetCursorPagedAsync(System.Nullable{System.Int32},System.Int32)" -->
+        <member name="F:BlogApi.Services.NotificacionesService._db">
+            <summary>
+            Constructor de NotificacionesService
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.NotificacionesService._hub">
+            <summary>
+            Hub de notificaciones para SignalR
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionesService.#ctor(BlogApi.Data.BlogDbContext,Microsoft.AspNetCore.SignalR.IHubContext{BlogApi.Hubs.NotificacionesHub})">
+            <summary>
+            Constructor de NotificacionesService
+            </summary>
+            <param name="db"></param>
+            <param name="hub"></param>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionesService.CrearAsync(BlogApi.Models.Notificacion)">
+            <summary>
+            Crea una nueva notificación
+            </summary>
+            <param name="notificacion"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionesService.MarcarTodasComoLeidasAsync(System.Int32)">
+            <summary>
+            Marca una notificación como leída
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionesService.ObtenerNoLeidasAsync(System.Int32)">
+            <summary>
+            Obtiene las notificaciones no leídas de un usuario
+            </summary>
+            <param name="id"></param>
+            <returns>Lista de notificaciones no leídas</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.NotificacionesService.GetPaginadasAsync(System.Int32,System.Int32,System.Int32)" -->
+        <member name="F:BlogApi.Services.NotificacionService._context">
+            <summary>
+            Contexto de la base de datos
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.NotificacionService.#ctor(BlogApi.Data.BlogDbContext)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.NotificacionService.CrearAsync(System.Int32,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.NotificacionService.GetByUsuarioAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.NotificacionService.MarcarComoLeidaAsync(System.Int32,System.Int32)" -->
+        <member name="F:BlogApi.Services.PostService._repo">
+            <summary>
+            Repositorio de posts
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.PostService._tagRepo">
+            <summary>
+            Repositorio de tags
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.PostService.#ctor(BlogApi.Repositories.IPostRepository,BlogApi.Repositories.ITagRepository)">
+            <summary>
+            Constructor de PostService
+            </summary>
+            <param name="repo"></param>
+            <param name="tagRepo"></param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetAllAsync" -->
+        <member name="M:BlogApi.Services.PostService.GetByIdAsync(System.Int32)">
+            <summary>
+            Obtiene un post por su id
+            </summary>
+            <param name="id"></param>
+            <returns>Post</returns>
+        </member>
+        <member name="M:BlogApi.Services.PostService.CreateAsync(BlogApi.Models.Post,System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Crea un nuevo post con tags asociados
+            </summary>
+            <param name="post"></param>
+            <param name="tagIds"></param>
+            <returns>Post</returns>
+        </member>
+        <member name="M:BlogApi.Services.PostService.UpdateAsync(System.Int32,BlogApi.Models.Post,System.Collections.Generic.List{System.Int32},System.Boolean)">
+            <summary>
+            Actualiza un post existente
+            </summary>
+            <param name="id"></param>
+            <param name="post"></param>
+            <param name="tagIds"></param>
+            <param name="puedeEditarTodo"></param>
+            <returns>bool</returns>
+        </member>
+        <member name="M:BlogApi.Services.PostService.DeleteAsync(System.Int32)">
+            <summary>
+            Elimina un post por su id
+            </summary>
+            <param name="id"></param>
+            <returns>bool</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetPagedAsync(System.Int32,System.Int32)" -->
+        <member name="M:BlogApi.Services.PostService.GetBySlugAsync(System.String)">
+            <summary>
+            Obtiene un post por su slug
+            </summary>
+            <param name="slug"></param>
+            <returns>Post</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.SearchAsync(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.SearchPagedAsync(System.String,System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetByCategoriaAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetByCategoriaSlugAsync(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetByTagAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetByTagNombreAsync(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetByAutorAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetByAutorNombreAsync(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetCursorPagedAsync(System.Nullable{System.Int32},System.Int32)" -->
+        <member name="F:BlogApi.Services.SmtpEmailService._config">
+            <summary>
+            Configuración de la aplicación
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.SmtpEmailService.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Constructor de SmtpEmailService
+            </summary>
+            <param name="config"></param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.SmtpEmailService.EnviarAsync(System.String,System.String,System.String)" -->
+        <member name="F:BlogApi.Services.TagService._repo">
+            <summary>
+            Repositorio de tags
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.TagService.#ctor(BlogApi.Repositories.ITagRepository)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.TagService.GetAllAsync" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.TagService.GetByIdAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.TagService.CreateAsync(BlogApi.Models.Tag)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.TagService.UpdateAsync(System.Int32,BlogApi.Models.Tag)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.TagService.DeleteAsync(System.Int32)" -->
+        <member name="F:BlogApi.Services.TokenService._config">
+            <summary>
+            Configuración de la aplicación
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.TokenService.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Constructor de TokenService
+            </summary>
+            <param name="config"></param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.TokenService.GenerateToken(BlogApi.Models.Usuario)" -->
+        <member name="F:BlogApi.Services.UsuarioService._repo">
+            <summary>
+                Repositorio de usuarios
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.UsuarioService.#ctor(BlogApi.Repositories.IUsuarioRepository)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.UsuarioService.GetByEmailAsync(System.String)" -->
+        <member name="M:BlogApi.Services.UsuarioService.CrearUsuarioAsync(BlogApi.Models.Usuario)">
+            <summary>
+            Crea un nuevo usuario
+            </summary>
+        </member>
+        <member name="T:Program">
+            <summary>
+            Auto-generated public partial Program class for top-level statement apps.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.OpenApi.Generated.DocumentationCommentIdHelper.CreateDocumentationId(System.Type)">
+            <summary>
+            Generates a documentation comment ID for a type.
+            Example: T:Namespace.Outer+Inner`1 becomes T:Namespace.Outer.Inner`1
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.OpenApi.Generated.DocumentationCommentIdHelper.CreateDocumentationId(System.Reflection.PropertyInfo)">
+            <summary>
+            Generates a documentation comment ID for a property.
+            Example: P:Namespace.ContainingType.PropertyName or for an indexer P:Namespace.ContainingType.Item(System.Int32)
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.OpenApi.Generated.DocumentationCommentIdHelper.CreateDocumentationId(System.Type,System.String)">
+            <summary>
+            Generates a documentation comment ID for a property given its container type and property name.
+            Example: P:Namespace.ContainingType.PropertyName
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.OpenApi.Generated.DocumentationCommentIdHelper.CreateDocumentationId(System.Reflection.MethodInfo)">
+            <summary>
+            Generates a documentation comment ID for a method (or constructor).
+            For example:
+              M:Namespace.ContainingType.MethodName(ParamType1,ParamType2)~ReturnType
+              M:Namespace.ContainingType.#ctor(ParamType)
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.OpenApi.Generated.DocumentationCommentIdHelper.GetTypeDocId(System.Type,System.Boolean,System.Boolean)">
+            <summary>
+            Generates a documentation ID string for a type.
+            This method handles nested types (replacing '+' with '.'),
+            generic types, arrays, pointers, by-ref types, and generic parameters.
+            The <paramref name="includeGenericArguments"/> flag controls whether
+            constructed generic type arguments are emitted, while <paramref name="omitGenericArity"/>
+            controls whether the generic arity marker (e.g. "`1") is appended.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.OpenApi.Generated.DocumentationCommentIdHelper.NormalizeDocId(System.String)">
+            <summary>
+            Normalizes a documentation comment ID to match the compiler-style format.
+            Strips the return type suffix for ordinary methods but retains it for conversion operators.
+            </summary>
+            <param name="docId">The documentation comment ID to normalize.</param>
+            <returns>The normalized documentation comment ID.</returns>
+        </member>
+    </members>
+</doc>

@@ -10,12 +10,36 @@ public class BlogDbContext : DbContext
     public BlogDbContext(DbContextOptions<BlogDbContext> options)
         : base(options) { }
 
+    /// <summary>
+    ///     Posts del blog
+    /// </summary>
     public DbSet<Post> Posts { get; set; }
+
+    /// <summary>
+    ///    Tags del blog
+    /// </summary>
     public DbSet<Categoria> Categorias { get; set; }
+
+    /// <summary>
+    ///   Usuarios del blog
+    /// </summary>
     public DbSet<Usuario> Usuarios { get; set; }
+
+    /// <summary>
+    ///   Comentarios del blog
+    /// /// </summary>
     public DbSet<Comentario> Comentarios { get; set; }
+
+    /// <summary>
+    ///  Notificaciones del blog
+    /// </summary>
     public DbSet<Notificacion> Notificaciones { get; set; }
 
+    /// <summary>
+    ///   Tags del blog
+    /// </summary>
+    /// <param name="modelBuilder"></param>
+    /// </summary>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Relación Post → Categoria (muchos a uno)

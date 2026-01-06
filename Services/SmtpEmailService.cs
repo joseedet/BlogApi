@@ -5,13 +5,29 @@ namespace BlogApi.Services;
 
 public class SmtpEmailService : IEmailService
 {
+    /// <summary>
+    /// Configuración de la aplicación
+    /// </summary>
     private readonly IConfiguration _config;
 
+    /// <summary>
+    /// Constructor de SmtpEmailService
+    /// </summary>
+    /// <param name="config"></param>
     public SmtpEmailService(IConfiguration config)
     {
         _config = config;
     }
 
+    /// <summary>
+    /// Envía un correo electrónico
+    /// </summary>
+    /// <param name="toEmail"></param>
+    /// <param name="subject"></param>
+    /// <param name="message"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <summary>
     public async Task EnviarAsync(string toEmail, string subject, string message)
     {
         var host =

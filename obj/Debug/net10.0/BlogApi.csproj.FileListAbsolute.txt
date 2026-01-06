@@ -173,3 +173,5 @@
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/obj/Debug/net10.0/BlogApi.pdb
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/obj/Debug/net10.0/BlogApi.genruntimeconfig.cache
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/obj/Debug/net10.0/ref/BlogApi.dll
+/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/bin/Debug/net10.0/BlogApi.xml
+/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/obj/Debug/net10.0/BlogApi.xml

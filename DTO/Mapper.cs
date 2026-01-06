@@ -8,11 +8,23 @@ namespace BlogApi.DTO;
 
 public static class Mapper
 {
+    /// <summary>
+    ///     Convierte una entidad Categoria a su DTO correspondiente.
+    /// </summary>
+    /// <param name="categoria"></param>
+    /// <returns>CategoriaDto </returns>
+    /// </summary>
     public static CategoriaDto ToDto(this Categoria categoria)
     {
         return new() { Id = categoria.Id, Nombre = categoria.Nombre };
     }
 
+    /// <summary>
+    ///    Convierte una entidad Usuario a su DTO correspondiente.
+    /// </summary>
+    /// <param name="usuario"></param>
+    /// <returns>UsuarioDto</returns>
+    /// </summary>
     public static UsuarioDto ToDto(this Usuario usuario) =>
         new UsuarioDto
         {
@@ -22,6 +34,12 @@ public static class Mapper
             Rol = usuario.Rol,
         };
 
+    /// <summary>
+    ///   Convierte una entidad Comentario a su DTO correspondiente.
+    /// </summary>
+    /// <param name="comentario"></param>
+    /// <returns>ComentarioDto</returns>
+    /// </summary>
     public static ComentarioDto ToDto(this Comentario comentario) =>
         new ComentarioDto
         {
@@ -33,6 +51,12 @@ public static class Mapper
             Respuestas = comentario.Respuestas.Select(r => r.ToDto()).ToList(),
         };
 
+    /// <summary>
+    ///   Convierte una entidad Post a su DTO correspondiente.
+    /// </summary>
+    /// <param name="post"></param>
+    /// <returns>PostDto</returns>
+    /// </summary>
     public static PostDto ToDto(this Post post) =>
         new PostDto
         {
@@ -49,5 +73,11 @@ public static class Mapper
             Tags = post.Tags.Select(t => t.ToDto()).ToList(),
         };
 
+    /// <summary>
+    ///  Convierte una entidad Tag a su DTO correspondiente.
+    ///</summary>
+    /// <param name="tag"></param>
+    /// <returns>TagDto</returns>
+    /// </summary>
     public static TagDto ToDto(this Tag tag) => new() { Id = tag.Id, Nombre = tag.Nombre };
 }

@@ -9,19 +9,45 @@ namespace BlogApi.Services;
 
 public class ComentarioService : IComentarioService
 {
+    /// <summary>
+    ///     Repositorio de comentarios
+    /// </summary>
     private readonly IComentarioRepository _repo;
+
+    /// <summary>
+    ///   Servicio de notificaciones
+    /// </summary>
     private readonly INotificacionService _notificacionService;
+
+    /// <summary>
+    ///     Contexto de la base de datos
+    /// </summary>
     private readonly BlogDbContext _context;
+
+    /// <summary>
+    ///     Servicio de email
+    /// </summary>
     private readonly IEmailService _emailService;
+
+    /// <summary>
+    ///     Servicio de plantillas de email
+    /// </summary> <summary>
     private readonly EmailTemplateService _emailTemplateService = new();
+
+    /// <summary>
+    ///    Hub de notificaciones para SignalR
+    /// </summary>
     private readonly IHubContext<NotificacionesHub> _hub;
 
-    /*public ComentarioService(IComentarioRepository repo, INotificacionService notificacionService)
-    {
-        _repo = repo;
-        _notificacionService = notificacionService;
-    }*/
-
+    /// <summary>
+    /// Constructor de ComentarioService
+    /// </summary>
+    /// <param name="repo"></param>
+    /// <param name="context"></param>
+    /// <param name="notificacionService"></param>
+    /// <param name="emailService"></param>
+    /// <param name="hub"></param>
+    /// </summary>
     public ComentarioService(
         IComentarioRepository repo,
         BlogDbContext context,
@@ -37,6 +63,12 @@ public class ComentarioService : IComentarioService
         _hub = hub;
     }
 
+    /// <summary>
+    /// Obtiene los comentarios de un post
+    /// </summary>
+    /// <param name="postId"></param>
+    /// <returns>IEnumerable<Comentario></returns>
+    /// </summary>
     public async Task<IEnumerable<Comentario>> GetComentariosDePostAsync(int postId)
     {
         // Comentarios raíz con respuestas y usuario
@@ -52,7 +84,12 @@ public class ComentarioService : IComentarioService
     }
 
     // await _repo.GetByPostIdAsync(postId);
-
+    /// <summary>
+    /// Crea un nuevo comentario
+    /// </summary>
+    /// <param name="comentario"></param>
+    /// <returns>Comentario</returns>
+    /// </summary>
     public async Task<Comentario> CrearComentarioAsync(Comentario comentario)
     {
         comentario.Fecha = DateTime.UtcNow;
@@ -117,6 +154,13 @@ public class ComentarioService : IComentarioService
         return comentario;
     }
 
+    /// <summary>
+    /// Cambia el estado de un comentario
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="estado"></param>
+    /// <returns>bool</returns>
+    /// </summary>
     public async Task<bool> CambiarEstadoAsync(int id, string estado)
     {
         var comentario = await _repo.GetByIdAsync(id);
@@ -170,6 +214,7 @@ public class ComentarioService : IComentarioService
     /// </summary>
     /// <param name="estado"></param>
     /// <returns>IEnumerable<Comentario></returns>
+    /// </summary>
     public async Task<IEnumerable<Comentario>> GetByEstadoAsync(string estado)
     {
         return await _repo

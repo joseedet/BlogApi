@@ -6,6 +6,14 @@ namespace BlogApi.Domain.Factories;
 
 public static class NotificacionFactory
 {
+    /// <summary>
+    /// Crea una notificación de nuevo post
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <param name="postId"></param>
+    /// <param name="titulo"></param>
+    /// <returns>Notificación de nuevo post</returns>
+    /// </summary>
     public static Notificacion NuevoPost(int usuarioId, int postId, string titulo) =>
         new Notificacion
         {
@@ -15,6 +23,14 @@ public static class NotificacionFactory
             Payload = JsonSerializer.Serialize(new { postId }),
         };
 
+    /// <summary>
+    /// Crea una notificación de nuevo comentario
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <param name="postId"></param>
+    /// <param name="contenido"></param>
+    /// <returns>Notificación de nuevo comentario</returns>
+    /// </summary>
     public static Notificacion NuevoComentario(int usuarioId, int postId, string contenido) =>
         new Notificacion
         {
@@ -24,6 +40,13 @@ public static class NotificacionFactory
             Payload = JsonSerializer.Serialize(new { postId }),
         };
 
+    /// <summary>
+    /// Crea una notificación de respuesta a un comentario
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <param name="comentarioId"></param>
+    /// <returns>Notificación de respuesta a comentario</returns>
+    /// </summary>
     public static Notificacion RespuestaComentario(int usuarioId, int comentarioId) =>
         new Notificacion
         {
@@ -33,6 +56,13 @@ public static class NotificacionFactory
             Payload = JsonSerializer.Serialize(new { comentarioId }),
         };
 
+    /// <summary>
+    /// Crea una notificación del sistema
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <param name="mensaje"></param>
+    /// <returns>Notificación del sistema</returns>
+    /// </summary>
     public static Notificacion Sistema(int usuarioId, string mensaje) =>
         new Notificacion
         {
