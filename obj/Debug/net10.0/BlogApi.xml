@@ -23,6 +23,7 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Data.BlogDbContext.#ctor(Microsoft.EntityFrameworkCore.DbContextOptions{BlogApi.Data.BlogDbContext})" -->
         <member name="P:BlogApi.Data.BlogDbContext.Posts">
             <summary>
                 Posts del blog
@@ -48,16 +49,85 @@
              Notificaciones del blog
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:BlogApi.Data.BlogDbContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)" -->
+        <member name="P:BlogApi.Data.BlogDbContext.Tags">
+            <summary>
+              Tags del blog
+            </summary>
+        </member>
+        <member name="P:BlogApi.Data.BlogDbContext.LikesPost">
+            <summary>
+             Likes en publicaciones del blog
+            </summary>
+        </member>
+        <member name="P:BlogApi.Data.BlogDbContext.LikesComentario">
+            <summary>
+             Likes en comentarios del blog
+            </summary>
+        </member>
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.NuevoPost(System.Int32,System.Int32,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.NuevoComentario(System.Int32,System.Int32,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.RespuestaComentario(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.NuevoComentario(System.Int32,System.Int32,System.String,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.RespuestaComentario(System.Int32,System.Int32,System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.Sistema(System.Int32,System.String)" -->
+        <member name="T:BlogApi.DTO.ComentarioLikesDto">
+            <summary>
+            Data Transfer Object para los "Me gusta" de un comentario
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.ComentarioLikesDto.ComentarioId">
+            <summary>
+            Id del comentario
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.ComentarioLikesDto.TotalLikes">
+            <summary>
+            Total de "Me gusta"
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.ComentarioLikesDto.UsuarioHaDadoLike">
+            <summary>
+            Indica si el usuario ha dado "Me gusta" al comentario
+            </summary>
+        </member>
+        <member name="T:BlogApi.DTO.LikeDto">
+            <summary>
+              Data Transfer Object para los "Me gusta"
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.LikeDto.UsuarioId">
+            <summary>
+              Id del usuario que da el "Me gusta"
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.LikeDto.LeGusta">
+            <summary>
+             Indica si al usuario le gusta el contenido
+            </summary>
+        </member>
         <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Categoria)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Usuario)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Comentario)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Post)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Tag)" -->
+        <member name="T:BlogApi.DTO.PostLikesDto">
+            <summary>
+             Data Transfer Object para los "Me gusta" de un post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PostLikesDto.PostId">
+            <summary>
+             Id del post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PostLikesDto.TotalLikes">
+            <summary>
+             Total de "Me gusta"
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PostLikesDto.UsuarioHaDadoLike">
+            <summary>
+             Indica si el usuario ha dado "Me gusta" al post
+            </summary>
+        </member>
         <member name="M:BlogApi.Hubs.NotificacionesHub.OnConnectedAsync">
             <summary>
             Método llamado cuando un cliente se conecta al hub
@@ -76,6 +146,141 @@
         <member name="M:BlogApi.Migrations.InitialCreate.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
         </member>
+        <member name="T:BlogApi.Models.LikeComentario">
+            <summary>
+                Modelo que representa un "like" en un comentario
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikeComentario.Id">
+            <summary>
+                Identificador único del "like"
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikeComentario.ComentarioId">
+            <summary>
+                Identificador del comentario al que se le dio "like"
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikeComentario.Comentario">
+            <summary>
+                Comentario al que se le dio "like"
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikeComentario.UsuarioId">
+            <summary>
+                Identificador del usuario que dio el "like"
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikeComentario.Usuario">
+            <summary>
+                Usuario que dio el "like"
+            </summary>
+        </member>
+        <member name="T:BlogApi.Models.LikePost">
+            <summary>
+                Modelo que representa un "like" en una publicación
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikePost.Id">
+            <summary>
+                Identificador único del "like"
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikePost.PostId">
+            <summary>
+               Identificador de la publicación a la que se le dio "like"
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikePost.Post">
+            <summary>
+              Publicación a la que se le dio "like"
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikePost.UsuarioId">
+            <summary>
+              Identificador del usuario que dio el "like"
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikePost.Usuario">
+            <summary>
+              Usuario que dio el "like"
+            </summary>
+        </member>
+        <member name="T:BlogApi.Repositories.ComentarioRepository">
+            <summary>
+                Repositorio para manejar operaciones de comentarios
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.ComentarioRepository.#ctor(BlogApi.Data.BlogDbContext)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.ComentarioRepository.GetByPostIdAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.ComentarioRepository.GetRespuestasAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.ComentarioRepository.GetByIdAsync(System.Int32)" -->
+        <member name="T:BlogApi.Repositories.ILikeComentarioRepository">
+            <summary>
+            Interfaz para el repositorio de "Me gusta" en comentarios
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.ILikeComentarioRepository.ExisteAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.ILikeComentarioRepository.ContarAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.ILikeComentarioRepository.CrearAsync(BlogApi.Models.LikeComentario)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.ILikeComentarioRepository.EliminarAsync(System.Int32,System.Int32)" -->
+        <member name="T:BlogApi.Repositories.ILikePostRepository">
+            <summary>
+            Interfaz para el repositorio de "Me gusta" en comentarios
+            </summary>
+        </member>
+        <member name="M:BlogApi.Repositories.ILikePostRepository.ExisteAsync(System.Int32,System.Int32)">
+            <summary>
+            Verifica si un usuario ha dado "Me gusta" a un comentario
+            </summary>
+            <param name="comentarioId"></param>
+            <param name="usuarioId"></param>
+            <returns>true si existe, false si no</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.ILikePostRepository.ContarAsync(System.Int32)">
+            <summary>
+            Cuenta el total de "Me gusta" en un comentario
+            </summary>
+            <param name="comentarioId"></param>
+            <returns>Total de "Me gusta"</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.ILikePostRepository.CrearAsync(BlogApi.Models.LikePost)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.ILikePostRepository.EliminarAsync(System.Int32,System.Int32)" -->
+        <member name="T:BlogApi.Repositories.LikeComentarioRepository">
+            <summary>
+              Repositorio para gestionar "Me gusta" en comentarios
+            </summary>
+        </member>
+        <member name="F:BlogApi.Repositories.LikeComentarioRepository._db">
+            <summary>
+              Contexto de la base de datos
+            </summary>
+        </member>
+        <member name="M:BlogApi.Repositories.LikeComentarioRepository.#ctor(BlogApi.Data.BlogDbContext)">
+            <summary>
+             Constructor del repositorio
+            </summary>
+            <param name="db"></param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikeComentarioRepository.ExisteAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikeComentarioRepository.ContarAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikeComentarioRepository.CrearAsync(BlogApi.Models.LikeComentario)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikeComentarioRepository.EliminarAsync(System.Int32,System.Int32)" -->
+        <member name="T:BlogApi.Repositories.LikePostRepository">
+            <summary>
+              Repositorio para manejar los "Me gusta" en publicaciones
+            </summary>
+        </member>
+        <member name="F:BlogApi.Repositories.LikePostRepository._db">
+            <summary>
+              Contexto de la base de datos
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikePostRepository.#ctor(BlogApi.Data.BlogDbContext)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikePostRepository.ExisteAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikePostRepository.ContarAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikePostRepository.EliminarAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikePostRepository.CrearAsync(BlogApi.Models.LikePost)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.#ctor(BlogApi.Repositories.ICategoriaRepository)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.GetAllAsync" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.GetByIdAsync(System.Int32)" -->
@@ -133,6 +338,32 @@
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.EmailService.EnviarAsync(System.String,System.String,System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.EmailTemplateService.CargarPlantilla(System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.EmailTemplateService.ReemplazarVariables(System.String,System.Collections.Generic.Dictionary{System.String,System.String})" -->
+        <member name="T:BlogApi.Services.IComentarioService">
+            <summary>
+            Servicio para gestionar comentarios.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IComentarioService.GetComentariosDePostAsync(System.Int32)" -->
+        <member name="M:BlogApi.Services.IComentarioService.CrearComentarioAsync(BlogApi.Models.Comentario)">
+            <summary>
+            Crea un nuevo comentario o respuesta.
+            </summary>
+            <param name="comentario"></param>
+            <returns>El comentario creado</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IComentarioService.CambiarEstadoAsync(System.Int32,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IComentarioService.GetByEstadoAsync(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IComentarioService.GetByIdAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IComentarioService.EliminarComentarioAsync(System.Int32,System.Int32,System.Boolean)" -->
+        <member name="T:BlogApi.Services.ILikeService">
+            <summary>
+              Servicio para manejar los "Me gusta" en posts y comentarios
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.ILikeService.LikePostAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.ILikeService.UnlikePostAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.ILikeService.LikeComentarioAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.ILikeService.UnlikeComentarioAsync(System.Int32,System.Int32)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IPostService.GetAllAsync" -->
         <member name="M:BlogApi.Services.IPostService.GetByIdAsync(System.Int32)">
             <summary>
@@ -188,6 +419,26 @@
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IPostService.GetByAutorAsync(System.Int32)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IPostService.GetByAutorNombreAsync(System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.IPostService.GetCursorPagedAsync(System.Nullable{System.Int32},System.Int32)" -->
+        <member name="T:BlogApi.Services.LikeService">
+            <summary>
+              Servicio para manejar los "Me gusta" en posts y comentarios
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.LikeService._likePostRepo">
+            <summary>
+              Repositorios necesarios para manejar los "Me gusta"
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.LikeService._likeComentarioRepo">
+            <summary>
+              Repositorios necesarios para manejar los "Me gusta" en comentarios
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.LikeService.#ctor(BlogApi.Repositories.ILikePostRepository,BlogApi.Repositories.ILikeComentarioRepository)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.LikeService.LikePostAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.LikeService.UnlikePostAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.LikeService.LikeComentarioAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.LikeService.UnlikeComentarioAsync(System.Int32,System.Int32)" -->
         <member name="F:BlogApi.Services.NotificacionesService._db">
             <summary>
             Constructor de NotificacionesService
@@ -350,6 +601,32 @@
             Crea un nuevo usuario
             </summary>
         </member>
+        <member name="T:ComentariosController">
+            <summary>
+            Controlador para gestionar comentarios en el blog.
+            </summary>
+        </member>
+        <member name="F:ComentariosController._service">
+            <summary>
+            Servicio de comentarios.
+            </summary>
+        </member>
+        <member name="F:ComentariosController._postService">
+            <summary>
+            Servicio de posts.
+            </summary>
+        </member>
+        <member name="F:ComentariosController._notificaciones">
+            <summary>
+            Servicio de notificaciones.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:ComentariosController.#ctor(BlogApi.Services.IComentarioService,BlogApi.Services.IPostService,BlogApi.Services.INotificacionesService)" -->
+        <!-- Badly formed XML comment ignored for member "M:ComentariosController.GetByPost(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:ComentariosController.Create(BlogApi.DTO.CreateComentarioDto)" -->
+        <!-- Badly formed XML comment ignored for member "M:ComentariosController.Delete(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:ComentariosController.CambiarEstado(System.Int32,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:ComentariosController.GetByEstado(System.String)" -->
         <member name="T:Program">
             <summary>
             Auto-generated public partial Program class for top-level statement apps.

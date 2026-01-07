@@ -6,6 +6,7 @@ using BlogApi.Models;
 
 namespace BlogApi.Services;
 
+[Obsolete("INotificacionService está obsoleto. Usa INotificacionesService en su lugar.")]
 public interface INotificacionService
 {
     Task CrearAsync(int usuarioId, string mensaje);

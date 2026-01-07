@@ -7,6 +7,12 @@ namespace BlogApi.Data;
 
 public class BlogDbContext : DbContext
 {
+    /// <summary>
+    ///   Constructor del contexto de la base de datos
+    /// </summary>
+    /// <param name="options"></param>
+    ///// <returns></returns>
+    /// <summary>
     public BlogDbContext(DbContextOptions<BlogDbContext> options)
         : base(options) { }
 
@@ -38,8 +44,18 @@ public class BlogDbContext : DbContext
     /// <summary>
     ///   Tags del blog
     /// </summary>
-    /// <param name="modelBuilder"></param>
+    public DbSet<Tag> Tags { get; set; }
+
+    /// <summary>
+    ///  Likes en publicaciones del blog
     /// </summary>
+    public DbSet<LikePost> LikesPost { get; set; }
+
+    /// <summary>
+    ///  Likes en comentarios del blog
+    /// </summary>
+    public DbSet<LikeComentario> LikesComentario { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Relación Post → Categoria (muchos a uno)

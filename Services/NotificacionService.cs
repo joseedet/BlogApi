@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Services;
 
+[Obsolete("NotificacionService está obsoleto. Usa NotificacionesService en su lugar.")]
 public class NotificacionService : INotificacionService
 {
     /// <summary>
