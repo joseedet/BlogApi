@@ -1,0 +1,69 @@
+# Compiled source #
+###################
+*.dll
+*.exe
+*.pdb
+*.cache
+*.log
+*.mdb
+*.svclog
+*.pidb
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results #
+#################
+bin/
+obj/
+out/
+artifacts/
+
+# Visual Studio Code #
+######################
+.vscode/
+.history/
+
+# ASP.NET Core #
+################
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+
+# NuGet #
+#########
+*.nupkg
+*.snupkg
+packages/
+*.nuget.props
+*.nuget.targets
+
+# Logs #
+########
+logs/
+*.log
+
+# Rider / JetBrains #
+#####################
+.idea/
+*.sln.iml
+
+# Temporary files #
+###################
+*.tmp
+*.temp
+*.bak
+*.swp
+*.DS_Store
+
+# Coverage #
+############
+coverage/
+*.coverage
+*.coveragexml
+
+# Publish output #
+##################
+wwwroot/
+publish/
