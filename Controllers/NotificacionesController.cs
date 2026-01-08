@@ -18,6 +18,7 @@ public class NotificacionesController : ControllerBase
     /// <summary>
     /// Servicio de notificaciones
     /// </summary>
+    [Obsolete("NotificacionService está obsoleto. Usa NotificacionesService en su lugar.")]
     private readonly INotificacionService _notificacionService;
     private readonly INotificacionRepository _notificacionRepository;
 
