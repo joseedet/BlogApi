@@ -1,5 +1,6 @@
 using BlogApi.Models;
 using BlogApi.Services;
+using BlogApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers;
