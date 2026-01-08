@@ -6,7 +6,6 @@ using BlogApi.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace BlogApi.Services;
 
 /// <summary>
@@ -71,7 +70,28 @@ public class NotificacionesService : INotificacionesService
     /// </summary>
     /// <param name="id"></param>
     /// <returns>Lista de notificaciones no leídas</returns>
-    public async Task<List<NotificacionDto>> ObtenerNoLeidasAsync(int id)
+    public async Task<List<NotificacionDto>> ObtenerNoLeidasAsync(int usuarioId)
+    {
+        return await _db
+            .Notificaciones.Where(n => n.UsuarioDestinoId == usuarioId && !n.Leida)
+            .OrderByDescending(n => n.Fecha)
+            .Select(n => new NotificacionDto
+            {
+                Id = n.Id,
+                UsuarioDestinoId = n.UsuarioDestinoId,
+                UsuarioOrigenId = n.UsuarioOrigenId,
+                Tipo = n.Tipo,
+                PostId = n.PostId,
+                ComentarioId = n.ComentarioId,
+                Mensaje = n.Mensaje,
+                Fecha = n.Fecha,
+                Leida = n.Leida,
+                Payload = n.Payload,
+            })
+            .ToListAsync();
+    }
+
+    /*public async Task<List<NotificacionDto>> ObtenerNoLeidasAsync(int id)
     {
         return await _db
             .Notificaciones.Where(n => n.UsuarioId == id && !n.Leida)
@@ -85,7 +105,7 @@ public class NotificacionesService : INotificacionesService
                 UsuarioId = n.UsuarioId,
             })
             .ToListAsync();
-    }
+    }*/
 
     /// <summary>
     /// Obtiene notificaciones paginadas de un usuario
@@ -94,7 +114,7 @@ public class NotificacionesService : INotificacionesService
     /// <param name="page"></param>
     /// <param name="pageSize"></param>
     // <returns>Paginación de notificaciones</returns>
-   
+
     public async Task<PaginacionResultado<NotificacionDto>> GetPaginadasAsync(
         int userId,
         int page,
@@ -113,10 +133,15 @@ public class NotificacionesService : INotificacionesService
             .Select(n => new NotificacionDto
             {
                 Id = n.Id,
+                UsuarioDestinoId = n.UsuarioDestinoId,
+                UsuarioOrigenId = n.UsuarioOrigenId,
+                Tipo = n.Tipo,
+                PostId = n.PostId,
+                ComentarioId = n.ComentarioId,
                 Mensaje = n.Mensaje,
                 Fecha = n.Fecha,
                 Leida = n.Leida,
-                UsuarioId = n.UsuarioId,
+                Payload = n.Payload,
             })
             .ToListAsync();
 

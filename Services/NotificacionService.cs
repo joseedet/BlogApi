@@ -131,4 +131,11 @@ public class NotificacionService : INotificacionService
 
         await _notificacionRepository.CrearAsync(notificacion);
     }
+    public async Task MarcarTodasComoLeidasAsync(int usuarioId)
+     {
+        var notificaciones = await _notificacionRepository.ObtenerPorUsuarioAsync(usuarioId); 
+     foreach (var n in notificaciones.Where(n => !n.Leida))
+      { n.Leida = true; } await _context.SaveChangesAsync();
+       }
+
 }

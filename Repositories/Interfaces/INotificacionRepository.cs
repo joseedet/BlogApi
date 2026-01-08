@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BlogApi.DTO;
 using BlogApi.Models;
 
 namespace BlogApi.Repositories;
@@ -16,7 +17,6 @@ public interface INotificacionRepository
     /// </summary>
     /// <param name="notificacion"></param>
     /// <returns></returns>
-    
     Task CrearAsync(Notificacion notificacion);
 
     /// <summary>
@@ -24,7 +24,6 @@ public interface INotificacionRepository
     /// </summary>
     /// <param name="id"></param>
     /// <returns>Notificacion</returns>
-    
     Task<Notificacion?> ObtenerPorIdAsync(int id);
 
     /// <summary>
@@ -32,7 +31,6 @@ public interface INotificacionRepository
     /// </summary>
     /// <param name="usuarioId"></param>
     /// <returns>IEnumerable de notificaciones</returns>
-    
     Task<IEnumerable<Notificacion>> ObtenerPorUsuarioAsync(int usuarioId);
 
     /// <summary>
@@ -40,6 +38,18 @@ public interface INotificacionRepository
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-   
     Task MarcarComoLeidaAsync(int id);
+
+    /// <summary>
+    /// Obtiene las notificaciones no leídas de un usuario con paginación
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <returns>PaginacionResultado de NotificacionDto</returns>
+    Task<PaginacionResultado<NotificacionDto>> ObtenerNoLeidasPaginadasAsync(
+        int usuarioId,
+        int page,
+        int pageSize
+    );
 }
