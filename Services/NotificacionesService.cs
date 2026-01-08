@@ -2,12 +2,16 @@ using BlogApi.Data;
 using BlogApi.DTO;
 using BlogApi.Hubs;
 using BlogApi.Models;
+using BlogApi.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using BlogApi.Services.Interfaces;
+
 
 namespace BlogApi.Services;
 
+/// <summary>
+/// Servicio para gestionar notificaciones
+/// </summary>
 public class NotificacionesService : INotificacionesService
 {
     /// <summary>
@@ -90,7 +94,7 @@ public class NotificacionesService : INotificacionesService
     /// <param name="page"></param>
     /// <param name="pageSize"></param>
     // <returns>Paginación de notificaciones</returns>
-    /// </summary>
+   
     public async Task<PaginacionResultado<NotificacionDto>> GetPaginadasAsync(
         int userId,
         int page,

@@ -7,7 +7,7 @@ using BlogApi.Models;
 namespace BlogApi.Repositories;
 
 /// <summary>
-///
+/// Interfaz para el repositorio de notificaciones
 /// </summary>
 public interface INotificacionRepository
 {
@@ -16,7 +16,7 @@ public interface INotificacionRepository
     /// </summary>
     /// <param name="notificacion"></param>
     /// <returns></returns>
-    /// <summary>
+    
     Task CrearAsync(Notificacion notificacion);
 
     /// <summary>
@@ -24,7 +24,7 @@ public interface INotificacionRepository
     /// </summary>
     /// <param name="id"></param>
     /// <returns>Notificacion</returns>
-    /// <summary>
+    
     Task<Notificacion?> ObtenerPorIdAsync(int id);
 
     /// <summary>
@@ -32,7 +32,7 @@ public interface INotificacionRepository
     /// </summary>
     /// <param name="usuarioId"></param>
     /// <returns>IEnumerable de notificaciones</returns>
-    /// <summary>
+    
     Task<IEnumerable<Notificacion>> ObtenerPorUsuarioAsync(int usuarioId);
 
     /// <summary>
@@ -40,6 +40,6 @@ public interface INotificacionRepository
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    /// <summary>
+   
     Task MarcarComoLeidaAsync(int id);
 }

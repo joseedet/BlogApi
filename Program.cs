@@ -10,14 +10,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
-/// <summary>
-///   Punto de entrada de la aplicación
-/// </summary>
 var builder = WebApplication.CreateBuilder(args);
 
-/// <summary>
-///   Configuración de servicios y dependencias
-/// </summary>
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
@@ -26,65 +20,46 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
-/// Inyección de dependencias para repositorios y servicios
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
-/// Repositorios y Servicios
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 
-///... Other repository and service registrations
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 
-///... Other repository and service registrations
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
-///... Other repository and service registrations
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 
-///... Other repository and service registrations
 builder.Services.AddScoped<IPostService, PostService>();
 
-///... Other repository and service registrations
 builder.Services.AddScoped<IComentarioRepository, ComentarioRepository>();
 
-///... Other repository and service registrations
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
-///... Other repository and service registrations
 builder.Services.AddScoped<IComentarioService, ComentarioService>();
 
-///... Other repository and service registrations
 builder.Services.AddScoped<ITokenService, TokenService>();
 
-///... Other repository and service registrations
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 
-///... Other repository and service registrations
 builder.Services.AddScoped<ITagService, TagService>();
 
-///... Other repository and service registrations
 builder.Services.AddScoped<INotificacionService, NotificacionService>();
 
-///... Other repository and service registrations
 builder.Services.AddScoped<ILikePostRepository, LikePostRepository>();
 
-///... Other repository and service registrations
 builder.Services.AddScoped<ILikeComentarioRepository, LikeComentarioRepository>();
 
 //builder.Services.AddScoped<IEmailService, EmailService>();
-/// SMTP Email Service Configuration
+
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 
-/// Email Template Service Configuration
 builder.Services.AddSingleton<EmailTemplateService>();
 
-/// Notification Service Configuration
 builder.Services.AddScoped<INotificacionesService, NotificacionesService>();
 
-/// Like Service Configuration
 builder.Services.AddScoped<ILikeService, LikeService>();
 
-/// JWT Authentication Configuration
 var key = builder.Configuration["Jwt:Key"];
 builder
     .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -119,7 +94,6 @@ builder
         };
     });
 
-/// Authorization Policies Configuration
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(
@@ -143,7 +117,6 @@ builder.Services.AddAuthorization(options =>
     );
 });
 
-/// Build the application
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
@@ -160,20 +133,14 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-/// Middleware Configuration
 app.UseAuthentication();
 
-/// Authorization Configuration
 app.UseAuthorization();
 
-/// Static Files Configuration
 app.UseStaticFiles();
 
-/// Map Controllers and Hubs
 app.MapControllers();
 
-/// SignalR Hub Mapping
 app.MapHub<NotificacionesHub>("/hubs/notificaciones");
 
-/// Run the application
 app.Run();

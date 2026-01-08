@@ -7,6 +7,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Services;
 
+/// <summary>
+/// Servicio para gestionar notificaciones
+/// </summary>
 [Obsolete("NotificacionService está obsoleto. Usa NotificacionesService en su lugar.")]
 public class NotificacionService : INotificacionService
 {
@@ -20,7 +23,7 @@ public class NotificacionService : INotificacionService
     /// Constructor de NotificacionService
     /// </summary>
     /// <param name="context"></param>
-    /// </summary>
+    /// <param name="notificacionRepository"></param>
     public NotificacionService(
         BlogDbContext context,
         INotificacionRepository notificacionRepository
@@ -36,7 +39,6 @@ public class NotificacionService : INotificacionService
     /// <param name="usuarioId"></param>
     /// <param name="mensaje"></param>
     /// <returns></returns>
-    /// </summary>
     public async Task CrearAsync(int usuarioId, string mensaje)
     {
         var n = new Notificacion { UsuarioId = usuarioId, Mensaje = mensaje };
@@ -49,7 +51,6 @@ public class NotificacionService : INotificacionService
     /// </summary>
     /// <param name="usuarioId"></param>
     /// <returns>IEnumerable de notificaciones</returns>
-    /// </summary>
     public async Task<IEnumerable<Notificacion>> GetByUsuarioAsync(int usuarioId)
     {
         return await _context
@@ -64,7 +65,6 @@ public class NotificacionService : INotificacionService
     /// <param name="id"></param>
     /// <param name="usuarioId"></param>
     /// <returns>bool</returns>
-    /// </summary>
     public async Task<bool> MarcarComoLeidaAsync(int id, int usuarioId)
     {
         var n = await _context.Notificaciones.FirstOrDefaultAsync(n =>
@@ -84,7 +84,6 @@ public class NotificacionService : INotificacionService
     /// <param name="usuarioOrigenId"></param>
     /// <param name="postId"></param>
     /// <returns>Task</returns>
-    /// </summary>
     public async Task CrearNotificacionLikePostAsync(
         int usuarioDestinoId,
         int usuarioOrigenId,

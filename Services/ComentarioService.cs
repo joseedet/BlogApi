@@ -1,14 +1,17 @@
 using BlogApi.Data;
 using BlogApi.Hubs;
 using BlogApi.Models;
-using BlogApi.Repositories;
+using BlogApi.Repositories.Interfaces;
+using BlogApi.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
-using BlogApi.Services.Interfaces;
-using BlogApi.Repositories.Interfaces;
 
 namespace BlogApi.Services;
 
+/// <summary>
+/// Servicio para gestionar comentarios
+/// </summary>
+[Obsolete("NotificacionService está obsoleto. Usa NotificacionesService en su lugar.")]
 public class ComentarioService : IComentarioService
 {
     /// <summary>
@@ -19,6 +22,7 @@ public class ComentarioService : IComentarioService
     /// <summary>
     ///   Servicio de notificaciones
     /// </summary>
+    [Obsolete]
     private readonly INotificacionService _notificacionService;
 
     /// <summary>
@@ -33,7 +37,7 @@ public class ComentarioService : IComentarioService
 
     /// <summary>
     ///     Servicio de plantillas de email
-    /// </summary> <summary>
+    /// </summary>
     private readonly EmailTemplateService _emailTemplateService = new();
 
     /// <summary>
@@ -49,7 +53,7 @@ public class ComentarioService : IComentarioService
     /// <param name="notificacionService"></param>
     /// <param name="emailService"></param>
     /// <param name="hub"></param>
-    /// </summary>
+    [Obsolete("NotificacionService está obsoleto. Usa NotificacionesService en su lugar.")]
     public ComentarioService(
         IComentarioRepository repo,
         BlogDbContext context,
@@ -69,8 +73,8 @@ public class ComentarioService : IComentarioService
     /// Obtiene los comentarios de un post
     /// </summary>
     /// <param name="postId"></param>
-    /// <returns>IEnumerable<Comentario></returns>
-    /// </summary>
+    /// <returns>IEnumerable&lt;Comentario&gt;</returns>
+
     public async Task<IEnumerable<Comentario>> GetComentariosDePostAsync(int postId)
     {
         // Comentarios raíz con respuestas y usuario
@@ -91,7 +95,6 @@ public class ComentarioService : IComentarioService
     /// </summary>
     /// <param name="comentario"></param>
     /// <returns>Comentario</returns>
-    /// </summary>
     public async Task<Comentario> CrearComentarioAsync(Comentario comentario)
     {
         comentario.Fecha = DateTime.UtcNow;
@@ -121,6 +124,7 @@ public class ComentarioService : IComentarioService
             .FirstAsync();
 
         // Crear notificación en la base de datos
+
         await _notificacionService.CrearAsync(
             postAutor.UsuarioId,
             $"Tu post ha recibido un nuevo comentario de {autorComentario}"
@@ -162,7 +166,6 @@ public class ComentarioService : IComentarioService
     /// <param name="id"></param>
     /// <param name="estado"></param>
     /// <returns>bool</returns>
-    /// </summary>
     public async Task<bool> CambiarEstadoAsync(int id, string estado)
     {
         var comentario = await _repo.GetByIdAsync(id);
@@ -180,7 +183,7 @@ public class ComentarioService : IComentarioService
     /// <param name="comentarioId"></param>
     /// <param name="usuarioId"></param>
     /// <param name="puedeBorrarTodo"></param>
-    /// <returns>bool</returns>
+    /// <returns>true si se eliminó correctamente</returns>
     public async Task<bool> EliminarComentarioAsync(
         int comentarioId,
         int usuarioId,
@@ -215,8 +218,7 @@ public class ComentarioService : IComentarioService
     /// Obtiene los comentarios por estado
     /// </summary>
     /// <param name="estado"></param>
-    /// <returns>IEnumerable<Comentario></returns>
-    /// </summary>
+    /// <returns>IEnumerable&lt;Comentario&gt;</returns>
     public async Task<IEnumerable<Comentario>> GetByEstadoAsync(string estado)
     {
         return await _repo
@@ -227,10 +229,15 @@ public class ComentarioService : IComentarioService
             .ToListAsync();
     }
 
+    /// <summary>
+    /// Obtiene un comentario por su ID
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Comentario o null</returns>
     public async Task<Comentario?> GetByIdAsync(int id)
     {
-        return await _context.Comentarios.FindAsync(id);
+        //return await _context.Comentarios.FindAsync(id);
         // o con Include si necesitas navegación:
-        // // return await _db.Co_repomentarios.FirstOrDefaultAsync(c => c.Id == id);
+        return await _repo.Query().FirstOrDefaultAsync(c => c.Id == id);
     }
 }
