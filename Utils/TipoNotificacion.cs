@@ -8,4 +8,8 @@ public enum TipoNotificacion
     Moderacion,
     Sistema,
     MensajePrivado,
+    LikePost,
+    LikeComentario,
+    ComentarioEnPost,
+    RespuestaAComentario,
 }

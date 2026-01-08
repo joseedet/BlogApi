@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BlogApi.Models;
 
-namespace BlogApi.Services;
+namespace BlogApi.Services.Interfaces;
 
 [Obsolete("INotificacionService está obsoleto. Usa INotificacionesService en su lugar.")]
 public interface INotificacionService
@@ -12,4 +12,10 @@ public interface INotificacionService
     Task CrearAsync(int usuarioId, string mensaje);
     Task<IEnumerable<Notificacion>> GetByUsuarioAsync(int usuarioId);
     Task<bool> MarcarComoLeidaAsync(int id, int usuarioId);
+    Task CrearNotificacionLikePostAsync(int usuarioDestinoId, int usuarioOrigenId, int postId);
+    Task CrearNotificacionLikeComentarioAsync(
+        int usuarioDestinoId,
+        int usuarioOrigenId,
+        int comentarioId
+    );
 }

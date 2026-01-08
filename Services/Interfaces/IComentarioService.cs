@@ -1,6 +1,6 @@
 using BlogApi.Models;
 
-namespace BlogApi.Services;
+namespace BlogApi.Services.Interfaces;
 
 /// <summary>
 /// Servicio para gestionar comentarios.

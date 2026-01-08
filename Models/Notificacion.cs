@@ -20,4 +20,9 @@ public class Notificacion
 
     // Opcional: datos adicionales (JSON)
     public string? Payload { get; set; }
+    public int UsuarioDestinoId { get; set; } 
+    public int UsuarioOrigenId { get; set; } 
+    public int? PostId { get; set; } 
+    public int? ComentarioId { get; set; }
+
 }

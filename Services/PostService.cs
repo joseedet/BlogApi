@@ -1,6 +1,8 @@
 using BlogApi.DTO;
 using BlogApi.Models;
 using BlogApi.Repositories;
+using BlogApi.Repositories.Interfaces;
+using BlogApi.Services.Interfaces;
 using BlogApi.Utils;
 using Microsoft.EntityFrameworkCore;
 

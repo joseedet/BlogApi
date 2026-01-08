@@ -1,7 +1,7 @@
 using BlogApi.DTO;
 using BlogApi.Models;
 
-namespace BlogApi.Services;
+namespace BlogApi.Services.Interfaces;
 
 public interface INotificacionesService
 {

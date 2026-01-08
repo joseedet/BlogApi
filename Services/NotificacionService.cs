@@ -1,5 +1,8 @@
 using BlogApi.Data;
 using BlogApi.Models;
+using BlogApi.Repositories;
+using BlogApi.Services.Interfaces;
+using BlogApi.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Services;
@@ -11,15 +14,20 @@ public class NotificacionService : INotificacionService
     /// Contexto de la base de datos
     /// </summary>
     private readonly BlogDbContext _context;
+    private readonly INotificacionRepository _notificacionRepository;
 
     /// <summary>
     /// Constructor de NotificacionService
     /// </summary>
     /// <param name="context"></param>
     /// </summary>
-    public NotificacionService(BlogDbContext context)
+    public NotificacionService(
+        BlogDbContext context,
+        INotificacionRepository notificacionRepository
+    )
     {
         _context = context;
+        _notificacionRepository = notificacionRepository;
     }
 
     /// <summary>
@@ -67,5 +75,61 @@ public class NotificacionService : INotificacionService
         n.Leida = true;
         await _context.SaveChangesAsync();
         return true;
+    }
+
+    /// <summary>
+    /// Crea una notificación de "Me gusta" en un post
+    /// </summary>
+    /// <param name="usuarioDestinoId"></param>
+    /// <param name="usuarioOrigenId"></param>
+    /// <param name="postId"></param>
+    /// <returns>Task</returns>
+    /// </summary>
+    public async Task CrearNotificacionLikePostAsync(
+        int usuarioDestinoId,
+        int usuarioOrigenId,
+        int postId
+    )
+    {
+        var notificacion = new Notificacion
+        {
+            UsuarioDestinoId = usuarioDestinoId,
+            Mensaje = $"Al usuario {usuarioOrigenId} le gustó tu post.",
+            UsuarioOrigenId = usuarioOrigenId,
+            Tipo = TipoNotificacion.LikePost,
+            PostId = postId,
+            Fecha = DateTime.UtcNow,
+            Leida = false,
+            Payload = $"{{ \"postId\": {postId}, \"usuarioOrigenId\": {usuarioOrigenId} }}",
+        };
+
+        await _notificacionRepository.CrearAsync(notificacion);
+    }
+
+    /// <summary>
+    /// Crea una notificación de "Me gusta" en un comentario
+    /// </summary>
+    /// <param name="usuarioDestinoId"></param>
+    /// <param name="usuarioOrigenId"></param>
+    /// <param name="comentarioId"></param>
+    /// <returns>Task</returns>
+    public async Task CrearNotificacionLikeComentarioAsync(
+        int usuarioDestinoId,
+        int usuarioOrigenId,
+        int comentarioId
+    )
+    {
+        var notificacion = new Notificacion
+        {
+            UsuarioDestinoId = usuarioDestinoId,
+            UsuarioOrigenId = usuarioOrigenId,
+            Tipo = TipoNotificacion.LikeComentario,
+            ComentarioId = comentarioId,
+            Mensaje = $"Al usuario {usuarioOrigenId} le gustó tu comentario.",
+            Fecha = DateTime.UtcNow,
+            Leida = false,
+        };
+
+        await _notificacionRepository.CrearAsync(notificacion);
     }
 }

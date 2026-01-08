@@ -1,5 +1,7 @@
 using BlogApi.Models;
 using BlogApi.Repositories;
+using BlogApi.Repositories.Interfaces;
+using BlogApi.Services.Interfaces;
 
 namespace BlogApi.Services;
 

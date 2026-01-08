@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace BlogApi.Repositories;
+namespace BlogApi.Repositories.Interfaces;
 
 public interface IGenericRepository<T>
     where T : class

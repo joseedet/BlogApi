@@ -4,6 +4,8 @@ using BlogApi.Models;
 using BlogApi.Repositories;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using BlogApi.Services.Interfaces;
+using BlogApi.Repositories.Interfaces;
 
 namespace BlogApi.Services;
 

@@ -1,4 +1,5 @@
 using BlogApi.Services;
+using BlogApi.Services.Interfaces;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 

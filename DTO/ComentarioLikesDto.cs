@@ -24,4 +24,9 @@ public class ComentarioLikesDto
     /// Indica si el usuario ha dado "Me gusta" al comentario
     /// </summary>
     public bool UsuarioHaDadoLike { get; set; }
+
+    /// <summary>
+    /// Id del usuario que dio el like
+    /// </summary>
+    public int UsuarioId { get; set; }
 }

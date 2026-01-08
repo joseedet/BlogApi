@@ -4,6 +4,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using BlogApi.Models;
 
-namespace BlogApi.Repositories;
+namespace BlogApi.Services.Interfaces;
 
-public interface ICategoriaRepository : IGenericRepository<Categoria> { }
+public interface ITokenService
+{
+    string GenerateToken(Usuario usuario);
+}

@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Mail;
+using BlogApi.Services.Interfaces;
 
 namespace BlogApi.Services;
 

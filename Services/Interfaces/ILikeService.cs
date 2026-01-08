@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BlogApi.DTO;
 
-namespace BlogApi.Services;
+namespace BlogApi.Services.Interfaces;
 
 /// <summary>
 ///   Servicio para manejar los "Me gusta" en posts y comentarios

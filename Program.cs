@@ -3,7 +3,9 @@ using System.Text;
 using BlogApi.Data;
 using BlogApi.Hubs;
 using BlogApi.Repositories;
+using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
+using BlogApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -81,7 +83,6 @@ builder.Services.AddScoped<INotificacionesService, NotificacionesService>();
 
 /// Like Service Configuration
 builder.Services.AddScoped<ILikeService, LikeService>();
-
 
 /// JWT Authentication Configuration
 var key = builder.Configuration["Jwt:Key"];

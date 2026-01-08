@@ -24,4 +24,9 @@ public class PostLikesDto
     ///  Indica si el usuario ha dado "Me gusta" al post
     /// </summary>
     public bool UsuarioHaDadoLike { get; set; }
+
+    /// <summary>
+    /// Id del usuario que dio el like
+    /// /// </summary>
+    public int UsuarioId { get; set; }
 }

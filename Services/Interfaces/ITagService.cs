@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BlogApi.Models;
 
-namespace BlogApi.Services;
+namespace BlogApi.Services.Interfaces;
 
 public interface ITagService
 {
@@ -13,4 +13,5 @@ public interface ITagService
     Task<Tag> CreateAsync(Tag tag);
     Task<bool> UpdateAsync(int id, Tag tag);
     Task<bool> DeleteAsync(int id);
+    //IQueryable<Tag> Query();
 }
