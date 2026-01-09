@@ -1,8 +1,10 @@
 using BlogApi.Data;
+using BlogApi.Hubs;
 using BlogApi.Models;
 using BlogApi.Repositories;
 using BlogApi.Services.Interfaces;
 using BlogApi.Utils;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Services;
@@ -17,6 +19,7 @@ public class NotificacionService : INotificacionService
     /// Contexto de la base de datos
     /// </summary>
     private readonly BlogDbContext _context;
+    private readonly IHubContext<NotificacionesHub> _hub;
     private readonly INotificacionRepository _notificacionRepository;
 
     /// <summary>
@@ -26,11 +29,13 @@ public class NotificacionService : INotificacionService
     /// <param name="notificacionRepository"></param>
     public NotificacionService(
         BlogDbContext context,
-        INotificacionRepository notificacionRepository
+        INotificacionRepository notificacionRepository,
+        IHubContext<NotificacionesHub> hub
     )
     {
         _context = context;
         _notificacionRepository = notificacionRepository;
+        _hub = hub;
     }
 
     /// <summary>
@@ -130,12 +135,37 @@ public class NotificacionService : INotificacionService
         };
 
         await _notificacionRepository.CrearAsync(notificacion);
-    }
-    public async Task MarcarTodasComoLeidasAsync(int usuarioId)
-     {
-        var notificaciones = await _notificacionRepository.ObtenerPorUsuarioAsync(usuarioId); 
-     foreach (var n in notificaciones.Where(n => !n.Leida))
-      { n.Leida = true; } await _context.SaveChangesAsync();
-       }
 
+        // Emitir por SignalR
+
+        await _hub
+            .Clients.User(usuarioDestinoId.ToString())
+            .SendAsync(
+                "NotificacionRecibida",
+                new
+                {
+                    Id = notificacion.Id,
+                    Tipo = notificacion.Tipo.ToString(),
+                    Mensaje = notificacion.Mensaje,
+                    Fecha = notificacion.Fecha,
+                    ComentarioId = comentarioId,
+                    UsuarioOrigenId = usuarioOrigenId,
+                }
+            );
+    }
+
+    /// <summary>
+    /// Marca todas las notificaciones de un usuario como leídas
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <returns>Task</returns>
+    public async Task MarcarTodasComoLeidasAsync(int usuarioId)
+    {
+        var notificaciones = await _notificacionRepository.ObtenerPorUsuarioAsync(usuarioId);
+        foreach (var n in notificaciones.Where(n => !n.Leida))
+        {
+            n.Leida = true;
+        }
+        await _context.SaveChangesAsync();
+    }
 }
