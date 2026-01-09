@@ -5,6 +5,8 @@ using BlogApi.DTO;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.SignalR.Client;
 
+namespace BlogApi.Services;
+
 public class HubClient
 {
     private HubConnection? _hub;
