@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using BlogApi.DTO;
 using BlogApi.Models;
 using BlogApi.Services;
 using BlogApi.Services.Interfaces;
@@ -5,13 +7,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers;
 
+/// <summary>
+/// Controlador para la autenticación de usuarios
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
+
 public class AuthController : ControllerBase
 {
     private readonly IUsuarioService _usuarioService;
     private readonly ITokenService _tokenService;
 
+    /// <summary>
+    /// Constructor del controlador de autenticación
+    /// </summary>
+    /// <param name="usuarioService"></param>
+    /// <param name="tokenService"></param>
     public AuthController(IUsuarioService usuarioService, ITokenService tokenService)
     {
         _usuarioService = usuarioService;
@@ -45,10 +56,13 @@ public class AuthController : ControllerBase
     }*/
 
     [HttpPost("registro")]
-    public async Task<IActionResult> Registro(Usuario usuario)
+    public async Task<IActionResult> Registro(RegistroDto dto)
     {
-        usuario.PasswordHash = BCrypt.Net.BCrypt.HashPassword(usuario.PasswordHash);
-        var created = await _usuarioService.CrearUsuarioAsync(usuario);
-        return Ok(created);
+        var created = await _usuarioService.RegistrarUsuarioAsync(dto);
+        if (created == null)
+            return BadRequest("El correo ya está registrado.");
+        // Aquí enviarías el email real Console.WriteLine($"TOKEN DE VERIFICACIÓN: 
+        Console.WriteLine($"TOKEN DE VERIFICACIÓN: {created.VerificacionToken}");
+          return Ok("Usuario registrado. Revisa tu correo para verificar la cuenta.");
     }
 }

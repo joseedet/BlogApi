@@ -1,9 +1,15 @@
+using System.Security.Cryptography;
+using BlogApi.Data;
+using BlogApi.DTO;
 using BlogApi.Models;
 using BlogApi.Repositories;
 using BlogApi.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Services;
-
+/// <summary>
+/// Servicio para la gestión de usuarios
+/// </summary>
 public class UsuarioService : IUsuarioService
 {
     /// <summary>
@@ -12,13 +18,19 @@ public class UsuarioService : IUsuarioService
     private readonly IUsuarioRepository _repo;
 
     /// <summary>
+    /// Repositorio de usuarios
+    /// </summary>
+    private readonly BlogDbContext _context;
+
+    /// <summary>
     /// Constructor de UsuarioService
     /// </summary>
     /// <param name="repo"></param>
     /// </summary>
-    public UsuarioService(IUsuarioRepository repo)
+    public UsuarioService(IUsuarioRepository repo, BlogDbContext context)
     {
         _repo = repo;
+        _context = context;
     }
 
     /// <summary>
@@ -38,6 +50,31 @@ public class UsuarioService : IUsuarioService
             usuario.Rol = RolUsuario.Suscriptor;
         await _repo.AddAsync(usuario);
         await _repo.SaveChangesAsync();
+        return usuario;
+    }
+    /// <summary>
+    /// Registra un nuevo usuario
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns>Usuario registrado o null si el email ya existe</returns>
+    public async Task<Usuario> RegistrarUsuarioAsync(RegistroDto dto)
+     {
+        var email = dto.Email.Trim().ToLower();
+        if (await _context.Usuarios.AnyAsync(u => u.Email == email))
+            return null;
+        var usuario = new Usuario
+        {
+            Nombre = dto.Nombre,
+            Email = email,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+            FechaRegistro = DateTime.UtcNow,
+            EmailVerificado = false,
+            VerificacionToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)),
+            VerificacionTokenExpira = DateTime.UtcNow.AddHours(24),
+            Rol = RolUsuario.Suscriptor,
+        };
+        _context.Usuarios.Add(usuario);
+        await _context.SaveChangesAsync();
         return usuario;
     }
 }

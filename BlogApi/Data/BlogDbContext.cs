@@ -1,5 +1,6 @@
 using BlogApi.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer;
 
 //using Microsoft.EntityFrameworkCore.Sqlite;
 
@@ -55,7 +56,11 @@ public class BlogDbContext : DbContext
     ///  Likes en comentarios del blog
     /// </summary>
     public DbSet<LikeComentario> LikesComentario { get; set; }
-
+    
+    /// <summary>
+    ///  Configuración de las relaciones entre entidades
+    /// </summary>
+    /// <param name="modelBuilder"></param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         // Relación Post → Categoria (muchos a uno)
