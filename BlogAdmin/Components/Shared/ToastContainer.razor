@@ -1,0 +1,31 @@
+@inject ToastService ToastService
+
+<div class="toast-container">
+    @foreach (var toast in toasts)
+    {
+        <div class="toast">@toast</div>
+    }
+</div>
+
+@code {
+    private List<string> toasts = new();
+
+    protected override void OnInitialized()
+    {
+        ToastService.OnShow += MostrarToast;
+    }
+
+    private void MostrarToast(string mensaje)
+    {
+        toasts.Add(mensaje);
+        StateHasChanged();
+        _ = DesaparecerToast(mensaje);
+    }
+
+    private async Task DesaparecerToast(string mensaje)
+    {
+        await Task.Delay(3000);
+        toasts.Remove(mensaje);
+        StateHasChanged();
+    }
+}
