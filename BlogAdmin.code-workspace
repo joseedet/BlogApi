@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "BlogAdmin"
+		},
+		{
+			"path": "BlogApi"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {}
+}
