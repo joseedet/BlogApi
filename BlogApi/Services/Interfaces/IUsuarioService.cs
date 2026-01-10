@@ -35,4 +35,11 @@ public interface IUsuarioService
     /// <param name="token"></param>
     /// <returns>Verdadero si se verificó correctamente, falso en caso contrario</returns>
     Task<bool> VerificarEmailAsync(string token);
+
+    /// <summary>
+    /// Inicia sesión con email y contraseña
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns>Resultado del intento de login</returns>
+    Task<LoginResult> LoginAsync(LoginDto dto);
 }

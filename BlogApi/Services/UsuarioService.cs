@@ -107,4 +107,58 @@ public class UsuarioService : IUsuarioService
         await _context.SaveChangesAsync();
         return true;
     }
+
+    /// <summary>
+    /// Inicia sesión con email y contraseña
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns>Resultado del intento de login</returns>
+    public async Task<LoginResult> LoginAsync(LoginDto dto)
+    {
+        var email = dto.Email.Trim().ToLower();
+
+        var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+
+        if (usuario == null)
+            return LoginResult.Failed("Credenciales inválidas.");
+
+        // ¿Está bloqueado?
+        if (usuario.BloqueadoHasta != null && usuario.BloqueadoHasta > DateTime.UtcNow)
+        {
+            return LoginResult.Failed(
+                "La cuenta está bloqueada temporalmente por intentos fallidos."
+            );
+        }
+
+        // ¿Correo verificado?
+        if (!usuario.EmailVerificado)
+        {
+            return LoginResult.Failed("Debes verificar tu correo antes de iniciar sesión.");
+        }
+
+        // Verificar contraseña
+        var passwordOk = BCrypt.Net.BCrypt.Verify(dto.Password, usuario.PasswordHash);
+
+        if (!passwordOk)
+        {
+            usuario.IntentosFallidos++;
+
+            // Límite de intentos fallidos
+            if (usuario.IntentosFallidos >= 5)
+            {
+                usuario.BloqueadoHasta = DateTime.UtcNow.AddMinutes(15);
+            }
+
+            await _context.SaveChangesAsync();
+            return LoginResult.Failed("Credenciales inválidas.");
+        }
+
+        // Login correcto: resetear contador y bloqueo
+        usuario.IntentosFallidos = 0;
+        usuario.BloqueadoHasta = null;
+
+        await _context.SaveChangesAsync();
+
+        return LoginResult.Ok(usuario);
+    }
 }

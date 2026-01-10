@@ -1,6 +1,4 @@
-using System.Security.Cryptography;
 using BlogApi.DTO;
-using BlogApi.Models;
 using BlogApi.Services;
 using BlogApi.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -16,36 +14,51 @@ public class AuthController : ControllerBase
 {
     private readonly IUsuarioService _usuarioService;
     private readonly ITokenService _tokenService;
+    private readonly JwtService _jwtService;
 
     /// <summary>
     /// Constructor del controlador de autenticación
     /// </summary>
     /// <param name="usuarioService"></param>
     /// <param name="tokenService"></param>
-    public AuthController(IUsuarioService usuarioService, ITokenService tokenService)
+    /// <param name="jwtService"></param>
+    public AuthController(
+        IUsuarioService usuarioService,
+        ITokenService tokenService,
+        JwtService jwtService
+    )
     {
         _usuarioService = usuarioService;
         _tokenService = tokenService;
+        _jwtService = jwtService;
     }
 
     /// <summary>
     /// Inicia sesión con email y contraseña
     /// </summary>
-    /// <param name="request"></param>
+    /// <param name="dto"></param>
     /// <returns>IActionResult</returns>
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginRequest request)
+    public async Task<IActionResult> Login(LoginDto dto)
     {
-        var usuario = await _usuarioService.GetByEmailAsync(request.Email);
-        if (usuario == null)
-            return Unauthorized("Usuario no encontrado");
-
-        if (!BCrypt.Net.BCrypt.Verify(request.Password, usuario.PasswordHash))
-            return Unauthorized("Contraseña incorrecta");
-
-        var token = _tokenService.GenerateToken(usuario);
-
-        return Ok(new { token });
+        var result = await _usuarioService.LoginAsync(dto);
+        if (!result.Success)
+            return Unauthorized(result.Error);
+        var token = _jwtService.GenerarToken(result.Usuario!);
+        return Ok(
+            new
+            {
+                mensaje = "Login correcto.",
+                token,
+                usuario = new
+                {
+                    result.Usuario!.Id,
+                    result.Usuario.Nombre,
+                    result.Usuario.Email,
+                    Rol = result.Usuario.Rol.ToString(),
+                },
+            }
+        );
     }
 
     /// <summary>
