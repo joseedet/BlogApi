@@ -7,6 +7,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace BlogApi.Services;
 
+/// <summary>
+/// Servicio para la generación de tokens JWT
+/// </summary>
 public class TokenService : ITokenService
 {
     /// <summary>
@@ -29,7 +32,6 @@ public class TokenService : ITokenService
     /// <param name="usuario"></param>
     /// <returns>Token JWT generado</returns>
     /// <exception cref="InvalidOperationException"></exception>
-    /// </summary>
     public string GenerateToken(Usuario usuario)
     {
         var key = _config["Jwt:Key"];

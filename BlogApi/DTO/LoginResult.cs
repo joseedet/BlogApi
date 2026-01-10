@@ -29,5 +29,10 @@ public class LoginResult
     /// <returns>Un LoginResult con éxito falso y el mensaje de error proporcionado</returns>
     public static LoginResult Failed(string error) => new() { Success = false, Error = error };
 
+    /// <summary>
+    /// Crea un resultado de login exitoso  
+    /// </summary>
+    /// <param name="usuario"></param>
+    /// <returns>Un LoginResult con éxito verdadero y el usuario proporcionado</returns>
     public static LoginResult Ok(Usuario usuario) => new() { Success = true, Usuario = usuario };
 }

@@ -27,7 +27,6 @@ public class UsuarioService : IUsuarioService
     /// Constructor de UsuarioService
     /// </summary>
     /// <param name="repo"></param>
-    /// </summary>
     public UsuarioService(IUsuarioRepository repo, BlogDbContext context)
     {
         _repo = repo;
@@ -39,7 +38,6 @@ public class UsuarioService : IUsuarioService
     /// </summary>
     /// <param name="email"></param>
     /// <returns>Usuario o null</returns>
-    /// </summary>
     public async Task<Usuario?> GetByEmailAsync(string email) => await _repo.GetByEmailAsync(email);
 
     /// <summary>
