@@ -7,6 +7,7 @@ using BlogApi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Services;
+
 /// <summary>
 /// Servicio para la gestión de usuarios
 /// </summary>
@@ -52,13 +53,14 @@ public class UsuarioService : IUsuarioService
         await _repo.SaveChangesAsync();
         return usuario;
     }
+
     /// <summary>
     /// Registra un nuevo usuario
     /// </summary>
     /// <param name="dto"></param>
     /// <returns>Usuario registrado o null si el email ya existe</returns>
     public async Task<Usuario> RegistrarUsuarioAsync(RegistroDto dto)
-     {
+    {
         var email = dto.Email.Trim().ToLower();
         if (await _context.Usuarios.AnyAsync(u => u.Email == email))
             return null;
@@ -76,5 +78,33 @@ public class UsuarioService : IUsuarioService
         _context.Usuarios.Add(usuario);
         await _context.SaveChangesAsync();
         return usuario;
+    }
+
+    /// <summary>
+    /// Verifica el email del usuario
+    /// </summary>
+    /// <param name="token"></param>
+    /// <returns>Verdadero si se verificó correctamente, falso en caso contrario</returns>
+    public async Task<bool> VerificarEmailAsync(string token)
+    {
+        var usuario = await _context.Usuarios.FirstOrDefaultAsync(u =>
+            u.VerificacionToken == token
+        );
+
+        if (usuario == null)
+            return false;
+
+        if (
+            usuario.VerificacionTokenExpira == null
+            || usuario.VerificacionTokenExpira < DateTime.UtcNow
+        )
+            return false;
+
+        usuario.EmailVerificado = true;
+        usuario.VerificacionToken = null;
+        usuario.VerificacionTokenExpira = null;
+
+        await _context.SaveChangesAsync();
+        return true;
     }
 }

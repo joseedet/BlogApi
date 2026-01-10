@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BlogApi.DTO;
 
 /// <summary>
-/// DTO para la verificación de email
+/// DTO para verificar el email del usuario
 /// </summary>
 public class VerificarEmailDto
 {
