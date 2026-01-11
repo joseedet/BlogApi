@@ -6,6 +6,7 @@ using BlogApi.Repositories;
 using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
 using BlogApi.Services.Interfaces;
+using BlogApi.Services.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +45,7 @@ builder.Services.AddScoped<INotificacionesService, NotificacionesService>();
 builder.Services.AddScoped<ILikeService, LikeService>();
 builder.Services.AddSingleton<JwtService>();
 builder.Services.AddSingleton<IAuthorizationHandler, PuedeEditarPostHandler>();
+builder.Services.AddSingleton<ISanitizerService, SanitizerService>();
 
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 builder
