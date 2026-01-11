@@ -17,9 +17,11 @@ public class SanitizerService : ISanitizerService
     public SanitizerService()
     { // Whitelist de HTML permitido
         _htmlSanitizer = new HtmlSanitizer();
+
         // Limpiamos todo y luego añadimos solo lo que queremos permitir
         _htmlSanitizer.AllowedTags.Clear();
         _htmlSanitizer.AllowedAttributes.Clear();
+
         // Ejemplo de whitelist (ajustable según tus necesidades):
         _htmlSanitizer.AllowedTags.Add("b");
         _htmlSanitizer.AllowedTags.Add("strong");
@@ -41,10 +43,12 @@ public class SanitizerService : ISanitizerService
         _htmlSanitizer.AllowedTags.Add("a");
         _htmlSanitizer.AllowedAttributes.Add("href");
         _htmlSanitizer.AllowedAttributes.Add("title");
+
         // Evitar URLs peligrosas tipo javascript:
         _htmlSanitizer.AllowedSchemes.Add("http");
         _htmlSanitizer.AllowedSchemes.Add("https");
         _htmlSanitizer.AllowedSchemes.Add("mailto");
+
         // Pipeline de Markdown -> HTML
         _markdownPipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
     }

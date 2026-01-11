@@ -27,6 +27,7 @@ public class UsuarioService : IUsuarioService
     /// Constructor de UsuarioService
     /// </summary>
     /// <param name="repo"></param>
+    /// <param name="context"></param>
     public UsuarioService(IUsuarioRepository repo, BlogDbContext context)
     {
         _repo = repo;
