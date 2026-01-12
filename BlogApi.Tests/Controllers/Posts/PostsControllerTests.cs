@@ -113,7 +113,7 @@ public class PostsControllerTests
         var result = await _controller.Create(dto);
 
         var created = Assert.IsType<CreatedAtActionResult>(result);
-        var data = Assert.IsType<Post>(created.Value);
+        var data = Assert.IsType<PostDto>(created.Value);
 
         Assert.Equal(1, data.Id);
     }
@@ -189,5 +189,41 @@ public class PostsControllerTests
         var result = await _controller.Delete(1);
 
         Assert.IsType<NotFoundResult>(result);
+    }
+
+    [Fact]
+    public async Task Create_ShouldReturnBadRequest_WhenServiceReturnsNull()
+    {
+        _service
+            .Setup(s => s.CreateAsync(It.IsAny<Post>(), It.IsAny<List<int>>()))
+            .Returns(Task.FromResult<Post?>(null));
+        var dto = new CreatePostDto
+        {
+            Titulo = "Nuevo",
+            Contenido = "Contenido",
+            CategoriaId = 1,
+            TagIds = new List<int>(),
+        };
+        var result = await _controller.Create(dto);
+        Assert.IsType<BadRequestResult>(result);
+    }
+
+    [Fact]
+    public async Task Create_ShouldReturnBadRequest_WhenModelStateIsInvalid()
+    {
+        var dto = new CreatePostDto
+        {
+            Titulo = "", // inválido cuando actives [Required]
+            Contenido = "Contenido",
+            CategoriaId = 1,
+            TagIds = new List<int>(),
+        };
+
+        _controller.ModelState.AddModelError("Titulo", "Required");
+
+        var result = await _controller.Create(dto);
+
+        var bad = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.Contains("Titulo", bad.Value.ToString());
     }
 }

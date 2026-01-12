@@ -65,6 +65,9 @@ public class PostsController : ControllerBase
     [Authorize(Roles = "Administrador,Editor,Autor")]
     public async Task<IActionResult> Create(CreatePostDto dto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         try
         {
             var post = new Post
@@ -78,6 +81,9 @@ public class PostsController : ControllerBase
             };
 
             var created = await _service.CreateAsync(post, dto.TagIds);
+
+            if (created == null)
+                return BadRequest();
 
             var notificacion = NotificacionFactory.NuevoPost(
                 usuarioId: created.UsuarioId,
