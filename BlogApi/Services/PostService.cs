@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Services;
 
+/// <summary>
+///     Servicio para manejar la lógica de posts
+/// </summary>
 public class PostService : IPostService
 {
     /// <summary>

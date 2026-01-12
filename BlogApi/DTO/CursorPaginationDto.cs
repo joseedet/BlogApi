@@ -14,7 +14,7 @@ public class CursorPaginationDto<T>
     /// <summary>
     /// Elementos de la página actual
     /// </summary>
-    public IEnumerable<T> Items { get; set; }
+    public IEnumerable<T> Items { get; set; } = Enumerable.Empty<T>();
 
     /// <summary>
     /// Cursor para la siguiente página
