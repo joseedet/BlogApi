@@ -5,7 +5,7 @@ using BlogApi.Services;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
-namespace BlogApi.Tests;
+namespace BlogApi.Tests.Services;
 
 public class PostServiceUpdatePermissionTests
 {

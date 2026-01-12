@@ -5,7 +5,7 @@ using BlogApi.Services;
 using Moq;
 using Xunit;
 
-namespace BlogApi.Tests;
+namespace BlogApi.Tests.Services;
 
 public class PostServiceDeleteTests
 {

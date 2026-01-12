@@ -5,7 +5,7 @@ using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
 using Moq;
 
-namespace BlogApi.Tests;
+namespace BlogApi.Tests.Services;
 
 public class PostServiceSearchPagedTests
 {
