@@ -46,7 +46,7 @@ builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<INotificacionService, NotificacionService>();
 builder.Services.AddScoped<IComentarioService, ComentarioService>();
-builder.Services.AddScoped<IPostService, BlogApi.Services.PostService>();
+builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 builder.Services.AddSingleton<EmailTemplateService>();
 builder.Services.AddScoped<INotificacionesService, NotificacionesService>();
