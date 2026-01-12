@@ -5,7 +5,7 @@ using BlogApi.Services;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
-namespace BlogApi.Testss.Services;
+namespace BlogApi.Testss.Services.Posts;
 
 public class PostServiceGetAllTests
 {

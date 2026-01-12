@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
 
-namespace BlogApi.Tests.Services;
+namespace BlogApi.Tests.Services.Posts;
 
 public class PostServiceTests
 {

@@ -25,6 +25,13 @@
 
   <ItemGroup>
     <Folder Include="Controllers/" />
+    <Folder Include="Controllers/Auth/" />
+    <Folder Include="Controllers/Posts/" />
+    <Folder Include="Controllers/Users/" />
+    <Folder Include="Integration/" />
+    <Folder Include="Repositories/" />
+    <Folder Include="Services/Auth/" />
+    <Folder Include="Utils/" />
   </ItemGroup>
 
 </Project>
