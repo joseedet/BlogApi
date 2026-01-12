@@ -1,6 +1,6 @@
 using System;
 
-namespace BlogApi.Services.Security;
+namespace BlogApi.Services.Interfaces;
 
 /// <summary>
 /// Servicio para sanitizar entradas de usuario y prevenir ataques XSS
@@ -8,23 +8,17 @@ namespace BlogApi.Services.Security;
 public interface ISanitizerService
 {
     /// <summary>
-    /// Sanitiza texto plano eliminando caracteres peligrosos
+    /// Sanitiza texto plano (títulos, inputs sin HTML)
     /// </summary>
-    /// <param name="input"></param>
-    /// <returns>Texto plano sanitizado</returns>
     string SanitizePlainText(string input);
 
     /// <summary>
-    /// Sanitiza HTML eliminando etiquetas y atributos peligrosos
+    /// Sanitiza contenido Markdown o HTML permitido
     /// </summary>
-    /// <param name="input"></param>
-    /// <returns>HTML sanitizado</returns>
-    string SanitizeHtml(string input);
+    string SanitizeMarkdown(string input);
 
     /// <summary>
-    /// Sanitiza contenido Markdown eliminando scripts y etiquetas peligrosas
+    /// Detecta patrones peligrosos (XSS)
     /// </summary>
-    /// <param name="markdownInput"></param>
-    /// <returns>Markdown sanitizado</returns>
-    string SanitizeMarkdown(string markdownInput);
+    bool ContainsDangerousPattern(string input);
 }

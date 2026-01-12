@@ -1,3 +1,4 @@
+using BlogApi.Services.Interfaces;
 using Ganss.Xss;
 using Markdig;
 
@@ -10,6 +11,7 @@ public class SanitizerService : ISanitizerService
 {
     private readonly HtmlSanitizer _htmlSanitizer;
     private readonly MarkdownPipeline _markdownPipeline;
+    private readonly ILogger<SanitizerService> _logger;
 
     /// <summary>
     /// Constructor de SanitizerService
@@ -17,11 +19,9 @@ public class SanitizerService : ISanitizerService
     public SanitizerService()
     { // Whitelist de HTML permitido
         _htmlSanitizer = new HtmlSanitizer();
-
         // Limpiamos todo y luego añadimos solo lo que queremos permitir
         _htmlSanitizer.AllowedTags.Clear();
         _htmlSanitizer.AllowedAttributes.Clear();
-
         // Ejemplo de whitelist (ajustable según tus necesidades):
         _htmlSanitizer.AllowedTags.Add("b");
         _htmlSanitizer.AllowedTags.Add("strong");
@@ -45,6 +45,7 @@ public class SanitizerService : ISanitizerService
         _htmlSanitizer.AllowedAttributes.Add("title");
 
         // Evitar URLs peligrosas tipo javascript:
+
         _htmlSanitizer.AllowedSchemes.Add("http");
         _htmlSanitizer.AllowedSchemes.Add("https");
         _htmlSanitizer.AllowedSchemes.Add("mailto");
@@ -93,6 +94,9 @@ public class SanitizerService : ISanitizerService
         return sanitizedHtml;
     }
 
+    /// <summary>
+    /// Quita etiquetas HTML de un string
+    /// </summary>
     private string StripHtmlTags(string input)
     {
         // Implementación sencilla para quitar etiquetas HTML
@@ -119,4 +123,25 @@ public class SanitizerService : ISanitizerService
         }
         return new string(array, 0, arrayIndex);
     }
+
+    /// <summary>
+    /// Detecta patrones peligrosos (XSS)
+    /// </summary>
+    public bool ContainsDangerousPattern(string input)
+    {
+        if (string.IsNullOrWhiteSpace(input))
+            return false;
+        var lower = input.ToLowerInvariant();
+        bool peligro =
+            lower.Contains("<script")
+            || lower.Contains("javascript:")
+            || lower.Contains("onerror=")
+            || lower.Contains("onload=")
+            || lower.Contains("<iframe")
+            || lower.Contains("<svg");
+        if (peligro)
+            _logger.LogWarning("Patrón XSS detectado: {Input}", input);
+        return peligro;
+    }
+    
 }

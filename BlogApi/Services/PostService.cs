@@ -185,7 +185,7 @@ public class PostService : IPostService
             Pagina = pagina,
             Tamano = tamano,
             Total = total,
-            Datos = datos,
+            Items = datos,
         };
     }
 
@@ -262,7 +262,7 @@ public class PostService : IPostService
             Pagina = pagina,
             Tamano = tamano,
             Total = total,
-            Datos = datos,
+            Items = datos,
         };
     }
 
@@ -396,6 +396,6 @@ public class PostService : IPostService
             datos.RemoveAt(datos.Count - 1); // quitar el extra
         }
 
-        return new CursorPaginationDto<Post> { Datos = datos, NextCursor = nextCursor };
+        return new CursorPaginationDto<Post> { Items = datos, NextCursor = nextCursor };
     }
 }

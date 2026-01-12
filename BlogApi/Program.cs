@@ -2,6 +2,7 @@ using System.Text;
 using BlogApi.Authorization;
 using BlogApi.Data;
 using BlogApi.Hubs;
+using BlogApi.Middleware;
 using BlogApi.Repositories;
 using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
@@ -14,7 +15,13 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = 10 * 1024 * 1024; // 10 MB
+});
+
 builder.Services.AddControllers();
+
 builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSignalR();
@@ -22,31 +29,35 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
+// Repositorios
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
-builder.Services.AddScoped<ICategoriaService, CategoriaService>();
-builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IComentarioRepository, ComentarioRepository>();
-builder.Services.AddScoped<IUsuarioService, UsuarioService>();
-builder.Services.AddScoped<IComentarioService, ComentarioService>();
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<ITagRepository, TagRepository>();
-builder.Services.AddScoped<ITagService, TagService>();
-builder.Services.AddScoped<INotificacionService, NotificacionService>();
 builder.Services.AddScoped<ILikePostRepository, LikePostRepository>();
 builder.Services.AddScoped<ILikeComentarioRepository, LikeComentarioRepository>();
 
-//builder.Services.AddScoped<IEmailService, EmailService>();
+// Servicios de la aplicación
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<ICategoriaService, CategoriaService>();
+builder.Services.AddScoped<INotificacionService, NotificacionService>();
+builder.Services.AddScoped<IComentarioService, ComentarioService>();
+builder.Services.AddScoped<IPostService, BlogApi.Services.PostService>();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 builder.Services.AddSingleton<EmailTemplateService>();
 builder.Services.AddScoped<INotificacionesService, NotificacionesService>();
 builder.Services.AddScoped<ILikeService, LikeService>();
-builder.Services.AddSingleton<JwtService>();
+builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<ISanitizerService, SanitizerService>();
 builder.Services.AddSingleton<IAuthorizationHandler, PuedeEditarPostHandler>();
-builder.Services.AddSingleton<ISanitizerService, SanitizerService>();
 
+//builder.Services.AddScoped<IEmailService, EmailService>();
+
+// Configuración de autenticación JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 builder
     .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -91,6 +102,7 @@ builder.Services.PostConfigure<JwtBearerOptions>(
     }
 );
 
+// Políticas de autorización
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy(
@@ -119,6 +131,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseAuthentication();
+
+app.UseSecurityHeaders();
 
 app.UseAuthorization();
 

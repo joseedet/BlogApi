@@ -1,0 +1,1920 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BlogApi</name>
+    </assembly>
+    <members>
+        <member name="T:BlogApi.Authorization.PuedeEditarPostHandler">
+            <summary>
+            Manejador de autorización para editar un post
+            </summary>
+        </member>
+        <member name="M:BlogApi.Authorization.PuedeEditarPostHandler.#ctor(BlogApi.Data.BlogDbContext)">
+            <summary>
+            Constructor de PuedeEditarPostHandler
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:BlogApi.Authorization.PuedeEditarPostHandler.HandleRequirementAsync(Microsoft.AspNetCore.Authorization.AuthorizationHandlerContext,BlogApi.Authorization.PuedeEditarPostRequirement)">
+            <summary>
+            Maneja el requisito de autorización para editar un post
+            </summary>
+            <param name="context"></param>
+            <param name="requirement"></param>
+            /// <returns>Task</returns>
+        </member>
+        <member name="T:BlogApi.Authorization.PuedeEditarPostRequirement">
+            <summary>
+            Requisito de autorización para editar un post
+            </summary>
+        </member>
+        <member name="T:BlogApi.Controllers.AuthController">
+            <summary>
+            Controlador para la autenticación de usuarios
+            </summary>
+        </member>
+        <member name="M:BlogApi.Controllers.AuthController.#ctor(BlogApi.Services.Interfaces.IUsuarioService,BlogApi.Services.Interfaces.ITokenService,BlogApi.Services.JwtService)">
+            <summary>
+            Constructor del controlador de autenticación
+            </summary>
+            <param name="usuarioService"></param>
+            <param name="tokenService"></param>
+            <param name="jwtService"></param>
+        </member>
+        <member name="M:BlogApi.Controllers.AuthController.Login(BlogApi.DTO.LoginDto)">
+            <summary>
+            Inicia sesión con email y contraseña
+            </summary>
+            <param name="dto"></param>
+            <returns>IActionResult</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.AuthController.Registro(BlogApi.DTO.RegistroDto)">
+            <summary>
+            Registra un nuevo usuario
+            </summary>
+            <param name="dto"></param>
+            <returns>IActionResult</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.AuthController.VerificarEmail(BlogApi.DTO.VerificarEmailDto)">
+            <summary>
+            Verifica el email del usuario
+            </summary>
+            <param name="dto"></param>
+            <returns>IActionResult</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.LikesController.LikePost(System.Int32)">
+            <summary>
+            Da "Me gusta" a un post
+            </summary>
+        </member>
+        <member name="M:BlogApi.Controllers.LikesController.UnlikePost(System.Int32)">
+            <summary>
+            Quita "Me gusta" a un post
+            </summary>
+        </member>
+        <member name="M:BlogApi.Controllers.LikesController.LikeComentario(System.Int32)">
+            <summary>
+            Da "Me gusta" a un comentario
+            </summary>
+        </member>
+        <member name="M:BlogApi.Controllers.LikesController.UnlikeComentario(System.Int32)">
+            <summary>
+            Quita "Me gusta" a un comentario
+            </summary>
+        </member>
+        <member name="T:BlogApi.Controllers.NotificacionesController">
+            <summary>
+            Controlador para gestionar notificaciones
+            </summary>
+        </member>
+        <member name="F:BlogApi.Controllers.NotificacionesController._notificacionService">
+            <summary>
+            Servicio de notificaciones
+            </summary>
+        </member>
+        <member name="M:BlogApi.Controllers.NotificacionesController.#ctor(BlogApi.Services.Interfaces.INotificacionService,BlogApi.Repositories.INotificacionRepository)">
+            <summary>
+            Constructor de NotificacionesController
+            </summary>
+            <param name="notificacionService"></param>
+            <param name="notificacionRepository"></param>
+        </member>
+        <member name="M:BlogApi.Controllers.NotificacionesController.GetUsuarioId">
+            <summary>
+                Obtiene el ID del usuario autenticado
+            </summary>
+            <returns></returns>
+            <exception cref="T:System.UnauthorizedAccessException"></exception>
+        </member>
+        <member name="M:BlogApi.Controllers.NotificacionesController.ObtenerNotificaciones">
+            <summary>
+                Obtiene todas las notificaciones del usuario autenticado
+            </summary>
+            <returns>IEnumerable de NotificacionDto</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.NotificacionesController.MarcarComoLeida(System.Int32)">
+            <summary>
+              Marca una notificación como leída
+            </summary>
+            <param name="id"></param>
+            <returns>ActionResult</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.NotificacionesController.MarcarTodasComoLeidas">
+            <summary>
+                Marca todas las notificaciones del usuario autenticado como leídas
+            </summary>
+            <returns>ActionResult</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.NotificacionesController.ObtenerNoLeidasPaginadas(System.Int32,System.Int32)">
+            <summary>
+                Obtiene las notificaciones no leídas del usuario autenticado con paginación
+            </summary>
+            <param name="page"></param>
+            <param name="pageSize"></param>
+            <returns>PaginacionResultado de NotificacionDto</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.PostsController.#ctor(BlogApi.Services.Interfaces.IPostService,BlogApi.Services.Interfaces.INotificacionesService)">
+            <summary>
+            Constructor de PostsController
+            </summary>
+            <param name="service"></param>
+            <param name="notificaciones"></param>
+        </member>
+        <member name="M:BlogApi.Controllers.PostsController.GetAll">
+            <summary>
+            Obtiene todos los posts
+            </summary>
+            <returns>Todos los posts</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.PostsController.GetById(System.Int32)">
+            <summary>
+            Obtiene un post por su ID
+            </summary>
+            <param name="id"></param>
+            <returns>Post</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.PostsController.Create(BlogApi.DTO.CreatePostDto)">
+            <summary>
+            Crea un nuevo post
+            </summary>
+            <param name="dto"></param>
+            <returns>Post</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.PostsController.Update(System.Int32,BlogApi.DTO.CreatePostDto)">
+            <summary>
+            Actualiza un post existente
+            </summary>
+            <param name="id"></param>
+            <param name="dto"></param>
+            <returns>Post actualizado</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.PostsController.Delete(System.Int32)">
+            <summary>
+            Elimina un post por su ID
+            </summary>
+            <param name="id"></param>
+            <returns>Notificación de eliminación</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.PostsController.GetPaged(System.Int32,System.Int32)">
+            <summary>
+            Obtiene posts paginados
+            </summary>
+            <param name="pagina"></param>
+            <param name="tamano"></param>
+            <returns>Posts paginados</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.PostsController.GetBySlug(System.String)">
+            <summary>
+            Obtiene un post por su slug
+            </summary>
+            <param name="slug"></param>
+            <returns>Post</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.PostsController.Buscar(System.String)">
+            <summary>
+            Busca posts por texto
+            </summary>
+            <param name="q"></param>
+            <returns>Posts encontrados</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.PostsController.GetByCategoria(System.Int32)">
+            <summary>
+            Obtiene posts por categoría ID
+            </summary>
+            <param name="categoriaId"></param>
+            <returns>Posts en la categoría</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.PostsController.GetByCategoriaSlug(System.String)">
+            <summary>
+            Obtiene posts por slug de categoría
+            </summary>
+            <param name="slug"></param>
+            <returns>Posts en la categoría</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.PostsController.GetByTag(System.Int32)">
+            <summary>
+            Obtiene posts por tag ID
+            </summary>
+            <param name="tagId"></param>
+            <returns>Posts con el tag</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.PostsController.GetByTagNombre(System.String)">
+            <summary>
+            Obtiene posts por nombre de tag
+            </summary>
+            <param name="nombre"></param>
+            <returns>Posts con el tag</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.PostsController.GetByAutor(System.Int32)">
+            <summary>
+            Obtiene posts por autor ID
+            </summary>
+            <param name="usuarioId"></param>
+            <returns>Posts del autor</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.PostsController.GetByAutorNombre(System.String)">
+            <summary>
+            Obtiene posts por nombre de autor
+            </summary>
+            <param name="nombre"></param>
+            <returns>Posts del autor</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.PostsController.GetCursorPaged(System.Nullable{System.Int32},System.Int32)">
+            <summary>
+            Obtiene posts con paginación por cursor
+            </summary>
+            <param name="after"></param>
+            <param name="limit"></param>
+            <returns>Posts paginados por cursor</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Data.BlogDbContext.#ctor(Microsoft.EntityFrameworkCore.DbContextOptions{BlogApi.Data.BlogDbContext})" -->
+        <member name="P:BlogApi.Data.BlogDbContext.Posts">
+            <summary>
+                Posts del blog
+            </summary>
+        </member>
+        <member name="P:BlogApi.Data.BlogDbContext.Categorias">
+            <summary>
+               Tags del blog
+            </summary>
+        </member>
+        <member name="P:BlogApi.Data.BlogDbContext.Usuarios">
+            <summary>
+              Usuarios del blog
+            </summary>
+        </member>
+        <member name="P:BlogApi.Data.BlogDbContext.Comentarios">
+            <summary>
+              Comentarios del blog
+            /// </summary>
+        </member>
+        <member name="P:BlogApi.Data.BlogDbContext.Notificaciones">
+            <summary>
+             Notificaciones del blog
+            </summary>
+        </member>
+        <member name="P:BlogApi.Data.BlogDbContext.Tags">
+            <summary>
+              Tags del blog
+            </summary>
+        </member>
+        <member name="P:BlogApi.Data.BlogDbContext.LikesPost">
+            <summary>
+             Likes en publicaciones del blog
+            </summary>
+        </member>
+        <member name="P:BlogApi.Data.BlogDbContext.LikesComentario">
+            <summary>
+             Likes en comentarios del blog
+            </summary>
+        </member>
+        <member name="M:BlogApi.Data.BlogDbContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <summary>
+             Configuración de las relaciones entre entidades
+            </summary>
+            <param name="modelBuilder"></param>
+        </member>
+        <member name="T:BlogApi.Data.BlogDbContextFactory">
+            <summary>
+            Factoría para crear instancias del contexto de base de datos en tiempo de diseño
+            </summary>
+        </member>
+        <member name="M:BlogApi.Data.BlogDbContextFactory.CreateDbContext(System.String[])">
+            <summary>
+            Crea una instancia del contexto de la base de datos para tiempo de diseño
+            </summary>
+            <param name="args"></param>
+            <returns></returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.NuevoPost(System.Int32,System.Int32,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.NuevoComentario(System.Int32,System.Int32,System.String,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.RespuestaComentario(System.Int32,System.Int32,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.Sistema(System.Int32,System.String)" -->
+        <member name="T:BlogApi.DTO.ComentarioLikesDto">
+            <summary>
+            Data Transfer Object para los "Me gusta" de un comentario
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.ComentarioLikesDto.ComentarioId">
+            <summary>
+            Id del comentario
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.ComentarioLikesDto.TotalLikes">
+            <summary>
+            Total de "Me gusta"
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.ComentarioLikesDto.UsuarioHaDadoLike">
+            <summary>
+            Indica si el usuario ha dado "Me gusta" al comentario
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.ComentarioLikesDto.UsuarioId">
+            <summary>
+            Id del usuario que dio el like
+            </summary>
+        </member>
+        <member name="T:BlogApi.DTO.CursorPaginationDto`1">
+            <summary>
+            DTO para paginación con cursor
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="P:BlogApi.DTO.CursorPaginationDto`1.Items">
+            <summary>
+            Elementos de la página actual
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.CursorPaginationDto`1.NextCursor">
+            <summary>
+            Cursor para la siguiente página
+            </summary>
+        </member>
+        <member name="M:BlogApi.DTO.CursorPaginationDto`1.#ctor(System.Collections.Generic.IEnumerable{`0},System.Nullable{System.Int32})">
+            <summary>
+            Constructor de CursorPaginationDto
+            </summary>
+        </member>
+        <member name="M:BlogApi.DTO.CursorPaginationDto`1.#ctor">
+            <summary>
+            Constructor vacío de CursorPaginationDto
+            </summary>
+        </member>
+        <member name="T:BlogApi.DTO.LikeDto">
+            <summary>
+              Data Transfer Object para los "Me gusta"
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.LikeDto.UsuarioId">
+            <summary>
+              Id del usuario que da el "Me gusta"
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.LikeDto.LeGusta">
+            <summary>
+             Indica si al usuario le gusta el contenido
+            </summary>
+        </member>
+        <member name="T:BlogApi.DTO.LoginDto">
+            <summary>
+            DTO para el inicio de sesión
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.LoginDto.Email">
+            <summary>
+            Email del usuario
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.LoginDto.Password">
+            <summary>
+            Contraseña del usuario
+            </summary>
+        </member>
+        <member name="T:BlogApi.DTO.LoginResult">
+            <summary>
+            Resultado del intento de login
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.LoginResult.Success">
+            <summary>
+            Indica si el login fue exitoso
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.LoginResult.Error">
+            <summary>
+            Mensaje de error en caso de fallo
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.LoginResult.Usuario">
+            <summary>
+            Usuario autenticado
+            </summary>
+        </member>
+        <member name="M:BlogApi.DTO.LoginResult.Failed(System.String)">
+            <summary>
+            Crea un resultado de login fallido
+            </summary>
+            <param name="error"></param>
+            <returns>Un LoginResult con éxito falso y el mensaje de error proporcionado</returns>
+        </member>
+        <member name="M:BlogApi.DTO.LoginResult.Ok(BlogApi.Models.Usuario)">
+            <summary>
+            Crea un resultado de login exitoso  
+            </summary>
+            <param name="usuario"></param>
+            <returns>Un LoginResult con éxito verdadero y el usuario proporcionado</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Categoria)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Usuario)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Comentario)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Post)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Tag)" -->
+        <member name="T:BlogApi.DTO.NotificacionDto">
+            <summary>
+            Data Transfer Object para Notificación
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.NotificacionDto.Id">
+            <summary>
+            Identificador de la notificación
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.NotificacionDto.UsuarioDestinoId">
+            <summary>
+            Identificador del usuario destinatario de la notificación
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.NotificacionDto.UsuarioOrigenId">
+            <summary>
+            Identificador del usuario origen de la notificación
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.NotificacionDto.Tipo">
+            <summary>
+            Tipo de notificación
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.NotificacionDto.PostId">
+            <summary>
+            Identificador del post relacionado (si aplica)
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.NotificacionDto.ComentarioId">
+            <summary>
+                Identificador del comentario relacionado (si aplica)
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.NotificacionDto.Mensaje">
+            <summary>
+            Mensaje de la notificación
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.NotificacionDto.Fecha">
+            <summary>
+            Fecha de creación de la notificación
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.NotificacionDto.Leida">
+            <summary>
+            Indica si la notificación ha sido leída
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.NotificacionDto.Payload">
+            <summary>
+            Payload adicional de la notificación
+            </summary>
+        </member>
+        <member name="T:BlogApi.DTO.PaginationDto`1">
+            <summary>
+            DTO para paginación genérica
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PaginationDto`1.Items">
+            <summary>
+            Elementos de la página actual
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PaginationDto`1.Total">
+            <summary>
+            Total de elementos disponibles
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PaginationDto`1.Pagina">
+            <summary>
+            Página actual
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PaginationDto`1.Tamano">
+            <summary>
+            Tamaño de página
+            </summary>
+        </member>
+        <member name="M:BlogApi.DTO.PaginationDto`1.#ctor(System.Collections.Generic.IEnumerable{`0},System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Constructor de PaginationDto
+            </summary>
+            <param name="items"></param>
+            <param name="total"></param>
+            <param name="pagina"></param>
+            <param name="tamano"></param>
+            <returns>IEnumerable&lt;T&gt;</returns>
+        </member>
+        <member name="M:BlogApi.DTO.PaginationDto`1.#ctor">
+            <summary>
+            /// Constructor vacío de PaginationDto
+            </summary>
+        </member>
+        <member name="T:BlogApi.DTO.PostLikesDto">
+            <summary>
+             Data Transfer Object para los "Me gusta" de un post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PostLikesDto.PostId">
+            <summary>
+             Id del post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PostLikesDto.TotalLikes">
+            <summary>
+             Total de "Me gusta"
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PostLikesDto.UsuarioHaDadoLike">
+            <summary>
+             Indica si el usuario ha dado "Me gusta" al post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PostLikesDto.UsuarioId">
+            <summary>
+            Id del usuario que dio el like
+            /// </summary>
+        </member>
+        <member name="T:BlogApi.DTO.RegistroDto">
+            <summary>
+            DTO para el registro de usuarios
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.RegistroDto.Nombre">
+            <summary>
+            Nombre del usuario
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.RegistroDto.Email">
+            <summary>
+            Correo electrónico del usuario
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.RegistroDto.Password">
+            <summary>
+            Contraseña del usuario
+            </summary>
+        </member>
+        <member name="T:BlogApi.DTO.VerificarEmailDto">
+            <summary>
+            DTO para verificar el email del usuario
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.VerificarEmailDto.Token">
+            <summary>
+            Token de verificación
+            </summary>
+        </member>
+        <member name="M:BlogApi.Hubs.NotificacionesHub.OnConnectedAsync">
+            <summary>
+            Método llamado cuando un cliente se conecta al hub
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:BlogApi.Middleware.SecurityHeadersMiddleware">
+            <summary>
+            Middleware para agregar cabeceras de seguridad HTTP
+            </summary>
+        </member>
+        <member name="M:BlogApi.Middleware.SecurityHeadersMiddleware.#ctor(Microsoft.AspNetCore.Http.RequestDelegate,Microsoft.Extensions.Logging.ILogger{BlogApi.Middleware.SecurityHeadersMiddleware})">
+            <summary>
+            Constructor
+            </summary>
+            <param name="next"></param>
+            <param name="logger"></param>
+        </member>
+        <member name="T:BlogApi.Middleware.SecurityHeadersMiddlewareExtensions">
+            <summary>
+            Extensiones para el middleware de cabeceras de seguridad
+            </summary>
+        </member>
+        <member name="M:BlogApi.Middleware.SecurityHeadersMiddlewareExtensions.UseSecurityHeaders(Microsoft.AspNetCore.Builder.IApplicationBuilder)">
+            <summary>
+            Agrega el middleware de cabeceras de seguridad HTTP al pipeline
+            </summary>
+            <param name="app"></param>
+            <returns>IApplicationBuilder</returns>
+        </member>
+        <member name="T:BlogApi.Migrations.InitialCreate">
+            <inheritdoc />
+        </member>
+        <member name="M:BlogApi.Migrations.InitialCreate.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:BlogApi.Migrations.InitialCreate.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:BlogApi.Migrations.InitialCreate.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:BlogApi.Models.LikeComentario">
+            <summary>
+                Modelo que representa un "like" en un comentario
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikeComentario.Id">
+            <summary>
+                Identificador único del "like"
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikeComentario.ComentarioId">
+            <summary>
+                Identificador del comentario al que se le dio "like"
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikeComentario.Comentario">
+            <summary>
+                Comentario al que se le dio "like"
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikeComentario.UsuarioId">
+            <summary>
+                Identificador del usuario que dio el "like"
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikeComentario.Usuario">
+            <summary>
+                Usuario que dio el "like"
+            </summary>
+        </member>
+        <member name="T:BlogApi.Models.LikePost">
+            <summary>
+                Modelo que representa un "like" en una publicación
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikePost.Id">
+            <summary>
+                Identificador único del "like"
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikePost.PostId">
+            <summary>
+               Identificador de la publicación a la que se le dio "like"
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikePost.Post">
+            <summary>
+              Publicación a la que se le dio "like"
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikePost.UsuarioId">
+            <summary>
+              Identificador del usuario que dio el "like"
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.LikePost.Usuario">
+            <summary>
+              Usuario que dio el "like"
+            </summary>
+        </member>
+        <member name="T:BlogApi.Models.Notificacion">
+            <summary>
+            Modelo de Notificación
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Notificacion.Id">
+            <summary>
+             ID de la notificación
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Notificacion.UsuarioId">
+            <summary>
+               ID del usuario asociado a la notificación
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Notificacion.Usuario">
+            <summary>
+                Usuario asociado a la notificación
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Notificacion.Mensaje">
+            <summary>
+              Mensaje de la notificación
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Notificacion.Fecha">
+            <summary>
+              Fecha de creación de la notificación
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Notificacion.Leida">
+            <summary>
+              Indica si la notificación ha sido leída
+            </summary>/
+        </member>
+        <member name="P:BlogApi.Models.Notificacion.Tipo">
+            <summary>
+            ///  Tipo de notificación
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Notificacion.Payload">
+            <summary>
+              Payload adicional en formato JSON
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Notificacion.UsuarioDestinoId">
+            <summary>
+             ID del usuario destino de la notificación
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Notificacion.UsuarioOrigenId">
+            <summary>
+            ID del usuario origen de la notificación
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Notificacion.PostId">
+            <summary>
+            ID del post asociado a la notificación
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Notificacion.ComentarioId">
+            <summary>
+            ID del comentario asociado a la notificación
+            </summary>
+        </member>
+        <member name="T:BlogApi.Models.Usuario">
+            <summary>
+            Representa un usuario del sistema.
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Usuario.Id">
+            <summary>
+            Identificador único del usuario.
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Usuario.Nombre">
+            <summary>
+            Nombre del usuario.
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Usuario.Email">
+            <summary>
+            Correo electrónico del usuario.
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Usuario.PasswordHash">
+            <summary>
+            Hash de la contraseña del usuario.
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Usuario.FechaRegistro">
+            <summary>
+            Fecha de registro del usuario.
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Usuario.ResetToken">
+            <summary>
+            Token para la recuperación de contraseña.
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Usuario.ResetTokenExpira">
+            <summary>
+            Fecha de expiración del token de recuperación de contraseña.
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Usuario.IntentosFallidos">
+            <summary>
+            Número de intentos fallidos de inicio de sesión.
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Usuario.BloqueadoHasta">
+            <summary>
+            Fecha hasta la cual el usuario está bloqueado.
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Usuario.VerificacionToken">
+            <summary>
+            Token para la verificación del correo electrónico.
+            </summary>
+        </member>
+        <member name="P:BlogApi.Models.Usuario.VerificacionTokenExpira">
+            <summary> Fecha de expiración del token de verificación de correo electrónico. </summary>
+        </member>
+        <member name="P:BlogApi.Models.Usuario.EmailVerificado">
+            <summary> Indica si el correo electrónico ha sido verificado. </summary>
+        </member>
+        <member name="P:BlogApi.Models.Usuario.Rol">
+            <summary>
+            Rol del usuario en el sistema.
+            </summary>
+        </member>
+        <member name="T:BlogApi.Repositories.ComentarioRepository">
+            <summary>
+                Repositorio para manejar operaciones de comentarios
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.ComentarioRepository.#ctor(BlogApi.Data.BlogDbContext)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.ComentarioRepository.GetByPostIdAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.ComentarioRepository.GetRespuestasAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.ComentarioRepository.GetByIdAsync(System.Int32)" -->
+        <member name="T:BlogApi.Repositories.Interfaces.ILikeComentarioRepository">
+            <summary>
+            Interfaz para el repositorio de "Me gusta" en comentarios
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.Interfaces.ILikeComentarioRepository.ExisteAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.Interfaces.ILikeComentarioRepository.ContarAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.Interfaces.ILikeComentarioRepository.CrearAsync(BlogApi.Models.LikeComentario)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.Interfaces.ILikeComentarioRepository.EliminarAsync(System.Int32,System.Int32)" -->
+        <member name="T:BlogApi.Repositories.Interfaces.IPostRepository">
+            <summary>
+            Repositorio específico para Posts
+            </summary>
+        </member>
+        <member name="M:BlogApi.Repositories.Interfaces.IPostRepository.GetPostCompletoAsync(System.Int32)">
+            <summary>
+            Obtiene un post completo por su id, incluyendo relaciones
+            </summary>
+            <param name="id"></param>
+            <returns>Post</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.Interfaces.IPostRepository.GetBySlugAsync(System.String)">
+            <summary>
+            Obtiene un post por su slug
+            </summary>
+            <param name="slug"></param>
+            <returns>Post</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.Interfaces.IPostRepository.GetPagedAsync(System.Int32,System.Int32)">
+            <summary>
+            Obtiene los posts paginados
+            </summary>
+            <param name="pagina"></param>
+            <param name="tamano"></param>
+            <returns>PaginationDto&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.Interfaces.IPostRepository.GetCursorPagedAsync(System.Nullable{System.Int32},System.Int32)">
+            <summary>
+            Obtiene los posts paginados con cursor
+            </summary>
+            <param name="after"></param>
+            <param name="limit"></param>
+            <returns>CursorPaginationDto&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.Interfaces.IPostRepository.SearchAsync(System.String)">
+            <summary>
+            Busca posts que coincidan con el texto dado
+            </summary>
+            <param name="texto"></param>
+            <returns>IEnumerable&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.Interfaces.IPostRepository.SearchPagedAsync(System.String,System.Int32,System.Int32)">
+            <summary>
+            Busca posts que coincidan con el texto dado y los devuelve paginados
+            </summary>
+            <param name="texto"></param>
+            <param name="pagina"></param>
+            <param name="tamano"></param>
+            <returns>PaginationDto&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.Interfaces.IPostRepository.GetByCategoriaAsync(System.Int32)">
+            <summary>
+            Obtiene los posts de una categoría específica
+            </summary>
+            <param name="categoriaId"></param>
+            <returns>IEnumerable&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.Interfaces.IPostRepository.GetByCategoriaSlugAsync(System.String)">
+            <summary>
+            Obtiene los posts de una categoría específica mediante su slug
+            </summary>
+            <param name="slug"></param>
+            <returns>IEnumerable&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.Interfaces.IPostRepository.GetByTagAsync(System.Int32)">
+            <summary>
+            Obtiene los posts asociados a una etiqueta específica
+            </summary>
+            <param name="tagId"></param>
+            <returns>IEnumerable&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.Interfaces.IPostRepository.GetByTagNombreAsync(System.String)">
+            <summary>
+            Obtiene los posts asociados a una etiqueta específica mediante su nombre
+            </summary>
+            <param name="nombre"></param>
+            <returns>IEnumerable&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.Interfaces.IPostRepository.GetByAutorAsync(System.Int32)">
+            <summary>
+            Obtiene los posts de un autor específico
+            </summary>
+            <param name="usuarioId"></param>
+            <returns>IEnumerable&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.Interfaces.IPostRepository.GetByAutorNombreAsync(System.String)">
+            <summary>
+            Obtiene los posts de un autor específico mediante su nombre
+            </summary>
+            <param name="nombre"></param>
+            <returns>IEnumerable&lt;Post&gt;</returns>
+        </member>
+        <member name="T:BlogApi.Repositories.ILikePostRepository">
+            <summary>
+            Interfaz para el repositorio de "Me gusta" en comentarios
+            </summary>
+        </member>
+        <member name="M:BlogApi.Repositories.ILikePostRepository.ExisteAsync(System.Int32,System.Int32)">
+            <summary>
+            Verifica si un usuario ha dado "Me gusta" a un comentario
+            </summary>
+            <param name="comentarioId"></param>
+            <param name="usuarioId"></param>
+            <returns>true si existe, false si no</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.ILikePostRepository.ContarAsync(System.Int32)">
+            <summary>
+            Cuenta el total de "Me gusta" en un comentario
+            </summary>
+            <param name="comentarioId"></param>
+            <returns>Total de "Me gusta"</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.ILikePostRepository.CrearAsync(BlogApi.Models.LikePost)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.ILikePostRepository.EliminarAsync(System.Int32,System.Int32)" -->
+        <member name="T:BlogApi.Repositories.INotificacionRepository">
+            <summary>
+            Interfaz para el repositorio de notificaciones
+            </summary>
+        </member>
+        <member name="M:BlogApi.Repositories.INotificacionRepository.CrearAsync(BlogApi.Models.Notificacion)">
+            <summary>
+            Crea una nueva notificación
+            </summary>
+            <param name="notificacion"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BlogApi.Repositories.INotificacionRepository.ObtenerPorIdAsync(System.Int32)">
+            <summary>
+            Obtiene una notificación por su ID
+            </summary>
+            <param name="id"></param>
+            <returns>Notificacion</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.INotificacionRepository.ObtenerPorUsuarioAsync(System.Int32)">
+            <summary>
+            Obtiene todas las notificaciones de un usuario
+            </summary>
+            <param name="usuarioId"></param>
+            <returns>IEnumerable de notificaciones</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.INotificacionRepository.MarcarComoLeidaAsync(System.Int32)">
+            <summary>
+            Marca una notificación como leída
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BlogApi.Repositories.INotificacionRepository.ObtenerNoLeidasPaginadasAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Obtiene las notificaciones no leídas de un usuario con paginación
+            </summary>
+            <param name="usuarioId"></param>
+            <param name="page"></param>
+            <param name="pageSize"></param>
+            <returns>PaginacionResultado de NotificacionDto</returns>
+        </member>
+        <member name="T:BlogApi.Repositories.LikeComentarioRepository">
+            <summary>
+              Repositorio para gestionar "Me gusta" en comentarios
+            </summary>
+        </member>
+        <member name="F:BlogApi.Repositories.LikeComentarioRepository._db">
+            <summary>
+              Contexto de la base de datos
+            </summary>
+        </member>
+        <member name="M:BlogApi.Repositories.LikeComentarioRepository.#ctor(BlogApi.Data.BlogDbContext)">
+            <summary>
+             Constructor del repositorio
+            </summary>
+            <param name="db"></param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikeComentarioRepository.ExisteAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikeComentarioRepository.ContarAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikeComentarioRepository.CrearAsync(BlogApi.Models.LikeComentario)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikeComentarioRepository.EliminarAsync(System.Int32,System.Int32)" -->
+        <member name="T:BlogApi.Repositories.LikePostRepository">
+            <summary>
+              Repositorio para manejar los "Me gusta" en publicaciones
+            </summary>
+        </member>
+        <member name="F:BlogApi.Repositories.LikePostRepository._db">
+            <summary>
+              Contexto de la base de datos
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikePostRepository.#ctor(BlogApi.Data.BlogDbContext)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikePostRepository.ExisteAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikePostRepository.ContarAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikePostRepository.EliminarAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Repositories.LikePostRepository.CrearAsync(BlogApi.Models.LikePost)" -->
+        <member name="T:BlogApi.Repositories.NotificacionRepository">
+            <summary>
+            Repositorio para gestionar notificaciones
+            </summary>
+        </member>
+        <member name="M:BlogApi.Repositories.NotificacionRepository.#ctor(BlogApi.Data.BlogDbContext)">
+            <summary>
+            Constructor de NotificacionRepository
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:BlogApi.Repositories.NotificacionRepository.CrearAsync(BlogApi.Models.Notificacion)">
+            <summary>
+            Crea una nueva notificación
+            </summary>
+            <param name="notificacion"></param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.NotificacionRepository.ObtenerPorIdAsync(System.Int32)">
+            <summary>
+            Obtiene una notificación por su ID
+            </summary>
+            <param name="id"></param>
+            <returns>Notificacion</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.NotificacionRepository.ObtenerPorUsuarioAsync(System.Int32)">
+            <summary>
+            Obtiene todas las notificaciones de un usuario
+            </summary>
+            <param name="usuarioId"></param>
+            <returns>IEnumerable de notificaciones</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.NotificacionRepository.MarcarComoLeidaAsync(System.Int32)">
+            <summary>
+            Marca una notificación como leída
+            </summary>
+            <param name="id"></param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.NotificacionRepository.ObtenerNoLeidasPaginadasAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Obtiene las notificaciones no leídas de un usuario con paginación
+            </summary>
+            <param name="usuarioId"></param>
+            <param name="page"></param>
+            <param name="pageSize"></param>
+            <returns>PaginacionResultado de NotificacionDto</returns>
+        </member>
+        <member name="T:BlogApi.Repositories.PostRepository">
+            <summary>
+            Repositorio específico para Posts
+            </summary>
+        </member>
+        <member name="M:BlogApi.Repositories.PostRepository.#ctor(BlogApi.Data.BlogDbContext)">
+            <summary>
+            Constructor del repositorio de posts
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:BlogApi.Repositories.PostRepository.GetPostCompletoAsync(System.Int32)">
+            <summary>
+            Obtiene un post completo por su id, incluyendo relaciones
+            </summary>
+            <param name="id"></param>
+            <returns>Post</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.PostRepository.GetBySlugAsync(System.String)">
+            <summary>
+            Obtiene un post por su slug
+            </summary>
+            <param name="slug"></param>
+            <returns>Post</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.PostRepository.GetPagedAsync(System.Int32,System.Int32)">
+            <summary>
+            Obtiene los posts paginados
+            </summary>
+            <param name="pagina"></param>
+            <param name="tamano"></param>
+            <returns>PaginationDto&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.PostRepository.GetCursorPagedAsync(System.Nullable{System.Int32},System.Int32)">
+            <summary>
+            Obtiene los posts paginados con cursor
+            </summary>
+            <param name="after"></param>
+            <param name="limit"></param>
+            <returns>CursorPaginationDto&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.PostRepository.SearchAsync(System.String)">
+            <summary>
+            Busca posts que coincidan con el texto dado
+            </summary>
+            <param name="texto"></param>
+            <returns>IEnumerable&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.PostRepository.SearchPagedAsync(System.String,System.Int32,System.Int32)">
+            <summary>
+            Busca posts que coincidan con el texto dado y los devuelve paginados
+            </summary>
+            <param name="texto"></param>
+            <param name="pagina"></param>
+            <param name="tamano"></param>
+            <returns>PaginationDto&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.PostRepository.GetByCategoriaAsync(System.Int32)">
+            <summary>
+            Obtiene los posts de una categoría específica
+            </summary>
+            <param name="categoriaId"></param>
+            <returns>IEnumerable&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.PostRepository.GetByCategoriaSlugAsync(System.String)">
+            <summary>
+            Obtiene los posts de una categoría específica mediante su slug
+            </summary>
+            <param name="slug"></param>
+            <returns>IEnumerable&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.PostRepository.GetByTagAsync(System.Int32)">
+            <summary>
+            Obtiene los posts asociados a una etiqueta específica
+            </summary>
+            <param name="tagId"></param>
+            <returns>IEnumerable&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.PostRepository.GetByTagNombreAsync(System.String)">
+            <summary>
+            Obtiene los posts asociados a una etiqueta específica mediante su nombre
+            </summary>
+            <param name="nombre"></param>
+            <returns>IEnumerable&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.PostRepository.GetByAutorAsync(System.Int32)">
+            <summary>
+            Obtiene los posts de un autor específico
+            </summary>
+            <param name="usuarioId"></param>
+            <returns>IEnumerable&lt;Post&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.PostRepository.GetByAutorNombreAsync(System.String)">
+            <summary>
+            Obtiene los posts de un autor específico mediante su nombre
+            </summary>
+            <param name="nombre"></param>
+            <returns>IEnumerable&lt;Post&gt;</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.#ctor(BlogApi.Repositories.Interfaces.ICategoriaRepository)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.GetAllAsync" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.GetByIdAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.CreateAsync(BlogApi.Models.Categoria)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.UpdateAsync(System.Int32,BlogApi.Models.Categoria)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.DeleteAsync(System.Int32)" -->
+        <member name="T:BlogApi.Services.ComentarioService">
+            <summary>
+            Servicio para gestionar comentarios
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.ComentarioService._repo">
+            <summary>
+                Repositorio de comentarios
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.ComentarioService._notificacionService">
+            <summary>
+              Servicio de notificaciones
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.ComentarioService._context">
+            <summary>
+                Contexto de la base de datos
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.ComentarioService._emailService">
+            <summary>
+                Servicio de email
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.ComentarioService._emailTemplateService">
+            <summary>
+                Servicio de plantillas de email
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.ComentarioService._hub">
+            <summary>
+               Hub de notificaciones para SignalR
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.ComentarioService.#ctor(BlogApi.Repositories.Interfaces.IComentarioRepository,BlogApi.Data.BlogDbContext,BlogApi.Services.Interfaces.INotificacionService,BlogApi.Services.Interfaces.IEmailService,Microsoft.AspNetCore.SignalR.IHubContext{BlogApi.Hubs.NotificacionesHub})">
+            <summary>
+            Constructor de ComentarioService
+            </summary>
+            <param name="repo"></param>
+            <param name="context"></param>
+            <param name="notificacionService"></param>
+            <param name="emailService"></param>
+            <param name="hub"></param>
+        </member>
+        <member name="M:BlogApi.Services.ComentarioService.GetComentariosDePostAsync(System.Int32)">
+            <summary>
+            Obtiene los comentarios de un post
+            </summary>
+            <param name="postId"></param>
+            <returns>IEnumerable&lt;Comentario&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Services.ComentarioService.CrearComentarioAsync(BlogApi.Models.Comentario)">
+            <summary>
+            Crea un nuevo comentario
+            </summary>
+            <param name="comentario"></param>
+            <returns>Comentario</returns>
+        </member>
+        <member name="M:BlogApi.Services.ComentarioService.CambiarEstadoAsync(System.Int32,System.String)">
+            <summary>
+            Cambia el estado de un comentario
+            </summary>
+            <param name="id"></param>
+            <param name="estado"></param>
+            <returns>bool</returns>
+        </member>
+        <member name="M:BlogApi.Services.ComentarioService.EliminarComentarioAsync(System.Int32,System.Int32,System.Boolean)">
+            <summary>
+            Elimina un comentario por su ID
+            </summary>
+            <param name="comentarioId"></param>
+            <param name="usuarioId"></param>
+            <param name="puedeBorrarTodo"></param>
+            <returns>true si se eliminó correctamente</returns>
+        </member>
+        <member name="M:BlogApi.Services.ComentarioService.GetByEstadoAsync(System.String)">
+            <summary>
+            Obtiene los comentarios por estado
+            </summary>
+            <param name="estado"></param>
+            <returns>IEnumerable&lt;Comentario&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Services.ComentarioService.GetByIdAsync(System.Int32)">
+            <summary>
+            Obtiene un comentario por su ID
+            </summary>
+            <param name="id"></param>
+            <returns>Comentario o null</returns>
+        </member>
+        <member name="F:BlogApi.Services.EmailService._apiKey">
+            <summary>
+            Constructor de EmailService
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "F:BlogApi.Services.EmailService._fromEmail" -->
+        <!-- Badly formed XML comment ignored for member "F:BlogApi.Services.EmailService._fromName" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.EmailService.#ctor(Microsoft.Extensions.Configuration.IConfiguration)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.EmailService.EnviarAsync(System.String,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.EmailTemplateService.CargarPlantilla(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.EmailTemplateService.ReemplazarVariables(System.String,System.Collections.Generic.Dictionary{System.String,System.String})" -->
+        <member name="M:BlogApi.Services.HubClient.IniciarAsync(System.String)">
+            <summary>
+            Inicia la conexión al Hub de notificaciones usando el token JWT.
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.HubClient.DetenerAsync">
+            <summary>
+            Cierra la conexión al Hub.
+            </summary>
+        </member>
+        <member name="T:BlogApi.Services.Interfaces.IComentarioService">
+            <summary>
+            Servicio para gestionar comentarios.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IComentarioService.GetComentariosDePostAsync(System.Int32)" -->
+        <member name="M:BlogApi.Services.Interfaces.IComentarioService.CrearComentarioAsync(BlogApi.Models.Comentario)">
+            <summary>
+            Crea un nuevo comentario o respuesta.
+            </summary>
+            <param name="comentario"></param>
+            <returns>El comentario creado</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IComentarioService.CambiarEstadoAsync(System.Int32,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IComentarioService.GetByEstadoAsync(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IComentarioService.GetByIdAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IComentarioService.EliminarComentarioAsync(System.Int32,System.Int32,System.Boolean)" -->
+        <member name="T:BlogApi.Services.Interfaces.ILikeService">
+            <summary>
+              Servicio para manejar los "Me gusta" en posts y comentarios
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.ILikeService.LikePostAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.ILikeService.UnlikePostAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.ILikeService.LikeComentarioAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.ILikeService.UnlikeComentarioAsync(System.Int32,System.Int32)" -->
+        <member name="M:BlogApi.Services.Interfaces.INotificacionService.CrearAsync(System.Int32,System.String)">
+            <summary>
+            Crea una nueva notificación para un usuario
+            </summary>
+            <param name="usuarioId"></param>
+            <param name="mensaje"></param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.INotificacionService.GetByUsuarioAsync(System.Int32)">
+             <summary>
+            
+             </summary>
+             <param name="usuarioId"></param>
+             <returns>IEnumerable&lt;Notificacion&gt;</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.INotificacionService.MarcarComoLeidaAsync(System.Int32,System.Int32)">
+            <summary>
+            Marca una notificación como leída
+            </summary>
+            <param name="id"></param>
+            <param name="usuarioId"></param>
+            <returns>true si se marca como leída, false en caso contrario</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.INotificacionService.CrearNotificacionLikePostAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Crea una notificación de "Me gusta" en un post
+            </summary>
+            <param name="usuarioDestinoId"></param>
+            <param name="usuarioOrigenId"></param>
+            <param name="postId"></param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.INotificacionService.CrearNotificacionLikeComentarioAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Crea una notificación de "Me gusta" en un comentario
+            </summary>
+            <param name="usuarioDestinoId"></param>
+            <param name="usuarioOrigenId"></param>
+            <param name="comentarioId"></param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.INotificacionService.MarcarTodasComoLeidasAsync(System.Int32)">
+            <summary>
+            Marca todas las notificaciones de un usuario como leídas
+            </summary>
+            <param name="usuarioId"></param>
+            <returns>Task</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IPostService.GetAllAsync" -->
+        <member name="M:BlogApi.Services.Interfaces.IPostService.GetByIdAsync(System.Int32)">
+            <summary>
+            Obtiene un post por su id
+            </summary>
+            <param name="id"></param>
+            <returns>Post</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.IPostService.DeleteAsync(System.Int32)">
+            <summary>
+            Elimina un post por su id
+            </summary>
+            <param name="id"></param>
+            <returns>bool</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.IPostService.CreateAsync(BlogApi.Models.Post,System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Crea un nuevo post con tags asociados
+            </summary>
+            <param name="post"></param>
+            <param name="tagIds"></param>
+            <returns>Post</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.IPostService.UpdateAsync(System.Int32,BlogApi.Models.Post,System.Collections.Generic.List{System.Int32},System.Boolean)">
+            <summary>
+            Actualiza un post existente
+            </summary>
+            <param name="id"></param>
+            <param name="post"></param>
+            <param name="tagIds"></param>
+            <param name="puedeEditarTodo"></param>
+            <returns>bool</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IPostService.GetPagedAsync(System.Int32,System.Int32)" -->
+        <member name="M:BlogApi.Services.Interfaces.IPostService.GetBySlugAsync(System.String)">
+            <summary>
+            Obtiene un post por su slug
+            </summary>
+            <param name="slug"></param>
+            <returns>Post</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IPostService.SearchAsync(System.String)" -->
+        <member name="M:BlogApi.Services.Interfaces.IPostService.GetByCategoriaAsync(System.Int32)">
+            <summary>
+            Obtiene los posts de una categoría específica
+            </summary>
+            <param name="categoriaId"></param>
+            <returns>Post</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IPostService.GetByCategoriaSlugAsync(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IPostService.GetByTagAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IPostService.GetByTagNombreAsync(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IPostService.GetByAutorAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IPostService.GetByAutorNombreAsync(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IPostService.GetCursorPagedAsync(System.Nullable{System.Int32},System.Int32)" -->
+        <member name="T:BlogApi.Services.Interfaces.IUsuarioService">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.IUsuarioService.GetByEmailAsync(System.String)">
+            <summary>
+            Obtiene un usuario por su email
+            </summary>
+            <param name="email"></param>
+            <returns>Usuario</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.IUsuarioService.CrearUsuarioAsync(BlogApi.Models.Usuario)">
+            <summary>
+            Crea un nuevo usuario
+            </summary>
+            <param name="usuario"></param>
+            <returns>Usuario</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.IUsuarioService.RegistrarUsuarioAsync(BlogApi.DTO.RegistroDto)">
+            <summary>
+            Registra un nuevo usuario
+            </summary>
+            <param name="dto"></param>
+            <returns>Usuario</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.IUsuarioService.VerificarEmailAsync(System.String)">
+            <summary>
+            Verifica el email del usuario
+            </summary>
+            <param name="token"></param>
+            <returns>Verdadero si se verificó correctamente, falso en caso contrario</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.IUsuarioService.LoginAsync(BlogApi.DTO.LoginDto)">
+            <summary>
+            Inicia sesión con email y contraseña
+            </summary>
+            <param name="dto"></param>
+            <returns>Resultado del intento de login</returns>
+        </member>
+        <member name="T:BlogApi.Services.Interfaces.ISanitizerService">
+            <summary>
+            Servicio para sanitizar entradas de usuario y prevenir ataques XSS
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.ISanitizerService.SanitizePlainText(System.String)">
+            <summary>
+            Sanitiza texto plano (títulos, inputs sin HTML)
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.ISanitizerService.SanitizeMarkdown(System.String)">
+            <summary>
+            Sanitiza contenido Markdown o HTML permitido
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.ISanitizerService.ContainsDangerousPattern(System.String)">
+            <summary>
+            Detecta patrones peligrosos (XSS)
+            </summary>
+        </member>
+        <member name="T:BlogApi.Services.JwtService">
+            <summary>
+            Servicio para la generación de JWT
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.JwtService.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Constructor de JwtService
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.JwtService.GenerarToken(BlogApi.Models.Usuario)">
+            <summary>
+            Genera un token JWT para el usuario especificado
+            </summary>
+        </member>
+        <member name="T:BlogApi.Services.LikeService">
+            <summary>
+                    Servicio para manejar los "Me gusta" en posts y comentarios
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.LikeService._likePostRepo">
+            <summary>
+            Repositorio para los "Me gusta" en posts
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.LikeService._likeComentarioRepo">
+            <summary>
+            Repositorio para los "Me gusta" en comentarios
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.LikeService.#ctor(BlogApi.Repositories.ILikePostRepository,BlogApi.Repositories.Interfaces.ILikeComentarioRepository)">
+            <summary>
+            Constructor del servicio
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.LikeService.LikePostAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.LikeService.UnlikePostAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.LikeService.LikeComentarioAsync(System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.LikeService.UnlikeComentarioAsync(System.Int32,System.Int32)" -->
+        <member name="T:BlogApi.Services.NotificacionesService">
+            <summary>
+            Servicio para gestionar notificaciones
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.NotificacionesService._db">
+            <summary>
+            Constructor de NotificacionesService
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.NotificacionesService._hub">
+            <summary>
+            Hub de notificaciones para SignalR
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionesService.#ctor(BlogApi.Data.BlogDbContext,Microsoft.AspNetCore.SignalR.IHubContext{BlogApi.Hubs.NotificacionesHub})">
+            <summary>
+            Constructor de NotificacionesService
+            </summary>
+            <param name="db"></param>
+            <param name="hub"></param>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionesService.CrearAsync(BlogApi.Models.Notificacion)">
+            <summary>
+            Crea una nueva notificación
+            </summary>
+            <param name="notificacion"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionesService.MarcarTodasComoLeidasAsync(System.Int32)">
+            <summary>
+            Marca una notificación como leída
+            </summary>
+            <param name="userId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionesService.ObtenerNoLeidasAsync(System.Int32)">
+            <summary>
+            Obtiene las notificaciones no leídas de un usuario
+            </summary>
+            <param name="id"></param>
+            <returns>Lista de notificaciones no leídas</returns>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionesService.GetPaginadasAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Obtiene notificaciones paginadas de un usuario
+            </summary>
+            <param name="userId"></param>
+            <param name="page"></param>
+            <param name="pageSize"></param>
+        </member>
+        <member name="T:BlogApi.Services.NotificacionService">
+            <summary>
+            Servicio para gestionar notificaciones
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.NotificacionService._context">
+            <summary>
+            Contexto de la base de datos
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionService.#ctor(BlogApi.Data.BlogDbContext,BlogApi.Repositories.INotificacionRepository,Microsoft.AspNetCore.SignalR.IHubContext{BlogApi.Hubs.NotificacionesHub})">
+            <summary>
+            Constructor de NotificacionService
+            </summary>
+            <param name="context"></param>
+            <param name="notificacionRepository"></param>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionService.CrearAsync(System.Int32,System.String)">
+            <summary>
+            Crea una nueva notificación para un usuario
+            </summary>
+            <param name="usuarioId"></param>
+            <param name="mensaje"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionService.GetByUsuarioAsync(System.Int32)">
+            <summary>
+            Obtiene las notificaciones de un usuario
+            </summary>
+            <param name="usuarioId"></param>
+            <returns>IEnumerable de notificaciones</returns>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionService.MarcarComoLeidaAsync(System.Int32,System.Int32)">
+            <summary>
+            Marca una notificación como leída
+            </summary>
+            <param name="id"></param>
+            <param name="usuarioId"></param>
+            <returns>bool</returns>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionService.CrearNotificacionLikePostAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Crea una notificación de "Me gusta" en un post
+            </summary>
+            <param name="usuarioDestinoId"></param>
+            <param name="usuarioOrigenId"></param>
+            <param name="postId"></param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionService.CrearNotificacionLikeComentarioAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Crea una notificación de "Me gusta" en un comentario
+            </summary>
+            <param name="usuarioDestinoId"></param>
+            <param name="usuarioOrigenId"></param>
+            <param name="comentarioId"></param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionService.MarcarTodasComoLeidasAsync(System.Int32)">
+            <summary>
+            Marca todas las notificaciones de un usuario como leídas
+            </summary>
+            <param name="usuarioId"></param>
+            <returns>Task</returns>
+        </member>
+        <member name="F:BlogApi.Services.PostService._repo">
+            <summary>
+            Repositorio de posts
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.PostService._tagRepo">
+            <summary>
+            Repositorio de tags
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.PostService.#ctor(BlogApi.Repositories.Interfaces.IPostRepository,BlogApi.Repositories.ITagRepository)">
+            <summary>
+            Constructor de PostService
+            </summary>
+            <param name="repo"></param>
+            <param name="tagRepo"></param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetAllAsync" -->
+        <member name="M:BlogApi.Services.PostService.GetByIdAsync(System.Int32)">
+            <summary>
+            Obtiene un post por su id
+            </summary>
+            <param name="id"></param>
+            <returns>Post</returns>
+        </member>
+        <member name="M:BlogApi.Services.PostService.CreateAsync(BlogApi.Models.Post,System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Crea un nuevo post con tags asociados
+            </summary>
+            <param name="post"></param>
+            <param name="tagIds"></param>
+            <returns>Post</returns>
+        </member>
+        <member name="M:BlogApi.Services.PostService.UpdateAsync(System.Int32,BlogApi.Models.Post,System.Collections.Generic.List{System.Int32},System.Boolean)">
+            <summary>
+            Actualiza un post existente
+            </summary>
+            <param name="id"></param>
+            <param name="post"></param>
+            <param name="tagIds"></param>
+            <param name="puedeEditarTodo"></param>
+            <returns>bool</returns>
+        </member>
+        <member name="M:BlogApi.Services.PostService.DeleteAsync(System.Int32)">
+            <summary>
+            Elimina un post por su id
+            </summary>
+            <param name="id"></param>
+            <returns>bool</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetPagedAsync(System.Int32,System.Int32)" -->
+        <member name="M:BlogApi.Services.PostService.GetBySlugAsync(System.String)">
+            <summary>
+            Obtiene un post por su slug
+            </summary>
+            <param name="slug"></param>
+            <returns>Post</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.SearchAsync(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.SearchPagedAsync(System.String,System.Int32,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetByCategoriaAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetByCategoriaSlugAsync(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetByTagAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetByTagNombreAsync(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetByAutorAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetByAutorNombreAsync(System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetCursorPagedAsync(System.Nullable{System.Int32},System.Int32)" -->
+        <member name="T:BlogApi.Services.Security.SanitizerService">
+            <summary>
+            Servicio para sanitizar entradas de usuario y prevenir ataques XSS
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.Security.SanitizerService.#ctor">
+            <summary>
+            Constructor de SanitizerService
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.Security.SanitizerService.SanitizePlainText(System.String)">
+            <summary>
+            Sanitiza texto plano eliminando caracteres peligrosos
+            </summary>
+            <param name="input"></param>
+            <returns>Texto plano sanitizado</returns>
+        </member>
+        <member name="M:BlogApi.Services.Security.SanitizerService.SanitizeHtml(System.String)">
+            <summary>
+            Sanitiza HTML eliminando etiquetas y atributos peligrosos
+            </summary>
+            <param name="input"></param>
+            <returns>HTML sanitizado</returns>
+        </member>
+        <member name="M:BlogApi.Services.Security.SanitizerService.SanitizeMarkdown(System.String)">
+            <summary>
+            Sanitiza contenido Markdown eliminando scripts y etiquetas peligrosas
+            </summary>
+            <param name="markdownInput"></param>
+            <returns>Markdown sanitizado</returns>
+        </member>
+        <member name="M:BlogApi.Services.Security.SanitizerService.StripHtmlTags(System.String)">
+            <summary>
+            Quita etiquetas HTML de un string
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.Security.SanitizerService.ContainsDangerousPattern(System.String)">
+            <summary>
+            Detecta patrones peligrosos (XSS)
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.SmtpEmailService._config">
+            <summary>
+            Configuración de la aplicación
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.SmtpEmailService.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Constructor de SmtpEmailService
+            </summary>
+            <param name="config"></param>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.SmtpEmailService.EnviarAsync(System.String,System.String,System.String)" -->
+        <member name="F:BlogApi.Services.TagService._repo">
+            <summary>
+            Repositorio de tags
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.TagService.#ctor(BlogApi.Repositories.ITagRepository)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.TagService.GetAllAsync" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.TagService.GetByIdAsync(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.TagService.CreateAsync(BlogApi.Models.Tag)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.TagService.UpdateAsync(System.Int32,BlogApi.Models.Tag)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.TagService.DeleteAsync(System.Int32)" -->
+        <member name="T:BlogApi.Services.TokenService">
+            <summary>
+            Servicio para la generación de tokens JWT
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.TokenService._config">
+            <summary>
+            Configuración de la aplicación
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.TokenService.#ctor(Microsoft.Extensions.Configuration.IConfiguration)">
+            <summary>
+            Constructor de TokenService
+            </summary>
+            <param name="config"></param>
+        </member>
+        <member name="M:BlogApi.Services.TokenService.GenerateToken(BlogApi.Models.Usuario)">
+            <summary>
+            Genera un token JWT para un usuario
+            </summary>
+            <param name="usuario"></param>
+            <returns>Token JWT generado</returns>
+            <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="T:BlogApi.Services.UsuarioService">
+            <summary>
+            Servicio para la gestión de usuarios
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.UsuarioService._repo">
+            <summary>
+                Repositorio de usuarios
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.UsuarioService._context">
+            <summary>
+            Repositorio de usuarios
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.UsuarioService.#ctor(BlogApi.Repositories.IUsuarioRepository,BlogApi.Data.BlogDbContext)">
+            <summary>
+            Constructor de UsuarioService
+            </summary>
+            <param name="repo"></param>
+            <param name="context"></param>
+        </member>
+        <member name="M:BlogApi.Services.UsuarioService.GetByEmailAsync(System.String)">
+            <summary>
+            Obtiene un usuario por su email
+            </summary>
+            <param name="email"></param>
+            <returns>Usuario o null</returns>
+        </member>
+        <member name="M:BlogApi.Services.UsuarioService.CrearUsuarioAsync(BlogApi.Models.Usuario)">
+            <summary>
+            Crea un nuevo usuario
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.UsuarioService.RegistrarUsuarioAsync(BlogApi.DTO.RegistroDto)">
+            <summary>
+            Registra un nuevo usuario
+            </summary>
+            <param name="dto"></param>
+            <returns>Usuario registrado o null si el email ya existe</returns>
+        </member>
+        <member name="M:BlogApi.Services.UsuarioService.VerificarEmailAsync(System.String)">
+            <summary>
+            Verifica el email del usuario
+            </summary>
+            <param name="token"></param>
+            <returns>Verdadero si se verificó correctamente, falso en caso contrario</returns>
+        </member>
+        <member name="M:BlogApi.Services.UsuarioService.LoginAsync(BlogApi.DTO.LoginDto)">
+            <summary>
+            Inicia sesión con email y contraseña
+            </summary>
+            <param name="dto"></param>
+            <returns>Resultado del intento de login</returns>
+        </member>
+        <member name="T:ComentariosController">
+            <summary>
+            Controlador para gestionar comentarios en el blog.
+            </summary>
+        </member>
+        <member name="F:ComentariosController._service">
+            <summary>
+            Servicio de comentarios.
+            </summary>
+        </member>
+        <member name="F:ComentariosController._postService">
+            <summary>
+            Servicio de posts.
+            </summary>
+        </member>
+        <member name="F:ComentariosController._notificaciones">
+            <summary>
+            Servicio de notificaciones.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:ComentariosController.#ctor(BlogApi.Services.Interfaces.IComentarioService,BlogApi.Services.Interfaces.IPostService,BlogApi.Services.Interfaces.INotificacionesService)" -->
+        <!-- Badly formed XML comment ignored for member "M:ComentariosController.GetByPost(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:ComentariosController.Create(BlogApi.DTO.CreateComentarioDto)" -->
+        <!-- Badly formed XML comment ignored for member "M:ComentariosController.Delete(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:ComentariosController.CambiarEstado(System.Int32,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:ComentariosController.GetByEstado(System.String)" -->
+        <member name="T:Program">
+            <summary>
+            Auto-generated public partial Program class for top-level statement apps.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.OpenApi.Generated.DocumentationCommentIdHelper.CreateDocumentationId(System.Type)">
+            <summary>
+            Generates a documentation comment ID for a type.
+            Example: T:Namespace.Outer+Inner`1 becomes T:Namespace.Outer.Inner`1
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.OpenApi.Generated.DocumentationCommentIdHelper.CreateDocumentationId(System.Reflection.PropertyInfo)">
+            <summary>
+            Generates a documentation comment ID for a property.
+            Example: P:Namespace.ContainingType.PropertyName or for an indexer P:Namespace.ContainingType.Item(System.Int32)
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.OpenApi.Generated.DocumentationCommentIdHelper.CreateDocumentationId(System.Type,System.String)">
+            <summary>
+            Generates a documentation comment ID for a property given its container type and property name.
+            Example: P:Namespace.ContainingType.PropertyName
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.OpenApi.Generated.DocumentationCommentIdHelper.CreateDocumentationId(System.Reflection.MethodInfo)">
+            <summary>
+            Generates a documentation comment ID for a method (or constructor).
+            For example:
+              M:Namespace.ContainingType.MethodName(ParamType1,ParamType2)~ReturnType
+              M:Namespace.ContainingType.#ctor(ParamType)
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.OpenApi.Generated.DocumentationCommentIdHelper.GetTypeDocId(System.Type,System.Boolean,System.Boolean)">
+            <summary>
+            Generates a documentation ID string for a type.
+            This method handles nested types (replacing '+' with '.'),
+            generic types, arrays, pointers, by-ref types, and generic parameters.
+            The <paramref name="includeGenericArguments"/> flag controls whether
+            constructed generic type arguments are emitted, while <paramref name="omitGenericArity"/>
+            controls whether the generic arity marker (e.g. "`1") is appended.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.OpenApi.Generated.DocumentationCommentIdHelper.NormalizeDocId(System.String)">
+            <summary>
+            Normalizes a documentation comment ID to match the compiler-style format.
+            Strips the return type suffix for ordinary methods but retains it for conversion operators.
+            </summary>
+            <param name="docId">The documentation comment ID to normalize.</param>
+            <returns>The normalized documentation comment ID.</returns>
+        </member>
+    </members>
+</doc>
