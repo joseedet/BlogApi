@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers;
 
+/// <summary>
+/// Controlador para gestionar los posts del blog
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class PostsController : ControllerBase

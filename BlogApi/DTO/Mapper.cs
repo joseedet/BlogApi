@@ -63,6 +63,7 @@ public static class Mapper
             Id = post.Id,
             Titulo = post.Titulo,
             Contenido = post.Contenido,
+            Slug = post.Slug,
             FechaCreacion = post.FechaCreacion,
             FechaActualizacion = post.FechaActualizacion,
 
