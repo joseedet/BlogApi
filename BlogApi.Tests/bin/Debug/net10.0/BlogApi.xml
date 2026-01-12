@@ -1631,6 +1631,11 @@
             <param name="usuarioId"></param>
             <returns>Task</returns>
         </member>
+        <member name="T:BlogApi.Services.PostService">
+            <summary>
+                Servicio para manejar la lógica de posts
+            </summary>
+        </member>
         <member name="F:BlogApi.Services.PostService._repo">
             <summary>
             Repositorio de posts

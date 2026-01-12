@@ -332,3 +332,5 @@
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/obj/Debug/net10.0/BlogApi.Tests.pdb
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/obj/Debug/net10.0/BlogApi.Tests.genruntimeconfig.cache
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/obj/Debug/net10.0/ref/BlogApi.Tests.dll
+/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/bin/Debug/net10.0/Castle.Core.dll
+/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/bin/Debug/net10.0/Moq.dll
