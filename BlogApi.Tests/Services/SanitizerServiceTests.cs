@@ -1,7 +1,7 @@
 using BlogApi.Services.Security;
 using Xunit;
 
-namespace BlogApi.Tests;
+namespace BlogApi.Tests.Services;
 
 public class SanitizerServiceTests
 {
