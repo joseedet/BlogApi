@@ -106,8 +106,9 @@ public class PostService : IPostService
     /// </summary>
     /// <param name="post"></param>
     /// <param name="tagIds"></param>
+    /// <param name="usuarioId"></param>
     /// <returns>Post</returns>
-    public async Task<Post> CreateAsync(Post post, List<int> tagIds)
+    public async Task<Post> CreateAsync(Post post, List<int> tagIds, int usuarioId)
     {
         ValidarEntrada(post, tagIds);
         await ValidarCategoriaAsync(post.CategoriaId);
@@ -129,6 +130,11 @@ public class PostService : IPostService
         var tags = await _tagRepo.Query().Where(t => tagIds.Contains(t.Id)).ToListAsync();
 
         post.Tags = tags;
+
+        SanitizarPost(post);
+        post.UsuarioId = usuarioId;
+        post.FechaCreacion = DateTime.UtcNow;
+        post.FechaActualizacion = DateTime.UtcNow;
 
         await _repo.AddAsync(post);
         await _repo.SaveChangesAsync();
@@ -168,6 +174,8 @@ public class PostService : IPostService
         // 🔥 VALIDACIÓN DE PERMISOS
         if (!puedeEditarTodo && existing.UsuarioId != usuarioId)
             return false;
+
+        SanitizarPost(post);
 
         // Actualizar campos básicos
         existing.Titulo = post.Titulo;
@@ -535,6 +543,23 @@ public class PostService : IPostService
         // Si no es admin, debe ser el autor del post
         if (post.UsuarioId != usuarioId)
             throw new UnauthorizedAccessException("No puedes editar posts de otros usuarios");
+    }
+
+    /// <summary>
+    /// Sanitiza el título y contenido del post
+    /// </summary>
+    /// <param name="post"></param>
+    private void SanitizarPost(Post post)
+    {
+        // Sanitizar título (texto plano)
+        post.Titulo = _sanitizerService.SanitizePlainText(post.Titulo);
+
+        // Sanitizar contenido (HTML/Markdown permitido)
+        post.Contenido = _sanitizerService.SanitizeMarkdown(post.Contenido);
+
+        // Validación extra opcional: detectar XSS
+        if (_sanitizerService.ContainsDangerousPattern(post.Contenido))
+            throw new ArgumentException("El contenido contiene patrones peligrosos (XSS).");
     }
 
     /// <summary>

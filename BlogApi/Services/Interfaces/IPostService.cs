@@ -34,8 +34,9 @@ public interface IPostService
     /// </summary>
     /// <param name="post"></param>
     /// <param name="tagIds"></param>
+    /// <param name="usuarioId"></param>
     /// <returns>Post</returns>
-    Task<Post> CreateAsync(Post post, List<int> tagIds);
+    Task<Post> CreateAsync(Post post, List<int> tagIds, int usuarioId);
 
     //Task<bool> UpdateAsync(int id, Post post, List<int> tagIds);
 
