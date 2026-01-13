@@ -110,7 +110,8 @@ public class PostsController : ControllerBase
     [Authorize(Policy = "PuedeEditarPost")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, CreatePostDto dto)
-    {
+    {   
+        
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
@@ -133,7 +134,7 @@ public class PostsController : ControllerBase
                 dto.TagIds ?? new List<int>(),
                 esAdmin || esEditor
             );
-
+            
             if (!ok)
                 return BadRequest(); // o NotFound, según tu diseño
 
@@ -308,5 +309,30 @@ public class PostsController : ControllerBase
                 NextCursor = result.NextCursor,
             }
         );
+    }
+    /// <summary>
+    /// Valida la entrada para crear o actualizar un post
+    /// </summary>
+    /// <param name="post"></param>
+    /// <param name="tagIds"></param>
+    private void ValidarEntrada(Post post, List<int> tagIds)
+    {
+        if (post == null)
+            throw new ArgumentException("El post no puede ser nulo");
+
+        if (string.IsNullOrWhiteSpace(post.Titulo))
+            throw new ArgumentException("El título es obligatorio");
+
+        if (string.IsNullOrWhiteSpace(post.Contenido))
+            throw new ArgumentException("El contenido es obligatorio");
+
+        if (post.CategoriaId <= 0)
+            throw new ArgumentException("La categoría es inválida");
+
+        if (tagIds == null)
+            throw new ArgumentException("La lista de tags no puede ser nula");
+
+        if (tagIds.Any(id => id <= 0))
+            throw new ArgumentException("Todos los tags deben tener un ID válido");
     }
 }

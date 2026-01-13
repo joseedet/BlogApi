@@ -79,6 +79,7 @@ public class PostService : IPostService
     /// <returns>Post</returns>
     public async Task<Post> CreateAsync(Post post, List<int> tagIds)
     {
+        ValidarEntrada(post, tagIds);
         // Generar slug base
         var baseSlug = SlugHelper.GenerateSlug(post.Titulo);
 
@@ -113,6 +114,7 @@ public class PostService : IPostService
     /// <returns>bool</returns>
     public async Task<bool> UpdateAsync(int id, Post post, List<int> tagIds, bool puedeEditarTodo)
     {
+        ValidarEntrada(post, tagIds);
         var existing = await _repo
             .Query()
             .Include(p => p.Tags)
@@ -400,5 +402,32 @@ public class PostService : IPostService
         }
 
         return new CursorPaginationDto<Post> { Items = datos, NextCursor = nextCursor };
+    }
+
+    /// <summary>
+    /// Valida la entrada para crear o actualizar un post
+    /// </summary>
+    /// <param name="post"></param>
+    /// <param name="tagIds"></param>
+    /// <exception cref="ArgumentException"></exception>
+    private void ValidarEntrada(Post post, List<int> tagIds)
+    {
+        if (post == null)
+            throw new ArgumentException("El post no puede ser nulo");
+
+        if (string.IsNullOrWhiteSpace(post.Titulo))
+            throw new ArgumentException("El título es obligatorio");
+
+        if (string.IsNullOrWhiteSpace(post.Contenido))
+            throw new ArgumentException("El contenido es obligatorio");
+
+        if (post.CategoriaId <= 0)
+            throw new ArgumentException("La categoría es inválida");
+
+        if (tagIds == null)
+            throw new ArgumentException("La lista de tags no puede ser nula");
+
+        if (tagIds.Any(id => id <= 0))
+            throw new ArgumentException("Todos los tags deben tener un ID válido");
     }
 }
