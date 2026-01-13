@@ -111,6 +111,9 @@ public class PostsController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, CreatePostDto dto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         try
         {
             var post = new Post
@@ -124,12 +127,21 @@ public class PostsController : ControllerBase
             bool esAdmin = User.IsInRole("Administrador");
             bool esEditor = User.IsInRole("Editor");
 
-            var ok = await _service.UpdateAsync(id, post, dto.TagIds, esAdmin || esEditor);
+            var ok = await _service.UpdateAsync(
+                id,
+                post,
+                dto.TagIds ?? new List<int>(),
+                esAdmin || esEditor
+            );
+
             if (!ok)
-                return NotFound();
+                return BadRequest(); // o NotFound, según tu diseño
 
             var updated = await _service.GetByIdAsync(id);
-            return Ok(updated!.ToDto());
+            if (updated == null)
+                return NotFound();
+
+            return Ok(updated.ToDto());
         }
         catch (ArgumentException ex)
         {

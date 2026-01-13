@@ -56,6 +56,7 @@ public class PostsControllerTests
         var data = Assert.IsType<PostDto>(ok.Value);
 
         Assert.Equal(1, data.Id);
+        Assert.Equal("Hola", data.Titulo);
     }
 
     [Fact]
@@ -66,6 +67,21 @@ public class PostsControllerTests
         var result = await _controller.GetById(99);
 
         Assert.IsType<NotFoundResult>(result);
+        _service.Verify(s => s.GetByIdAsync(1), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetById_ShouldReturnBadRequest_WhenServiceThrowsArgumentException()
+    {
+        _service
+            .Setup(s => s.GetByIdAsync(1))
+            .ThrowsAsync(new ArgumentException("Error de prueba"));
+
+        var result = await _controller.GetById(1);
+
+        var bad = Assert.IsType<BadRequestObjectResult>(result);
+        var error = bad.Value!.ToString();
+        Assert.Contains("Error de prueba", error);
     }
 
     // ------------------------------------------------------------
@@ -148,8 +164,12 @@ public class PostsControllerTests
         Assert.Equal(1, data.Id);
     }
 
+    /// <summary>
+    /// Actualiza un post y devuelve BadRequest si el servicio devuelve false
+    /// </summary>
+    /// <returns>BadRequestResult</returns>
     [Fact]
-    public async Task Update_ShouldReturnNotFound_WhenServiceReturnsFalse()
+    public async Task Update_ShouldReturnBadRequest_WhenServiceReturnsFalse()
     {
         _service
             .Setup(s => s.UpdateAsync(1, It.IsAny<Post>(), It.IsAny<List<int>>(), It.IsAny<bool>()))
@@ -165,7 +185,7 @@ public class PostsControllerTests
 
         var result = await _controller.Update(1, dto);
 
-        Assert.IsType<NotFoundResult>(result);
+        Assert.IsType<BadRequestResult>(result);
     }
 
     // ------------------------------------------------------------
@@ -179,8 +199,14 @@ public class PostsControllerTests
         var result = await _controller.Delete(1);
 
         Assert.IsType<NoContentResult>(result);
+
+        _service.Verify(s => s.DeleteAsync(1), Times.Once);
     }
 
+    /// <summary>
+    /// Elimina un post y devuelve NotFound si el post no existe
+    /// </summary>
+    /// <returns>NotFoundResult</returns>
     [Fact]
     public async Task Delete_ShouldReturnNotFound_WhenPostDoesNotExist()
     {
@@ -189,8 +215,29 @@ public class PostsControllerTests
         var result = await _controller.Delete(1);
 
         Assert.IsType<NotFoundResult>(result);
+
+        _service.Verify(s => s.DeleteAsync(1), Times.Once);
     }
 
+    /// <summary>
+    /// Elimina un post y devuelve BadRequest si el servicio lanza ArgumentException
+    /// </summary>
+    /// <returns>BadRequestObjectResult</returns>
+    [Fact]
+    public async Task Delete_ShouldReturnBadRequest_WhenServiceThrowsArgumentException()
+    {
+        _service.Setup(s => s.DeleteAsync(1)).ThrowsAsync(new ArgumentException("Error de prueba"));
+
+        var result = await _controller.Delete(1);
+
+        var bad = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.NotNull(bad.Value); // opcional pero profesional
+    }
+
+    /// <summary>
+    /// Crea un post y devuelve BadRequest si el servicio devuelve null
+    /// </summary>
+    /// <returns>BadRequestResult</returns>
     [Fact]
     public async Task Create_ShouldReturnBadRequest_WhenServiceReturnsNull()
     {
@@ -208,6 +255,10 @@ public class PostsControllerTests
         Assert.IsType<BadRequestResult>(result);
     }
 
+    /// <summary>
+    /// Actualiza un post y devuelve BadRequest si el modelo es inválido
+    /// </summary>
+    /// <returns>BadRequestObjectResult</returns>
     [Fact]
     public async Task Create_ShouldReturnBadRequest_WhenModelStateIsInvalid()
     {
@@ -225,5 +276,81 @@ public class PostsControllerTests
 
         var bad = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Contains("Titulo", bad.Value.ToString());
+    }
+
+    /// <summary>
+    /// Actualiza un post y devuelve BadRequest si el modelo es inválido
+    /// </summary>
+    /// <returns>BadRequestObjectResult</returns>
+    [Fact]
+    public async Task Update_ShouldReturnBadRequest_WhenModelStateIsInvalid()
+    {
+        var dto = new CreatePostDto
+        {
+            Titulo = "", // inválido cuando actives [Required]
+            Contenido = "Contenido",
+            CategoriaId = 1,
+            TagIds = new List<int>(),
+        };
+
+        // Forzamos un error de validación
+        _controller.ModelState.AddModelError("Titulo", "Required");
+
+        var result = await _controller.Update(1, dto);
+
+        var bad = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.NotNull(bad.Value); // opcional, pero profesional
+    }
+
+    /// <summary>
+    /// Actualiza un post y devuelve BadRequest si el servicio lanza ArgumentException
+    /// </summary>
+    /// <returns>BadRequestObjectResult</returns>
+    [Fact]
+    public async Task Update_ShouldReturnBadRequest_WhenServiceThrowsArgumentException()
+    {
+        _service
+            .Setup(s => s.UpdateAsync(1, It.IsAny<Post>(), It.IsAny<List<int>>(), It.IsAny<bool>()))
+            .ThrowsAsync(new ArgumentException("Error de prueba"));
+
+        var dto = new CreatePostDto
+        {
+            Titulo = "Editado",
+            Contenido = "Nuevo contenido",
+            CategoriaId = 2,
+            TagIds = new List<int>(),
+        };
+
+        var result = await _controller.Update(1, dto);
+
+        var bad = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.NotNull(bad.Value); // opcional pero profesional
+    }
+
+    /// <summary>
+    /// Actualiza un post y devuelve NotFound si el post actualizado no puede ser cargado
+    /// </summary>
+    [Fact]
+    public async Task Update_ShouldReturnNotFound_WhenUpdatedPostCannotBeLoaded()
+    {
+        // UpdateAsync devuelve true → la actualización "funciona"
+        _service
+            .Setup(s => s.UpdateAsync(1, It.IsAny<Post>(), It.IsAny<List<int>>(), It.IsAny<bool>()))
+            .ReturnsAsync(true);
+
+        // Pero GetByIdAsync devuelve null → no se puede cargar el post actualizado
+        _service.Setup(s => s.GetByIdAsync(1)).ReturnsAsync((Post?)null);
+
+        var dto = new CreatePostDto
+        {
+            Titulo = "Editado",
+            Contenido = "Nuevo contenido",
+            CategoriaId = 2,
+            TagIds = new List<int>(),
+        };
+
+        var result = await _controller.Update(1, dto);
+
+        Assert.IsType<NotFoundResult>(result);
     }
 }
