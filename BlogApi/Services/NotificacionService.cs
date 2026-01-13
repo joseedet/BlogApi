@@ -2,12 +2,11 @@ using BlogApi.Data;
 using BlogApi.Hubs;
 using BlogApi.Models;
 using BlogApi.Repositories;
-using BlogApi.Services.Interfaces;
 using BlogApi.Utils;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
-namespace BlogApi.Services;
+namespace BlogApi.Services.Interfaces;
 
 /// <summary>
 /// Servicio para gestionar notificaciones

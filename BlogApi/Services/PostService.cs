@@ -24,14 +24,46 @@ public class PostService : IPostService
     private readonly ITagRepository _tagRepo;
 
     /// <summary>
+    /// Repositorio de categorías
+    /// </summary>
+    private readonly ICategoriaRepository _categoriaRepository;
+
+    /// <summary>
+    ///     Servicio de sanitización de entradas
+    /// </summary>
+    private readonly ISanitizerService _sanitizerService;
+
+    /// <summary>
+    /// Servicio de notificaciones
+    /// </summary>
+    private readonly INotificacionService _notificationService;
+
+    /// <summary>
+    /// Repositorio de categorías
+    /// </summary>
+    /// <summary>
     /// Constructor de PostService
     /// </summary>
     /// <param name="repo"></param>
     /// <param name="tagRepo"></param>
-    public PostService(IPostRepository repo, ITagRepository tagRepo)
+    /// <param name="categoriaRepository"></param>
+    /// <param name="sanitizerService"></param>
+    /// <param name="notificationService"></param>
+    public PostService(
+        IPostRepository repo,
+        ITagRepository tagRepo,
+        ICategoriaRepository categoriaRepository,
+        ISanitizerService sanitizerService,
+#pragma warning disable CS0618 // Deshabilita advertencia de Obsolete
+        INotificacionService notificationService
+#pragma warning restore CS0618
+    )
     {
         _repo = repo;
         _tagRepo = tagRepo;
+        _categoriaRepository = categoriaRepository;
+        _sanitizerService = sanitizerService;
+        _notificationService = notificationService;
     }
 
     /// <summary>
@@ -80,6 +112,7 @@ public class PostService : IPostService
     public async Task<Post> CreateAsync(Post post, List<int> tagIds)
     {
         ValidarEntrada(post, tagIds);
+        await ValidarCategoriaAsync(post.CategoriaId);
         // Generar slug base
         var baseSlug = SlugHelper.GenerateSlug(post.Titulo);
 
@@ -115,6 +148,7 @@ public class PostService : IPostService
     public async Task<bool> UpdateAsync(int id, Post post, List<int> tagIds, bool puedeEditarTodo)
     {
         ValidarEntrada(post, tagIds);
+        await ValidarCategoriaAsync(post.CategoriaId);
         var existing = await _repo
             .Query()
             .Include(p => p.Tags)
@@ -429,5 +463,18 @@ public class PostService : IPostService
 
         if (tagIds.Any(id => id <= 0))
             throw new ArgumentException("Todos los tags deben tener un ID válido");
+    }
+
+    /// <summary>
+    /// Valida que la categoría exista
+    /// </summary>
+    /// <param name="categoriaId"></param>
+    /// <exception cref="ArgumentException"></exception>
+    private async Task ValidarCategoriaAsync(int categoriaId)
+    {
+        var categoria = await _categoriaRepository.GetByIdAsync(categoriaId);
+
+        if (categoria == null)
+            throw new ArgumentException("La categoría no existe");
     }
 }
