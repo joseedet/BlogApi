@@ -101,4 +101,21 @@ public interface IPostRepository : IGenericRepository<Post>
     /// <param name="nombre"></param>
     /// <returns>IEnumerable&lt;Post&gt;</returns>
     Task<IEnumerable<Post>> GetByAutorNombreAsync(string nombre);
+
+    /// <summary>
+    /// Actualiza un post junto con sus etiquetas
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="post"></param>
+    /// <param name="tagIds"></param>
+    /// <param name="usuarioId"></param>
+    /// <param name="puedeEditarTodo"></param>
+    /// <returns>bool</returns>
+    Task<bool> UpdateAsync(
+        int id,
+        Post post,
+        List<int> tagIds,
+        int usuarioId,
+        bool puedeEditarTodo
+    );
 }

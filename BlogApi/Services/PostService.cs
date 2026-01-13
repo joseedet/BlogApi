@@ -54,9 +54,7 @@ public class PostService : IPostService
         ITagRepository tagRepo,
         ICategoriaRepository categoriaRepository,
         ISanitizerService sanitizerService,
-#pragma warning disable CS0618 // Deshabilita advertencia de Obsolete
         INotificacionService notificationService
-#pragma warning restore CS0618
     )
     {
         _repo = repo;
@@ -113,6 +111,7 @@ public class PostService : IPostService
     {
         ValidarEntrada(post, tagIds);
         await ValidarCategoriaAsync(post.CategoriaId);
+        await ValidarTagsAsync(tagIds);
         // Generar slug base
         var baseSlug = SlugHelper.GenerateSlug(post.Titulo);
 
@@ -144,11 +143,20 @@ public class PostService : IPostService
     /// <param name="post"></param>
     /// <param name="tagIds"></param>
     /// <param name="puedeEditarTodo"></param>
+    /// <param name="usuarioId"></param>
     /// <returns>bool</returns>
-    public async Task<bool> UpdateAsync(int id, Post post, List<int> tagIds, bool puedeEditarTodo)
+    public async Task<bool> UpdateAsync(
+        int id,
+        Post post,
+        List<int> tagIds,
+        int usuarioId,
+        bool puedeEditarTodo
+    )
     {
         ValidarEntrada(post, tagIds);
         await ValidarCategoriaAsync(post.CategoriaId);
+        await ValidarTagsAsync(tagIds);
+
         var existing = await _repo
             .Query()
             .Include(p => p.Tags)
@@ -158,16 +166,18 @@ public class PostService : IPostService
             return false;
 
         // 🔥 VALIDACIÓN DE PERMISOS
-        // Autor solo puede editar sus posts
-        if (existing.UsuarioId != post.UsuarioId && !puedeEditarTodo)
+        if (!puedeEditarTodo && existing.UsuarioId != usuarioId)
             return false;
 
         // Actualizar campos básicos
         existing.Titulo = post.Titulo;
         existing.Contenido = post.Contenido;
         existing.CategoriaId = post.CategoriaId;
-        existing.UsuarioId = post.UsuarioId;
         existing.FechaActualizacion = DateTime.UtcNow;
+
+        // ⚠️ Nunca actualices UsuarioId desde el body
+        // existing.UsuarioId = post.UsuarioId;  ❌
+        // El usuario del post NO debe cambiar
 
         // Actualizar tags
         var tags = await _tagRepo.Query().Where(t => tagIds.Contains(t.Id)).ToListAsync();
@@ -186,14 +196,21 @@ public class PostService : IPostService
     /// Elimina un post por su id
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="usuarioId"></param>
+    /// <param name="puedeEditarTodo"></param>
     /// <returns>bool</returns>
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(int id, int usuarioId, bool puedeEditarTodo)
     {
-        var post = await _repo.GetByIdAsync(id);
-        if (post == null)
+        var existing = await _repo.GetByIdAsync(id);
+
+        if (existing == null)
             return false;
 
-        _repo.Remove(post);
+        // Validación de permisos
+        if (!puedeEditarTodo && existing.UsuarioId != usuarioId)
+            return false;
+
+        _repo.Remove(existing);
         await _repo.SaveChangesAsync();
 
         return true;
@@ -476,5 +493,71 @@ public class PostService : IPostService
 
         if (categoria == null)
             throw new ArgumentException("La categoría no existe");
+    }
+
+    /// <summary>
+    /// Valida que los tags existan y sean válidos
+    /// </summary>
+    /// <param name="tagIds"></param>
+    /// <exception cref="ArgumentException"></exception>
+    private async Task ValidarTagsAsync(List<int> tagIds)
+    {
+        if (tagIds == null)
+            throw new ArgumentException("La lista de tags no puede ser nula");
+
+        if (tagIds.Count == 0)
+            throw new ArgumentException("Debes seleccionar al menos un tag");
+
+        if (tagIds.Any(id => id <= 0))
+            throw new ArgumentException("Todos los tags deben tener un ID válido");
+
+        if (tagIds.Distinct().Count() != tagIds.Count)
+            throw new ArgumentException("La lista de tags contiene duplicados");
+
+        var tagsExistentes = await _tagRepo.GetByIdsAsync(tagIds);
+
+        if (tagsExistentes.Count != tagIds.Count)
+            throw new ArgumentException("Uno o más tags no existen");
+    }
+
+    /// <summary>
+    /// Valida los permisos para editar un post
+    /// </summary>
+    /// <param name="post"></param>
+    /// <param name="usuarioId"></param>
+    /// <param name="puedeEditar"></param>
+    /// <exception cref="UnauthorizedAccessException"></exception>
+    private void ValidarPermisos(Post post, int usuarioId, bool puedeEditar)
+    {
+        if (!puedeEditar)
+            throw new UnauthorizedAccessException("No tienes permisos para editar posts");
+
+        // Si no es admin, debe ser el autor del post
+        if (post.UsuarioId != usuarioId)
+            throw new UnauthorizedAccessException("No puedes editar posts de otros usuarios");
+    }
+
+    /// <summary>
+    /// Elimina un post por su id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>bool</returns>
+    public Task<bool> DeleteAsync(int id)
+    {
+        throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Actualiza un post junto con sus etiquetas
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="post"></param>
+    /// <param name="tagIds"></param>
+    /// <param name="usuarioId"></param>
+    /// <param name="puedeEditarTodo"></param>
+    /// <returns>bool</returns>
+    public Task<bool> UpdateAsync(int id, Post post, List<int> tagIds, bool puedeEditarTodo)
+    {
+        throw new NotImplementedException();
     }
 }

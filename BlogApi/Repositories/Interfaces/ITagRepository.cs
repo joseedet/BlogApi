@@ -7,4 +7,15 @@ using BlogApi.Repositories.Interfaces;
 
 namespace BlogApi.Repositories;
 
-public interface ITagRepository : IGenericRepository<Tag> { }
+/// <summary>
+/// Repositorio específico para la entidad Tag
+/// </summary>
+public interface ITagRepository : IGenericRepository<Tag>
+{
+    /// <summary>
+    /// Obtiene una lista de etiquetas por sus IDs
+    /// </summary>
+    /// <param name="ids"></param>
+    /// <returns>List&lt;Tag&gt;</returns>
+    Task<List<Tag>> GetByIdsAsync(List<int> ids);
+}
