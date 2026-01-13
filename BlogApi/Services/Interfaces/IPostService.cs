@@ -26,8 +26,10 @@ public interface IPostService
     /// Elimina un post por su id
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="usuarioId"></param>
+    /// <param name="puedeEditarTodo"></param>
     /// <returns>bool</returns>
-    Task<bool> DeleteAsync(int id);
+    Task<bool> DeleteAsync(int id, int usuarioId, bool puedeEditarTodo);
 
     /// <summary>
     /// Crea un nuevo post con tags asociados
@@ -47,8 +49,15 @@ public interface IPostService
     /// <param name="post"></param>
     /// <param name="tagIds"></param>
     /// <param name="puedeEditarTodo"></param>
+    /// <param name="usuarioId"></param>
     /// <returns>bool</returns>
-    Task<bool> UpdateAsync(int id, Post post, List<int> tagIds, bool puedeEditarTodo);
+    Task<bool> UpdateAsync(
+        int id,
+        Post post,
+        List<int> tagIds,
+        int usuarioId,
+        bool puedeEditarTodo
+    );
 
     /// <summary>
     /// Obtiene los posts paginados

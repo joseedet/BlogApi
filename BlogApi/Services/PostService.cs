@@ -561,28 +561,4 @@ public class PostService : IPostService
         if (_sanitizerService.ContainsDangerousPattern(post.Contenido))
             throw new ArgumentException("El contenido contiene patrones peligrosos (XSS).");
     }
-
-    /// <summary>
-    /// Elimina un post por su id
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns>bool</returns>
-    public Task<bool> DeleteAsync(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    /// <summary>
-    /// Actualiza un post junto con sus etiquetas
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="post"></param>
-    /// <param name="tagIds"></param>
-    /// <param name="usuarioId"></param>
-    /// <param name="puedeEditarTodo"></param>
-    /// <returns>bool</returns>
-    public Task<bool> UpdateAsync(int id, Post post, List<int> tagIds, bool puedeEditarTodo)
-    {
-        throw new NotImplementedException();
-    }
 }
