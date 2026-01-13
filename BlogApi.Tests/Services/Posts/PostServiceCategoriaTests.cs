@@ -2,6 +2,7 @@ using BlogApi.Models;
 using BlogApi.Repositories;
 using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
+using BlogApi.Services.Interfaces;
 using Moq;
 
 namespace BlogApi.Tests.Services.Posts;
@@ -10,11 +11,20 @@ public class PostServiceCategoriaTests
 {
     private readonly Mock<IPostRepository> _repo = new();
     private readonly Mock<ITagRepository> _tagRepo = new();
+    private readonly Mock<ICategoriaRepository> _categoriaRepo = new();
+    private readonly Mock<ISanitizerService> _sanitizer = new();
+    private readonly Mock<INotificacionService> _notificaciones = new();
     private readonly PostService _service;
 
     public PostServiceCategoriaTests()
     {
-        _service = new PostService(_repo.Object, _tagRepo.Object);
+        _service = new PostService(
+            _repo.Object,
+            _tagRepo.Object,
+            _categoriaRepo.Object,
+            _sanitizer.Object,
+            _notificaciones.Object
+        );
     }
 
     // ------------------------------------------------------------

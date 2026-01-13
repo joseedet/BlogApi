@@ -2,6 +2,7 @@ using BlogApi.Models;
 using BlogApi.Repositories;
 using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
+using BlogApi.Services.Interfaces;
 using Moq;
 using Xunit;
 
@@ -12,10 +13,19 @@ public class PostServiceAutorTests
     private readonly Mock<IPostRepository> _repo = new();
     private readonly Mock<ITagRepository> _tagRepo = new();
     private readonly PostService _service;
+    private readonly Mock<ICategoriaRepository> _categoriaRepo = new();
+    private readonly Mock<ISanitizerService> _sanitizer = new();
+    private readonly Mock<INotificacionService> _notificaciones = new();
 
     public PostServiceAutorTests()
     {
-        _service = new PostService(_repo.Object, _tagRepo.Object);
+        _service = new PostService(
+            _repo.Object,
+            _tagRepo.Object,
+            _categoriaRepo.Object,
+            _sanitizer.Object,
+            _notificaciones.Object
+        );
     }
 
     // ------------------------------------------------------------

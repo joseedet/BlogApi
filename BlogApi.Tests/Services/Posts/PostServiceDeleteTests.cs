@@ -2,6 +2,7 @@ using BlogApi.Models;
 using BlogApi.Repositories;
 using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
+using BlogApi.Services.Interfaces;
 using Moq;
 using Xunit;
 
@@ -11,11 +12,20 @@ public class PostServiceDeleteTests
 {
     private readonly Mock<IPostRepository> _repo = new();
     private readonly Mock<ITagRepository> _tagRepo = new();
+    private readonly Mock<ICategoriaRepository> _categoriaRepo = new();
+    private readonly Mock<ISanitizerService> _sanitizerService = new();
+    private readonly Mock<INotificacionService> _notificationService = new();
     private readonly PostService _service;
 
     public PostServiceDeleteTests()
     {
-        _service = new PostService(_repo.Object, _tagRepo.Object);
+        _service = new PostService(
+            _repo.Object,
+            _tagRepo.Object,
+            _categoriaRepo.Object,
+            _sanitizerService.Object,
+            _notificationService.Object
+        );
     }
 
     // ------------------------------------------------------------
@@ -26,7 +36,7 @@ public class PostServiceDeleteTests
     {
         _repo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((Post?)null);
 
-        var result = await _service.DeleteAsync(1);
+        var result = await _service.DeleteAsync(1, 1, puedeEditarTodo: false);
 
         Assert.False(result);
         _repo.Verify(r => r.Remove(It.IsAny<Post>()), Times.Never);
@@ -45,7 +55,7 @@ public class PostServiceDeleteTests
 
         _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        var result = await _service.DeleteAsync(1);
+        var result = await _service.DeleteAsync(1, 1, false);
 
         Assert.True(result);
     }
@@ -62,7 +72,7 @@ public class PostServiceDeleteTests
 
         _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        await _service.DeleteAsync(1);
+        await _service.DeleteAsync(1, 1, false);
 
         _repo.Verify(r => r.Remove(post), Times.Once);
     }
@@ -79,7 +89,7 @@ public class PostServiceDeleteTests
 
         _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        await _service.DeleteAsync(1);
+        await _service.DeleteAsync(1, 1, false);
 
         _repo.Verify(r => r.SaveChangesAsync(), Times.Once);
     }
