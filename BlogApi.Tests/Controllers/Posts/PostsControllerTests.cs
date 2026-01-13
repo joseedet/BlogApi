@@ -39,6 +39,16 @@ public class PostsControllerTests
 
         Assert.Equal(2, data.Count());
     }
+    [Fact]
+    public async Task GetAll_ShouldReturnBadRequest_WhenServiceThrowsArgumentException()
+    {
+        _service.Setup(s => s.GetAllAsync()).ThrowsAsync(new ArgumentException("Error de prueba"));
+
+        var result = await _controller.GetAll();
+
+        var bad = Assert.IsType<BadRequestObjectResult>(result);
+        Assert.NotNull(bad.Value);
+    }
 
     // ------------------------------------------------------------
     // GET BY ID
