@@ -3,6 +3,7 @@ using BlogApi.Repositories;
 using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
 using BlogApi.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
 
@@ -12,10 +13,11 @@ public class PostServiceAutorTests
 {
     private readonly Mock<IPostRepository> _repo = new();
     private readonly Mock<ITagRepository> _tagRepo = new();
-    private readonly PostService _service;
     private readonly Mock<ICategoriaRepository> _categoriaRepo = new();
     private readonly Mock<ISanitizerService> _sanitizer = new();
     private readonly Mock<INotificacionService> _notificaciones = new();
+
+    private readonly PostService _service;
 
     public PostServiceAutorTests()
     {
@@ -38,9 +40,9 @@ public class PostServiceAutorTests
         {
             new Post { Id = 1, UsuarioId = 10 },
             new Post { Id = 2, UsuarioId = 10 },
-        };
+        }.AsQueryable();
 
-        _repo.Setup(r => r.GetByAutorAsync(10)).ReturnsAsync(posts);
+        _repo.Setup(r => r.Query()).Returns(posts);
 
         var result = await _service.GetByAutorAsync(10);
 
@@ -51,7 +53,9 @@ public class PostServiceAutorTests
     [Fact]
     public async Task GetByAutorAsync_ShouldReturnEmpty_WhenNoMatches()
     {
-        _repo.Setup(r => r.GetByAutorAsync(99)).ReturnsAsync(new List<Post>());
+        var posts = new List<Post>().AsQueryable();
+
+        _repo.Setup(r => r.Query()).Returns(posts);
 
         var result = await _service.GetByAutorAsync(99);
 
@@ -76,9 +80,9 @@ public class PostServiceAutorTests
                 Id = 2,
                 Usuario = new Usuario { Nombre = "Jose Antonio" },
             },
-        };
+        }.AsQueryable();
 
-        _repo.Setup(r => r.GetByAutorNombreAsync("jose")).ReturnsAsync(posts);
+        _repo.Setup(r => r.Query()).Returns(posts);
 
         var result = await _service.GetByAutorNombreAsync("jose");
 
@@ -89,7 +93,9 @@ public class PostServiceAutorTests
     [Fact]
     public async Task GetByAutorNombreAsync_ShouldReturnEmpty_WhenNoMatches()
     {
-        _repo.Setup(r => r.GetByAutorNombreAsync("no-existe")).ReturnsAsync(new List<Post>());
+        var posts = new List<Post>().AsQueryable();
+
+        _repo.Setup(r => r.Query()).Returns(posts);
 
         var result = await _service.GetByAutorNombreAsync("no-existe");
 
