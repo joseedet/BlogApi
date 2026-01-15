@@ -4,6 +4,7 @@ using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
 using BlogApi.Services.Interfaces;
 using Moq;
+using Xunit;
 
 namespace BlogApi.Tests.Services.Posts;
 
@@ -14,6 +15,7 @@ public class PostServiceCategoriaTests
     private readonly Mock<ICategoriaRepository> _categoriaRepo = new();
     private readonly Mock<ISanitizerService> _sanitizer = new();
     private readonly Mock<INotificacionService> _notificaciones = new();
+
     private readonly PostService _service;
 
     public PostServiceCategoriaTests()
@@ -37,9 +39,9 @@ public class PostServiceCategoriaTests
         {
             new Post { Id = 1, CategoriaId = 10 },
             new Post { Id = 2, CategoriaId = 10 },
-        };
+        }.AsQueryable();
 
-        _repo.Setup(r => r.GetByCategoriaAsync(10)).ReturnsAsync(posts);
+        _repo.Setup(r => r.Query()).Returns(posts);
 
         var result = await _service.GetByCategoriaAsync(10);
 
@@ -50,7 +52,9 @@ public class PostServiceCategoriaTests
     [Fact]
     public async Task GetByCategoriaAsync_ShouldReturnEmpty_WhenNoMatches()
     {
-        _repo.Setup(r => r.GetByCategoriaAsync(99)).ReturnsAsync(new List<Post>());
+        var posts = new List<Post>().AsQueryable();
+
+        _repo.Setup(r => r.Query()).Returns(posts);
 
         var result = await _service.GetByCategoriaAsync(99);
 
@@ -75,9 +79,9 @@ public class PostServiceCategoriaTests
                 Id = 2,
                 Categoria = new Categoria { Slug = "backend" },
             },
-        };
+        }.AsQueryable();
 
-        _repo.Setup(r => r.GetByCategoriaSlugAsync("backend")).ReturnsAsync(posts);
+        _repo.Setup(r => r.Query()).Returns(posts);
 
         var result = await _service.GetByCategoriaSlugAsync("backend");
 
@@ -88,7 +92,9 @@ public class PostServiceCategoriaTests
     [Fact]
     public async Task GetByCategoriaSlugAsync_ShouldReturnEmpty_WhenNoMatches()
     {
-        _repo.Setup(r => r.GetByCategoriaSlugAsync("no-existe")).ReturnsAsync(new List<Post>());
+        var posts = new List<Post>().AsQueryable();
+
+        _repo.Setup(r => r.Query()).Returns(posts);
 
         var result = await _service.GetByCategoriaSlugAsync("no-existe");
 
