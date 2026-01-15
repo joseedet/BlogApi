@@ -4,7 +4,6 @@ using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
 using BlogApi.Services.Interfaces;
 using Moq;
-using Xunit;
 
 namespace BlogApi.Tests.Services.Posts;
 
