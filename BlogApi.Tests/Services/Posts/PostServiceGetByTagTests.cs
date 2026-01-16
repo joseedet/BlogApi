@@ -1,20 +1,17 @@
 using BlogApi.Models;
-using BlogApi.Repositories;
-using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
+using BlogApi.Tests.Common;
 using Moq;
 
 namespace BlogApi.Tests.Services.Posts;
 
-public class PostServiceGetByTagTests
+public class PostServiceGetByTagTests : PostServiceTestBase
 {
-    private readonly Mock<IPostRepository> _repo = new();
-    private readonly Mock<ITagRepository> _tagRepo = new();
     private readonly PostService _service;
 
     public PostServiceGetByTagTests()
     {
-        _service = new PostService(_repo.Object, _tagRepo.Object);
+        _service = CreateService();
     }
 
     // ------------------------------------------------------------
@@ -37,7 +34,7 @@ public class PostServiceGetByTagTests
             },
         };
 
-        _repo.Setup(r => r.GetByTagAsync(5)).ReturnsAsync(posts);
+        Repo.Setup(r => r.GetByTagAsync(5)).ReturnsAsync(posts);
 
         var result = await _service.GetByTagAsync(5);
 
@@ -48,7 +45,7 @@ public class PostServiceGetByTagTests
     [Fact]
     public async Task GetByTagAsync_ShouldReturnEmpty_WhenNoMatches()
     {
-        _repo.Setup(r => r.GetByTagAsync(99)).ReturnsAsync(new List<Post>());
+        Repo.Setup(r => r.GetByTagAsync(99)).ReturnsAsync(new List<Post>());
 
         var result = await _service.GetByTagAsync(99);
 
@@ -58,10 +55,10 @@ public class PostServiceGetByTagTests
     [Fact]
     public async Task GetByTagAsync_ShouldCallRepositoryWithCorrectId()
     {
-        _repo.Setup(r => r.GetByTagAsync(It.IsAny<int>())).ReturnsAsync(new List<Post>());
+        Repo.Setup(r => r.GetByTagAsync(It.IsAny<int>())).ReturnsAsync(new List<Post>());
 
         await _service.GetByTagAsync(7);
 
-        _repo.Verify(r => r.GetByTagAsync(7), Times.Once);
+        Repo.Verify(r => r.GetByTagAsync(7), Times.Once);
     }
 }
