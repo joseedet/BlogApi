@@ -115,8 +115,6 @@
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/bin/Debug/net10.0/testhost.dll
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/bin/Debug/net10.0/Mono.TextTemplating.dll
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/bin/Debug/net10.0/Newtonsoft.Json.dll
-/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/bin/Debug/net10.0/Npgsql.dll
-/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/bin/Debug/net10.0/Npgsql.EntityFrameworkCore.PostgreSQL.dll
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/bin/Debug/net10.0/SendGrid.dll
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/bin/Debug/net10.0/SQLitePCLRaw.batteries_v2.dll
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/bin/Debug/net10.0/SQLitePCLRaw.core.dll
@@ -334,3 +332,4 @@
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/obj/Debug/net10.0/ref/BlogApi.Tests.dll
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/bin/Debug/net10.0/Castle.Core.dll
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/bin/Debug/net10.0/Moq.dll
+/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.InMemory.dll

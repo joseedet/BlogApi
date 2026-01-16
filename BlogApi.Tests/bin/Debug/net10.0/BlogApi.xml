@@ -133,120 +133,6 @@
             <param name="pageSize"></param>
             <returns>PaginacionResultado de NotificacionDto</returns>
         </member>
-        <member name="M:BlogApi.Controllers.PostsController.#ctor(BlogApi.Services.Interfaces.IPostService,BlogApi.Services.Interfaces.INotificacionesService)">
-            <summary>
-            Constructor de PostsController
-            </summary>
-            <param name="service"></param>
-            <param name="notificaciones"></param>
-        </member>
-        <member name="M:BlogApi.Controllers.PostsController.GetAll">
-            <summary>
-            Obtiene todos los posts
-            </summary>
-            <returns>Todos los posts</returns>
-        </member>
-        <member name="M:BlogApi.Controllers.PostsController.GetById(System.Int32)">
-            <summary>
-            Obtiene un post por su ID
-            </summary>
-            <param name="id"></param>
-            <returns>Post</returns>
-        </member>
-        <member name="M:BlogApi.Controllers.PostsController.Create(BlogApi.DTO.CreatePostDto)">
-            <summary>
-            Crea un nuevo post
-            </summary>
-            <param name="dto"></param>
-            <returns>Post</returns>
-        </member>
-        <member name="M:BlogApi.Controllers.PostsController.Update(System.Int32,BlogApi.DTO.CreatePostDto)">
-            <summary>
-            Actualiza un post existente
-            </summary>
-            <param name="id"></param>
-            <param name="dto"></param>
-            <returns>Post actualizado</returns>
-        </member>
-        <member name="M:BlogApi.Controllers.PostsController.Delete(System.Int32)">
-            <summary>
-            Elimina un post por su ID
-            </summary>
-            <param name="id"></param>
-            <returns>Notificación de eliminación</returns>
-        </member>
-        <member name="M:BlogApi.Controllers.PostsController.GetPaged(System.Int32,System.Int32)">
-            <summary>
-            Obtiene posts paginados
-            </summary>
-            <param name="pagina"></param>
-            <param name="tamano"></param>
-            <returns>Posts paginados</returns>
-        </member>
-        <member name="M:BlogApi.Controllers.PostsController.GetBySlug(System.String)">
-            <summary>
-            Obtiene un post por su slug
-            </summary>
-            <param name="slug"></param>
-            <returns>Post</returns>
-        </member>
-        <member name="M:BlogApi.Controllers.PostsController.Buscar(System.String)">
-            <summary>
-            Busca posts por texto
-            </summary>
-            <param name="q"></param>
-            <returns>Posts encontrados</returns>
-        </member>
-        <member name="M:BlogApi.Controllers.PostsController.GetByCategoria(System.Int32)">
-            <summary>
-            Obtiene posts por categoría ID
-            </summary>
-            <param name="categoriaId"></param>
-            <returns>Posts en la categoría</returns>
-        </member>
-        <member name="M:BlogApi.Controllers.PostsController.GetByCategoriaSlug(System.String)">
-            <summary>
-            Obtiene posts por slug de categoría
-            </summary>
-            <param name="slug"></param>
-            <returns>Posts en la categoría</returns>
-        </member>
-        <member name="M:BlogApi.Controllers.PostsController.GetByTag(System.Int32)">
-            <summary>
-            Obtiene posts por tag ID
-            </summary>
-            <param name="tagId"></param>
-            <returns>Posts con el tag</returns>
-        </member>
-        <member name="M:BlogApi.Controllers.PostsController.GetByTagNombre(System.String)">
-            <summary>
-            Obtiene posts por nombre de tag
-            </summary>
-            <param name="nombre"></param>
-            <returns>Posts con el tag</returns>
-        </member>
-        <member name="M:BlogApi.Controllers.PostsController.GetByAutor(System.Int32)">
-            <summary>
-            Obtiene posts por autor ID
-            </summary>
-            <param name="usuarioId"></param>
-            <returns>Posts del autor</returns>
-        </member>
-        <member name="M:BlogApi.Controllers.PostsController.GetByAutorNombre(System.String)">
-            <summary>
-            Obtiene posts por nombre de autor
-            </summary>
-            <param name="nombre"></param>
-            <returns>Posts del autor</returns>
-        </member>
-        <member name="M:BlogApi.Controllers.PostsController.GetCursorPaged(System.Nullable{System.Int32},System.Int32)">
-            <summary>
-            Obtiene posts con paginación por cursor
-            </summary>
-            <param name="after"></param>
-            <param name="limit"></param>
-            <returns>Posts paginados por cursor</returns>
-        </member>
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Data.BlogDbContext.#ctor(Microsoft.EntityFrameworkCore.DbContextOptions{BlogApi.Data.BlogDbContext})" -->
         <member name="P:BlogApi.Data.BlogDbContext.Posts">
             <summary>
@@ -308,6 +194,15 @@
         </member>
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.NuevoPost(System.Int32,System.Int32,System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.NuevoComentario(System.Int32,System.Int32,System.String,System.Int32)" -->
+        <member name="M:BlogApi.Domain.Factories.NotificacionFactory.NuevoComentario(System.Int32,System.Int32,System.String,System.Int32,System.String)">
+            <summary>
+            Crea una notificación de nuevo comentario
+            </summary>
+            <param name="usuarioId"></param>
+            <param name="postId"></param>
+            <param name="autorComentario"></param>
+            <returns>Notificación de nuevo comentario</returns>
+        </member>
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.RespuestaComentario(System.Int32,System.Int32,System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.Sistema(System.Int32,System.String)" -->
         <member name="T:BlogApi.DTO.ComentarioLikesDto">
@@ -333,6 +228,36 @@
         <member name="P:BlogApi.DTO.ComentarioLikesDto.UsuarioId">
             <summary>
             Id del usuario que dio el like
+            </summary>
+        </member>
+        <member name="T:BlogApi.DTO.CreatePostDto">
+            <summary>
+            DTO para crear un nuevo post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.CreatePostDto.Titulo">
+            <summary>
+            Título del post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.CreatePostDto.Contenido">
+            <summary>
+            Contenido del post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.CreatePostDto.CategoriaId">
+            <summary>
+            ID de la categoría del post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.CreatePostDto.UsuarioId">
+            <summary>
+            ID del usuario que crea el post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.CreatePostDto.TagIds">
+            <summary>
+            IDs de los tags asociados al post
             </summary>
         </member>
         <member name="T:BlogApi.DTO.CursorPaginationDto`1">
@@ -425,11 +350,6 @@
             <param name="usuario"></param>
             <returns>Un LoginResult con éxito verdadero y el usuario proporcionado</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Categoria)" -->
-        <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Usuario)" -->
-        <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Comentario)" -->
-        <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Post)" -->
-        <!-- Badly formed XML comment ignored for member "M:BlogApi.DTO.Mapper.ToDto(BlogApi.Models.Tag)" -->
         <member name="T:BlogApi.DTO.NotificacionDto">
             <summary>
             Data Transfer Object para Notificación
@@ -525,6 +445,61 @@
             /// Constructor vacío de PaginationDto
             </summary>
         </member>
+        <member name="T:BlogApi.DTO.PostDto">
+            <summary>
+            Transferencia de objeto para Post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PostDto.Id">
+            <summary>
+            ID del post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PostDto.Titulo">
+            <summary>
+            Titulo del post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PostDto.Contenido">
+            <summary>
+            Contenido del post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PostDto.Slug">
+            <summary>
+            Slug para la URL del post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PostDto.FechaCreacion">
+            <summary>
+            Fecha de creación del post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PostDto.FechaActualizacion">
+            <summary>
+            Fecha de actualización del post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PostDto.Categoria">
+            <summary>
+            Categoría del post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PostDto.Usuario">
+            <summary>
+            Usuario que creó el post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PostDto.Comentarios">
+            <summary>
+            Comentarios del post
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PostDto.Tags">
+            <summary>
+            Etiquetas del post
+            </summary>
+        </member>
         <member name="T:BlogApi.DTO.PostLikesDto">
             <summary>
              Data Transfer Object para los "Me gusta" de un post
@@ -584,6 +559,23 @@
             <summary>
             Método llamado cuando un cliente se conecta al hub
             </summary>
+            <returns></returns>
+        </member>
+        <member name="T:BlogApi.Mapper.Mapper">
+            <summary>
+            Clase estática que contiene métodos de mapeo entre entidades y DTOs.
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Mapper.Mapper.ToDto(BlogApi.Models.Categoria)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Mapper.Mapper.ToDto(BlogApi.Models.Usuario)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Mapper.Mapper.ToDto(BlogApi.Models.Comentario)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Mapper.Mapper.ToDto(BlogApi.Models.Post)" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Mapper.Mapper.ToDto(BlogApi.Models.Tag)" -->
+        <member name="M:BlogApi.Mapper.Mapper.ToDto(BlogApi.Models.Notificacion)">
+            <summary>
+             Convierte una entidad Notificación a su DTO correspondiente.
+            </summary>
+            <param name="n"></param>
             <returns></returns>
         </member>
         <member name="T:BlogApi.Middleware.SecurityHeadersMiddleware">
@@ -988,6 +980,18 @@
             <param name="pageSize"></param>
             <returns>PaginacionResultado de NotificacionDto</returns>
         </member>
+        <member name="T:BlogApi.Repositories.ITagRepository">
+            <summary>
+            Repositorio específico para la entidad Tag
+            </summary>
+        </member>
+        <member name="M:BlogApi.Repositories.ITagRepository.GetByIdsAsync(System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Obtiene una lista de etiquetas por sus IDs
+            </summary>
+            <param name="ids"></param>
+            <returns>List&lt;Tag&gt;</returns>
+        </member>
         <member name="T:BlogApi.Repositories.LikeComentarioRepository">
             <summary>
               Repositorio para gestionar "Me gusta" en comentarios
@@ -1170,6 +1174,18 @@
             <param name="nombre"></param>
             <returns>IEnumerable&lt;Post&gt;</returns>
         </member>
+        <member name="T:BlogApi.Repositories.TagRepository">
+            <summary>
+            Repositorio específico para la entidad Tag
+            </summary>
+        </member>
+        <member name="M:BlogApi.Repositories.TagRepository.GetByIdsAsync(System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Obtiene una lista de etiquetas por sus IDs
+            </summary>
+            <param name="ids"></param>
+            <returns>List&lt;Tag&gt;</returns>
+        </member>
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.#ctor(BlogApi.Repositories.Interfaces.ICategoriaRepository)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.GetAllAsync" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.GetByIdAsync(System.Int32)" -->
@@ -1313,7 +1329,7 @@
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.ILikeService.UnlikePostAsync(System.Int32,System.Int32)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.ILikeService.LikeComentarioAsync(System.Int32,System.Int32)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.ILikeService.UnlikeComentarioAsync(System.Int32,System.Int32)" -->
-        <member name="M:BlogApi.Services.Interfaces.INotificacionService.CrearAsync(System.Int32,System.String)">
+        <member name="M:BlogApi.Services.Interfaces.INotificacionService.CrearAsync(BlogApi.Models.Notificacion)">
             <summary>
             Crea una nueva notificación para un usuario
             </summary>
@@ -1369,22 +1385,25 @@
             <param name="id"></param>
             <returns>Post</returns>
         </member>
-        <member name="M:BlogApi.Services.Interfaces.IPostService.DeleteAsync(System.Int32)">
+        <member name="M:BlogApi.Services.Interfaces.IPostService.DeleteAsync(System.Int32,System.Int32,System.Boolean)">
             <summary>
             Elimina un post por su id
             </summary>
             <param name="id"></param>
+            <param name="usuarioId"></param>
+            <param name="puedeEditarTodo"></param>
             <returns>bool</returns>
         </member>
-        <member name="M:BlogApi.Services.Interfaces.IPostService.CreateAsync(BlogApi.Models.Post,System.Collections.Generic.List{System.Int32})">
+        <member name="M:BlogApi.Services.Interfaces.IPostService.CreateAsync(BlogApi.Models.Post,System.Collections.Generic.List{System.Int32},System.Int32)">
             <summary>
             Crea un nuevo post con tags asociados
             </summary>
             <param name="post"></param>
             <param name="tagIds"></param>
+            <param name="usuarioId"></param>
             <returns>Post</returns>
         </member>
-        <member name="M:BlogApi.Services.Interfaces.IPostService.UpdateAsync(System.Int32,BlogApi.Models.Post,System.Collections.Generic.List{System.Int32},System.Boolean)">
+        <member name="M:BlogApi.Services.Interfaces.IPostService.UpdateAsync(System.Int32,BlogApi.Models.Post,System.Collections.Generic.List{System.Int32},System.Int32,System.Boolean)">
             <summary>
             Actualiza un post existente
             </summary>
@@ -1392,6 +1411,7 @@
             <param name="post"></param>
             <param name="tagIds"></param>
             <param name="puedeEditarTodo"></param>
+            <param name="usuarioId"></param>
             <returns>bool</returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IPostService.GetPagedAsync(System.Int32,System.Int32)" -->
@@ -1455,6 +1475,71 @@
             </summary>
             <param name="dto"></param>
             <returns>Resultado del intento de login</returns>
+        </member>
+        <member name="T:BlogApi.Services.Interfaces.NotificacionService">
+            <summary>
+            Servicio para gestionar notificaciones
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.Interfaces.NotificacionService._context">
+            <summary>
+            Contexto de la base de datos
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.NotificacionService.#ctor(BlogApi.Data.BlogDbContext,BlogApi.Repositories.INotificacionRepository,Microsoft.AspNetCore.SignalR.IHubContext{BlogApi.Hubs.NotificacionesHub})">
+            <summary>
+            Constructor de NotificacionService
+            </summary>
+            <param name="context"></param>
+            <param name="notificacionRepository"></param>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.NotificacionService.CrearAsync(BlogApi.Models.Notificacion)">
+            <summary>
+            Crea una nueva notificación para un usuario
+            </summary>
+            <param name="usuarioId"></param>
+            <param name="mensaje"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.NotificacionService.GetByUsuarioAsync(System.Int32)">
+            <summary>
+            Obtiene las notificaciones de un usuario
+            </summary>
+            <param name="usuarioId"></param>
+            <returns>IEnumerable de notificaciones</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.NotificacionService.MarcarComoLeidaAsync(System.Int32,System.Int32)">
+            <summary>
+            Marca una notificación como leída
+            </summary>
+            <param name="id"></param>
+            <param name="usuarioId"></param>
+            <returns>bool</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.NotificacionService.CrearNotificacionLikePostAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Crea una notificación de "Me gusta" en un post
+            </summary>
+            <param name="usuarioDestinoId"></param>
+            <param name="usuarioOrigenId"></param>
+            <param name="postId"></param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.NotificacionService.CrearNotificacionLikeComentarioAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Crea una notificación de "Me gusta" en un comentario
+            </summary>
+            <param name="usuarioDestinoId"></param>
+            <param name="usuarioOrigenId"></param>
+            <param name="comentarioId"></param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.NotificacionService.MarcarTodasComoLeidasAsync(System.Int32)">
+            <summary>
+            Marca todas las notificaciones de un usuario como leídas
+            </summary>
+            <param name="usuarioId"></param>
+            <returns>Task</returns>
         </member>
         <member name="T:BlogApi.Services.Interfaces.ISanitizerService">
             <summary>
@@ -1566,71 +1651,6 @@
             <param name="page"></param>
             <param name="pageSize"></param>
         </member>
-        <member name="T:BlogApi.Services.NotificacionService">
-            <summary>
-            Servicio para gestionar notificaciones
-            </summary>
-        </member>
-        <member name="F:BlogApi.Services.NotificacionService._context">
-            <summary>
-            Contexto de la base de datos
-            </summary>
-        </member>
-        <member name="M:BlogApi.Services.NotificacionService.#ctor(BlogApi.Data.BlogDbContext,BlogApi.Repositories.INotificacionRepository,Microsoft.AspNetCore.SignalR.IHubContext{BlogApi.Hubs.NotificacionesHub})">
-            <summary>
-            Constructor de NotificacionService
-            </summary>
-            <param name="context"></param>
-            <param name="notificacionRepository"></param>
-        </member>
-        <member name="M:BlogApi.Services.NotificacionService.CrearAsync(System.Int32,System.String)">
-            <summary>
-            Crea una nueva notificación para un usuario
-            </summary>
-            <param name="usuarioId"></param>
-            <param name="mensaje"></param>
-            <returns></returns>
-        </member>
-        <member name="M:BlogApi.Services.NotificacionService.GetByUsuarioAsync(System.Int32)">
-            <summary>
-            Obtiene las notificaciones de un usuario
-            </summary>
-            <param name="usuarioId"></param>
-            <returns>IEnumerable de notificaciones</returns>
-        </member>
-        <member name="M:BlogApi.Services.NotificacionService.MarcarComoLeidaAsync(System.Int32,System.Int32)">
-            <summary>
-            Marca una notificación como leída
-            </summary>
-            <param name="id"></param>
-            <param name="usuarioId"></param>
-            <returns>bool</returns>
-        </member>
-        <member name="M:BlogApi.Services.NotificacionService.CrearNotificacionLikePostAsync(System.Int32,System.Int32,System.Int32)">
-            <summary>
-            Crea una notificación de "Me gusta" en un post
-            </summary>
-            <param name="usuarioDestinoId"></param>
-            <param name="usuarioOrigenId"></param>
-            <param name="postId"></param>
-            <returns>Task</returns>
-        </member>
-        <member name="M:BlogApi.Services.NotificacionService.CrearNotificacionLikeComentarioAsync(System.Int32,System.Int32,System.Int32)">
-            <summary>
-            Crea una notificación de "Me gusta" en un comentario
-            </summary>
-            <param name="usuarioDestinoId"></param>
-            <param name="usuarioOrigenId"></param>
-            <param name="comentarioId"></param>
-            <returns>Task</returns>
-        </member>
-        <member name="M:BlogApi.Services.NotificacionService.MarcarTodasComoLeidasAsync(System.Int32)">
-            <summary>
-            Marca todas las notificaciones de un usuario como leídas
-            </summary>
-            <param name="usuarioId"></param>
-            <returns>Task</returns>
-        </member>
         <member name="T:BlogApi.Services.PostService">
             <summary>
                 Servicio para manejar la lógica de posts
@@ -1646,12 +1666,33 @@
             Repositorio de tags
             </summary>
         </member>
-        <member name="M:BlogApi.Services.PostService.#ctor(BlogApi.Repositories.Interfaces.IPostRepository,BlogApi.Repositories.ITagRepository)">
+        <member name="F:BlogApi.Services.PostService._categoriaRepository">
+            <summary>
+            Repositorio de categorías
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.PostService._sanitizerService">
+            <summary>
+                Servicio de sanitización de entradas
+            </summary>
+        </member>
+        <member name="F:BlogApi.Services.PostService._notificationService">
+            <summary>
+            Servicio de notificaciones
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.PostService.#ctor(BlogApi.Repositories.Interfaces.IPostRepository,BlogApi.Repositories.ITagRepository,BlogApi.Repositories.Interfaces.ICategoriaRepository,BlogApi.Services.Interfaces.ISanitizerService,BlogApi.Services.Interfaces.INotificacionService)">
+            <summary>
+            Repositorio de categorías
+            </summary>
             <summary>
             Constructor de PostService
             </summary>
             <param name="repo"></param>
             <param name="tagRepo"></param>
+            <param name="categoriaRepository"></param>
+            <param name="sanitizerService"></param>
+            <param name="notificationService"></param>
         </member>
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetAllAsync" -->
         <member name="M:BlogApi.Services.PostService.GetByIdAsync(System.Int32)">
@@ -1661,15 +1702,16 @@
             <param name="id"></param>
             <returns>Post</returns>
         </member>
-        <member name="M:BlogApi.Services.PostService.CreateAsync(BlogApi.Models.Post,System.Collections.Generic.List{System.Int32})">
+        <member name="M:BlogApi.Services.PostService.CreateAsync(BlogApi.Models.Post,System.Collections.Generic.List{System.Int32},System.Int32)">
             <summary>
             Crea un nuevo post con tags asociados
             </summary>
             <param name="post"></param>
             <param name="tagIds"></param>
+            <param name="usuarioId"></param>
             <returns>Post</returns>
         </member>
-        <member name="M:BlogApi.Services.PostService.UpdateAsync(System.Int32,BlogApi.Models.Post,System.Collections.Generic.List{System.Int32},System.Boolean)">
+        <member name="M:BlogApi.Services.PostService.UpdateAsync(System.Int32,BlogApi.Models.Post,System.Collections.Generic.List{System.Int32},System.Int32,System.Boolean)">
             <summary>
             Actualiza un post existente
             </summary>
@@ -1677,13 +1719,16 @@
             <param name="post"></param>
             <param name="tagIds"></param>
             <param name="puedeEditarTodo"></param>
+            <param name="usuarioId"></param>
             <returns>bool</returns>
         </member>
-        <member name="M:BlogApi.Services.PostService.DeleteAsync(System.Int32)">
+        <member name="M:BlogApi.Services.PostService.DeleteAsync(System.Int32,System.Int32,System.Boolean)">
             <summary>
             Elimina un post por su id
             </summary>
             <param name="id"></param>
+            <param name="usuarioId"></param>
+            <param name="puedeEditarTodo"></param>
             <returns>bool</returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetPagedAsync(System.Int32,System.Int32)" -->
@@ -1703,6 +1748,43 @@
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetByAutorAsync(System.Int32)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetByAutorNombreAsync(System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetCursorPagedAsync(System.Nullable{System.Int32},System.Int32)" -->
+        <member name="M:BlogApi.Services.PostService.ValidarEntrada(BlogApi.Models.Post,System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Valida la entrada para crear o actualizar un post
+            </summary>
+            <param name="post"></param>
+            <param name="tagIds"></param>
+            <exception cref="T:System.ArgumentException"></exception>
+        </member>
+        <member name="M:BlogApi.Services.PostService.ValidarCategoriaAsync(System.Int32)">
+            <summary>
+            Valida que la categoría exista
+            </summary>
+            <param name="categoriaId"></param>
+            <exception cref="T:System.ArgumentException"></exception>
+        </member>
+        <member name="M:BlogApi.Services.PostService.ValidarTagsAsync(System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Valida que los tags existan y sean válidos
+            </summary>
+            <param name="tagIds"></param>
+            <exception cref="T:System.ArgumentException"></exception>
+        </member>
+        <member name="M:BlogApi.Services.PostService.ValidarPermisos(BlogApi.Models.Post,System.Int32,System.Boolean)">
+            <summary>
+            Valida los permisos para editar un post
+            </summary>
+            <param name="post"></param>
+            <param name="usuarioId"></param>
+            <param name="puedeEditar"></param>
+            <exception cref="T:System.UnauthorizedAccessException"></exception>
+        </member>
+        <member name="M:BlogApi.Services.PostService.SanitizarPost(BlogApi.Models.Post)">
+            <summary>
+            Sanitiza el título y contenido del post
+            </summary>
+            <param name="post"></param>
+        </member>
         <member name="T:BlogApi.Services.Security.SanitizerService">
             <summary>
             Servicio para sanitizar entradas de usuario y prevenir ataques XSS

@@ -4,6 +4,9 @@ using BlogApi.Services.Interfaces;
 
 namespace BlogApi.Services;
 
+/// <summary>
+/// Servicio para enviar correos electrónicos usando SMTP
+/// </summary>
 public class SmtpEmailService : IEmailService
 {
     /// <summary>

@@ -4,6 +4,9 @@ using BlogApi.Services.Interfaces;
 
 namespace BlogApi.Services;
 
+/// <summary>
+/// Servicio para gestionar tags
+/// </summary>
 public class TagService : ITagService
 {
     /// <summary>

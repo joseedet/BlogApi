@@ -6,17 +6,16 @@ using BlogApi.Models;
 
 namespace BlogApi.Services.Interfaces;
 
-[Obsolete("INotificacionService está obsoleto. Usa INotificacionesService en su lugar.")]
 /// <summary>
 /// Interfaz para el servicio de notificaciones
 /// </summary>
+[Obsolete("INotificacionService está obsoleto. Usa INotificacionesService en su lugar.")]
 public interface INotificacionService
 {
     /// <summary>
-    /// Crea una nueva notificación para un usuario
+    /// Crea una nueva notificación
     /// </summary>
-    /// <param name="usuarioId"></param>
-    /// <param name="mensaje"></param>
+    /// <param name="notificacion"></param>
     /// <returns>Task</returns>
     Task CrearAsync(Notificacion notificacion);
 

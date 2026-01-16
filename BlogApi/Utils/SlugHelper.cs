@@ -7,8 +7,16 @@ using System.Threading.Tasks;
 
 namespace BlogApi.Utils;
 
+/// <summary>
+/// Helper para generar slugs a partir de textos
+/// </summary>
 public class SlugHelper
 {
+    /// <summary>
+    /// Genera un slug a partir de un texto
+    /// </summary>
+    /// <param name="text">Texto de entrada</param>
+    /// <returns>Slug generado</returns>
     public static string GenerateSlug(string text)
     {
         text = text.ToLowerInvariant().Trim();
