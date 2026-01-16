@@ -36,6 +36,8 @@ public static class NotificacionFactory
         int postId,
         string contenido,
         int comentarioId
+    //string autorComentario
+
     ) =>
         new Notificacion
         {
@@ -44,6 +46,29 @@ public static class NotificacionFactory
             Mensaje = $"Nuevo comentario en tu post: {contenido}",
             Payload = JsonSerializer.Serialize(new { postId, comentarioId }),
         };
+    /// <summary>
+    /// Crea una notificación de nuevo comentario
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <param name="postId"></param>
+    /// <param name="autorComentario"></param>
+    /// <returns>Notificación de nuevo comentario</returns>
+    public static Notificacion NuevoComentario(
+        int usuarioId,
+        int postId,
+        string contenido,
+        int comentarioId,
+        string autorComentario
+    )
+    {
+        return new Notificacion
+        {
+            UsuarioId = usuarioId,
+            Tipo = TipoNotificacion.NuevoComentario,
+            Mensaje = $"Nuevo comentario de {autorComentario}: {contenido}",
+            Payload = JsonSerializer.Serialize(new { postId, comentarioId }),
+        };
+    }
 
     /// <summary>
     /// Crea una notificación de respuesta a un comentario

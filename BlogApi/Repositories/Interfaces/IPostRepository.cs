@@ -102,7 +102,7 @@ public interface IPostRepository : IGenericRepository<Post>
     /// <returns>IEnumerable&lt;Post&gt;</returns>
     Task<IEnumerable<Post>> GetByAutorNombreAsync(string nombre);
 
-    /// <summary>
+    /*/// <summary>
     /// Actualiza un post junto con sus etiquetas
     /// </summary>
     /// <param name="id"></param>
@@ -117,5 +117,5 @@ public interface IPostRepository : IGenericRepository<Post>
         List<int> tagIds,
         int usuarioId,
         bool puedeEditarTodo
-    );
+    );*/
 }

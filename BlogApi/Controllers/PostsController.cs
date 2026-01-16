@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using BlogApi.Domain.Factories;
 using BlogApi.DTO;
 using BlogApi.Models;
@@ -7,31 +8,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers;
 
-/// <summary>
-/// Controlador para gestionar los posts del blog
-/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class PostsController : ControllerBase
 {
     private readonly IPostService _service;
-    private readonly INotificacionesService _notificaciones;
+    private readonly INotificacionService _notificaciones;
 
-    /// <summary>
-    /// Constructor de PostsController
-    /// </summary>
-    /// <param name="service"></param>
-    /// <param name="notificaciones"></param>
-    public PostsController(IPostService service, INotificacionesService notificaciones)
+    public PostsController(IPostService service, INotificacionService notificaciones)
     {
         _service = service;
         _notificaciones = notificaciones;
     }
 
-    /// <summary>
-    /// Obtiene todos los posts
-    /// </summary>
-    /// <returns>Todos los posts</returns>
+    // ------------------------------------------------------------
+    // GET ALL
+    // ------------------------------------------------------------
     [HttpGet]
     [Authorize(Roles = "Administrador,Editor,Autor")]
     public async Task<IActionResult> GetAll()
@@ -40,11 +32,9 @@ public class PostsController : ControllerBase
         return Ok(posts.Select(p => p.ToDto()));
     }
 
-    /// <summary>
-    /// Obtiene un post por su ID
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns>Post</returns>
+    // ------------------------------------------------------------
+    // GET BY ID
+    // ------------------------------------------------------------
     [HttpGet("{id}")]
     [Authorize(Roles = "Administrador,Editor,Autor")]
     public async Task<IActionResult> GetById(int id)
@@ -56,11 +46,9 @@ public class PostsController : ControllerBase
         return Ok(post.ToDto());
     }
 
-    /// <summary>
-    /// Crea un nuevo post
-    /// </summary>
-    /// <param name="dto"></param>
-    /// <returns>Post</returns>
+    // ------------------------------------------------------------
+    // CREATE
+    // ------------------------------------------------------------
     [HttpPost]
     [Authorize(Roles = "Administrador,Editor,Autor")]
     public async Task<IActionResult> Create(CreatePostDto dto)
@@ -70,20 +58,20 @@ public class PostsController : ControllerBase
 
         try
         {
+            int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
             var post = new Post
             {
                 Titulo = dto.Titulo,
                 Contenido = dto.Contenido,
                 CategoriaId = dto.CategoriaId,
-                UsuarioId = dto.UsuarioId,
-                FechaCreacion = DateTime.UtcNow,
-                FechaActualizacion = DateTime.UtcNow,
+                UsuarioId = usuarioId,
             };
 
-            var created = await _service.CreateAsync(post, dto.TagIds);
+            var created = await _service.CreateAsync(post, dto.TagIds, usuarioId);
 
             if (created == null)
-                return BadRequest();
+                return BadRequest("No se pudo crear el post");
 
             var notificacion = NotificacionFactory.NuevoPost(
                 usuarioId: created.UsuarioId,
@@ -101,48 +89,44 @@ public class PostsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Actualiza un post existente
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="dto"></param>
-    /// <returns>Post actualizado</returns>
-    [Authorize(Policy = "PuedeEditarPost")]
+    // ------------------------------------------------------------
+    // UPDATE
+    // ------------------------------------------------------------
     [HttpPut("{id}")]
+    [Authorize(Policy = "PuedeEditarPost")]
     public async Task<IActionResult> Update(int id, CreatePostDto dto)
-    {   
-        
+    {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
         try
         {
+            int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+            bool esAdmin = User.IsInRole("Administrador");
+            bool esEditor = User.IsInRole("Editor");
+
             var post = new Post
             {
                 Titulo = dto.Titulo,
                 Contenido = dto.Contenido,
                 CategoriaId = dto.CategoriaId,
-                UsuarioId = dto.UsuarioId,
+                UsuarioId = usuarioId,
             };
-
-            bool esAdmin = User.IsInRole("Administrador");
-            bool esEditor = User.IsInRole("Editor");
 
             var ok = await _service.UpdateAsync(
                 id,
                 post,
                 dto.TagIds ?? new List<int>(),
+                usuarioId,
                 esAdmin || esEditor
             );
-            
-            if (!ok)
-                return BadRequest(); // o NotFound, según tu diseño
 
-            var updated = await _service.GetByIdAsync(id);
-            if (updated == null)
+            if (!ok)
                 return NotFound();
 
-            return Ok(updated.ToDto());
+            var updated = await _service.GetByIdAsync(id);
+            return Ok(updated!.ToDto());
         }
         catch (ArgumentException ex)
         {
@@ -150,28 +134,25 @@ public class PostsController : ControllerBase
         }
     }
 
-    /// <summary>
-    /// Elimina un post por su ID
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns>Notificación de eliminación</returns>
+    // ------------------------------------------------------------
+    // DELETE
+    // ------------------------------------------------------------
     [HttpDelete("{id}")]
     [Authorize(Roles = "Administrador,Editor,Autor")]
     public async Task<IActionResult> Delete(int id)
     {
-        var ok = await _service.DeleteAsync(id);
+        int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        bool esAdmin = User.IsInRole("Administrador");
+        bool esEditor = User.IsInRole("Editor");
+        var ok = await _service.DeleteAsync(id, usuarioId, esAdmin || esEditor);
         if (!ok)
             return NotFound();
-
         return NoContent();
     }
 
-    /// <summary>
-    /// Obtiene posts paginados
-    /// </summary>
-    /// <param name="pagina"></param>
-    /// <param name="tamano"></param>
-    /// <returns>Posts paginados</returns>
+    // ------------------------------------------------------------
+    // PAGED
+    // ------------------------------------------------------------
     [HttpGet("paged")]
     public async Task<IActionResult> GetPaged(int pagina = 1, int tamano = 10)
     {
@@ -188,11 +169,9 @@ public class PostsController : ControllerBase
         );
     }
 
-    /// <summary>
-    /// Obtiene un post por su slug
-    /// </summary>
-    /// <param name="slug"></param>
-    /// <returns>Post</returns>
+    // ------------------------------------------------------------
+    // GET BY SLUG
+    // ------------------------------------------------------------
     [HttpGet("slug/{slug}")]
     public async Task<IActionResult> GetBySlug(string slug)
     {
@@ -203,11 +182,9 @@ public class PostsController : ControllerBase
         return Ok(post.ToDto());
     }
 
-    /// <summary>
-    /// Busca posts por texto
-    /// </summary>
-    /// <param name="q"></param>
-    /// <returns>Posts encontrados</returns>
+    // ------------------------------------------------------------
+    // SEARCH
+    // ------------------------------------------------------------
     [HttpGet("buscar")]
     public async Task<IActionResult> Buscar([FromQuery] string q)
     {
@@ -215,15 +192,12 @@ public class PostsController : ControllerBase
             return BadRequest("Debe proporcionar un texto de búsqueda");
 
         var posts = await _service.SearchAsync(q);
-
         return Ok(posts.Select(p => p.ToDto()));
     }
 
-    /// <summary>
-    /// Obtiene posts por categoría ID
-    /// </summary>
-    /// <param name="categoriaId"></param>
-    /// <returns>Posts en la categoría</returns>
+    // ------------------------------------------------------------
+    // BY CATEGORY
+    // ------------------------------------------------------------
     [HttpGet("categoria/{categoriaId:int}")]
     public async Task<IActionResult> GetByCategoria(int categoriaId)
     {
@@ -231,11 +205,6 @@ public class PostsController : ControllerBase
         return Ok(posts.Select(p => p.ToDto()));
     }
 
-    /// <summary>
-    /// Obtiene posts por slug de categoría
-    /// </summary>
-    /// <param name="slug"></param>
-    /// <returns>Posts en la categoría</returns>
     [HttpGet("categoria/slug/{slug}")]
     public async Task<IActionResult> GetByCategoriaSlug(string slug)
     {
@@ -243,11 +212,9 @@ public class PostsController : ControllerBase
         return Ok(posts.Select(p => p.ToDto()));
     }
 
-    /// <summary>
-    /// Obtiene posts por tag ID
-    /// </summary>
-    /// <param name="tagId"></param>
-    /// <returns>Posts con el tag</returns>
+    // ------------------------------------------------------------
+    // BY TAG
+    // ------------------------------------------------------------
     [HttpGet("tag/{tagId:int}")]
     public async Task<IActionResult> GetByTag(int tagId)
     {
@@ -255,11 +222,6 @@ public class PostsController : ControllerBase
         return Ok(posts.Select(p => p.ToDto()));
     }
 
-    /// <summary>
-    /// Obtiene posts por nombre de tag
-    /// </summary>
-    /// <param name="nombre"></param>
-    /// <returns>Posts con el tag</returns>
     [HttpGet("tag/nombre/{nombre}")]
     public async Task<IActionResult> GetByTagNombre(string nombre)
     {
@@ -267,11 +229,9 @@ public class PostsController : ControllerBase
         return Ok(posts.Select(p => p.ToDto()));
     }
 
-    /// <summary>
-    /// Obtiene posts por autor ID
-    /// </summary>
-    /// <param name="usuarioId"></param>
-    /// <returns>Posts del autor</returns>
+    // ------------------------------------------------------------
+    // BY AUTHOR
+    // ------------------------------------------------------------
     [HttpGet("autor/{usuarioId:int}")]
     public async Task<IActionResult> GetByAutor(int usuarioId)
     {
@@ -279,11 +239,6 @@ public class PostsController : ControllerBase
         return Ok(posts.Select(p => p.ToDto()));
     }
 
-    /// <summary>
-    /// Obtiene posts por nombre de autor
-    /// </summary>
-    /// <param name="nombre"></param>
-    /// <returns>Posts del autor</returns>
     [HttpGet("autor/nombre/{nombre}")]
     public async Task<IActionResult> GetByAutorNombre(string nombre)
     {
@@ -291,12 +246,9 @@ public class PostsController : ControllerBase
         return Ok(posts.Select(p => p.ToDto()));
     }
 
-    /// <summary>
-    /// Obtiene posts con paginación por cursor
-    /// </summary>
-    /// <param name="after"></param>
-    /// <param name="limit"></param>
-    /// <returns>Posts paginados por cursor</returns>
+    // ------------------------------------------------------------
+    // CURSOR PAGINATION
+    // ------------------------------------------------------------
     [HttpGet("cursor")]
     public async Task<IActionResult> GetCursorPaged(int? after = null, int limit = 10)
     {
@@ -305,34 +257,9 @@ public class PostsController : ControllerBase
         return Ok(
             new CursorPaginationDto<PostDto>
             {
-                Items = result.Items.Select(p => p.ToDto()), // ✔ corregido
+                Items = result.Items.Select(p => p.ToDto()),
                 NextCursor = result.NextCursor,
             }
         );
-    }
-    /// <summary>
-    /// Valida la entrada para crear o actualizar un post
-    /// </summary>
-    /// <param name="post"></param>
-    /// <param name="tagIds"></param>
-    private void ValidarEntrada(Post post, List<int> tagIds)
-    {
-        if (post == null)
-            throw new ArgumentException("El post no puede ser nulo");
-
-        if (string.IsNullOrWhiteSpace(post.Titulo))
-            throw new ArgumentException("El título es obligatorio");
-
-        if (string.IsNullOrWhiteSpace(post.Contenido))
-            throw new ArgumentException("El contenido es obligatorio");
-
-        if (post.CategoriaId <= 0)
-            throw new ArgumentException("La categoría es inválida");
-
-        if (tagIds == null)
-            throw new ArgumentException("La lista de tags no puede ser nula");
-
-        if (tagIds.Any(id => id <= 0))
-            throw new ArgumentException("Todos los tags deben tener un ID válido");
     }
 }

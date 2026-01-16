@@ -18,7 +18,7 @@ public interface INotificacionService
     /// <param name="usuarioId"></param>
     /// <param name="mensaje"></param>
     /// <returns>Task</returns>
-    Task CrearAsync(int usuarioId, string mensaje);
+    Task CrearAsync(Notificacion notificacion);
 
     /// <summary>
     ///

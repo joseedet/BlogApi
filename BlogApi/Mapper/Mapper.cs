@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using BlogApi.Models;
 
 namespace BlogApi.DTO;
 
+/// <summary>
+/// Clase estática que contiene métodos de mapeo entre entidades y DTOs.
+/// </summary>
 public static class Mapper
 {
     /// <summary>
@@ -81,4 +85,49 @@ public static class Mapper
     /// <returns>TagDto</returns>
     /// </summary>
     public static TagDto ToDto(this Tag tag) => new() { Id = tag.Id, Nombre = tag.Nombre };
+
+
+    /// <summary>
+    ///  Convierte una entidad Notificación a su DTO correspondiente.
+    /// </summary>
+    /// <param name="n"></param>
+    /// <returns></returns>
+    public static NotificacionDto ToDto(this Notificacion n)
+    {
+        var dto = new NotificacionDto
+        {
+            Id = n.Id,
+            UsuarioDestinoId = n.UsuarioId,
+            UsuarioOrigenId = 0, // si luego quieres añadirlo, aquí se ajusta
+            Tipo = n.Tipo,
+            Mensaje = n.Mensaje,
+            Fecha = n.Fecha,
+            Leida = n.Leida,
+            Payload = n.Payload,
+        };
+
+        // Extraer datos del payload si existe
+        if (!string.IsNullOrWhiteSpace(n.Payload))
+        {
+            try
+            {
+                var data = JsonSerializer.Deserialize<Dictionary<string, int>>(n.Payload);
+
+                if (data != null)
+                {
+                    if (data.TryGetValue("postId", out var postId))
+                        dto.PostId = postId;
+
+                    if (data.TryGetValue("comentarioId", out var comentarioId))
+                        dto.ComentarioId = comentarioId;
+                }
+            }
+            catch
+            {
+                // Si el payload no es válido, simplemente lo ignoramos
+            }
+        }
+
+        return dto;
+    }
 }

@@ -43,10 +43,10 @@ public class NotificacionService : INotificacionService
     /// <param name="usuarioId"></param>
     /// <param name="mensaje"></param>
     /// <returns></returns>
-    public async Task CrearAsync(int usuarioId, string mensaje)
+    public async Task CrearAsync(Notificacion notificacion)
     {
-        var n = new Notificacion { UsuarioId = usuarioId, Mensaje = mensaje };
-        _context.Notificaciones.Add(n);
+        //var n = new Notificacion { UsuarioId = usuarioId, Mensaje = mensaje };
+        _context.Notificaciones.Add(notificacion);
         await _context.SaveChangesAsync();
     }
 

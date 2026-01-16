@@ -1,4 +1,5 @@
 using BlogApi.Data;
+using BlogApi.Domain.Factories;
 using BlogApi.Hubs;
 using BlogApi.Models;
 using BlogApi.Repositories.Interfaces;
@@ -74,7 +75,6 @@ public class ComentarioService : IComentarioService
     /// </summary>
     /// <param name="postId"></param>
     /// <returns>IEnumerable&lt;Comentario&gt;</returns>
-
     public async Task<IEnumerable<Comentario>> GetComentariosDePostAsync(int postId)
     {
         // Comentarios raíz con respuestas y usuario
@@ -125,10 +125,19 @@ public class ComentarioService : IComentarioService
 
         // Crear notificación en la base de datos
 
-        await _notificacionService.CrearAsync(
+        /*await _notificacionService.CrearAsync(
             postAutor.UsuarioId,
             $"Tu post ha recibido un nuevo comentario de {autorComentario}"
+        );*/
+        Notificacion notificacion = NotificacionFactory.NuevoComentario(
+            postAutor.UsuarioId,
+            comentario.PostId,
+            comentario.Contenido,
+            comentario.Id,
+            autorComentario
         );
+        await _notificacionService.CrearAsync(notificacion);
+
         // Enviar notificación en tiempo real vía SignalR
         await _hub
             .Clients.User(postAutor.UsuarioId.ToString())
