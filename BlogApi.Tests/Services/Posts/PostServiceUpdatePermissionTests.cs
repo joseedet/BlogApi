@@ -1,21 +1,18 @@
 using BlogApi.Models;
-using BlogApi.Repositories;
-using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
+using BlogApi.Tests.Common;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace BlogApi.Tests.Services.Posts;
 
-public class PostServiceUpdatePermissionTests
+public class PostServiceUpdatePermissionTests : PostServiceTestBase
 {
-    private readonly Mock<IPostRepository> _repo = new();
-    private readonly Mock<ITagRepository> _tagRepo = new();
     private readonly PostService _service;
 
     public PostServiceUpdatePermissionTests()
     {
-        _service = new PostService(_repo.Object, _tagRepo.Object);
+        _service = CreateService();
     }
 
     // Helper para simular Query().Include().FirstOrDefaultAsync()
@@ -23,12 +20,11 @@ public class PostServiceUpdatePermissionTests
     {
         var queryable = new List<Post> { post! }.AsQueryable();
 
-        _repo.Setup(r => r.Query()).Returns(queryable);
+        Repo.Setup(r => r.Query()).Returns(queryable);
 
-        _repo.Setup(r => r.Query().Include(It.IsAny<string>())).Returns(queryable);
+        Repo.Setup(r => r.Query().Include(It.IsAny<string>())).Returns(queryable);
 
-        _repo
-            .Setup(r =>
+        Repo.Setup(r =>
                 r.Query()
                     .FirstOrDefaultAsync(
                         It.IsAny<System.Linq.Expressions.Expression<Func<Post, bool>>>()
@@ -42,11 +38,10 @@ public class PostServiceUpdatePermissionTests
     // ------------------------------------------------------------
     [Fact]
     public async Task UpdateAsync_ShouldReturnFalse_WhenPostNotFound()
-    {
+    { // Arrange
         SetupExistingPost(null);
-
-        var ok = await _service.UpdateAsync(1, new Post(), new List<int>(), true);
-
+        var ok = await _service.UpdateAsync(1, new Post(), new List<int>(), 123, false);
+        //Assert
         Assert.False(ok);
     }
 
@@ -62,7 +57,13 @@ public class PostServiceUpdatePermissionTests
 
         var updated = new Post { UsuarioId = 20 }; // otro usuario
 
-        var ok = await _service.UpdateAsync(1, updated, new List<int>(), puedeEditarTodo: false);
+        var ok = await _service.UpdateAsync(
+            1,
+            updated,
+            new List<int>(),
+            123,
+            puedeEditarTodo: false
+        );
 
         Assert.False(ok);
     }
@@ -89,10 +90,16 @@ public class PostServiceUpdatePermissionTests
             Contenido = "Contenido",
         };
 
-        _tagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+        TagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        var ok = await _service.UpdateAsync(1, updated, new List<int>(), puedeEditarTodo: false);
+        var ok = await _service.UpdateAsync(
+            1,
+            updated,
+            new List<int>(),
+            123,
+            puedeEditarTodo: false
+        );
 
         Assert.True(ok);
     }
@@ -119,10 +126,16 @@ public class PostServiceUpdatePermissionTests
             Contenido = "Contenido",
         };
 
-        _tagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+        TagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        var ok = await _service.UpdateAsync(1, updated, new List<int>(), puedeEditarTodo: true);
+        var ok = await _service.UpdateAsync(
+            1,
+            updated,
+            new List<int>(),
+            123,
+            puedeEditarTodo: true
+        );
 
         Assert.True(ok);
     }
@@ -150,10 +163,10 @@ public class PostServiceUpdatePermissionTests
             CategoriaId = 3,
         };
 
-        _tagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+        TagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        var ok = await _service.UpdateAsync(1, updated, new List<int>(), true);
+        var ok = await _service.UpdateAsync(1, updated, new List<int>(), 123, true);
 
         Assert.True(ok);
         Assert.Equal("Nuevo Título", existing.Titulo);
@@ -184,10 +197,10 @@ public class PostServiceUpdatePermissionTests
             new Tag { Id = 3 },
         };
 
-        _tagRepo.Setup(r => r.Query()).Returns(newTags.AsQueryable());
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+        TagRepo.Setup(r => r.Query()).Returns(newTags.AsQueryable());
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        var ok = await _service.UpdateAsync(1, updated, new List<int> { 2, 3 }, true);
+        var ok = await _service.UpdateAsync(1, updated, new List<int> { 2, 3 }, 123, true);
 
         Assert.True(ok);
         Assert.Equal(2, existing.Tags.Count);
@@ -212,11 +225,11 @@ public class PostServiceUpdatePermissionTests
 
         var updated = new Post { UsuarioId = 10 };
 
-        _tagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+        TagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        await _service.UpdateAsync(1, updated, new List<int>(), true);
+        await _service.UpdateAsync(1, updated, new List<int>(), 123, true);
 
-        _repo.Verify(r => r.SaveChangesAsync(), Times.Once);
+        Repo.Verify(r => r.SaveChangesAsync(), Times.Once);
     }
 }

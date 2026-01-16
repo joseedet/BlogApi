@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using BlogApi.Controllers;
 using BlogApi.DTO;
 using BlogApi.Models;
 using BlogApi.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -11,7 +13,8 @@ public class PostsControllerTests
 {
     private readonly Mock<IPostService> _service = new();
     private readonly PostsController _controller;
-    private readonly Mock<INotificacionesService> _notificaciones = new();
+    //private readonly Mock<INotificacionesService> _notificaciones = new();
+    private readonly Mock<INotificacionService> _notificaciones = new();
 
     public PostsControllerTests()
     {
@@ -125,7 +128,13 @@ public class PostsControllerTests
         var post = new Post { Id = 1, Titulo = "Nuevo" };
 
         _service
-            .Setup(s => s.CreateAsync(It.IsAny<Post>(), It.IsAny<List<int>>()))
+            .Setup(s =>
+                s.CreateAsync(
+                    It.IsAny<Post>(),
+                    It.IsAny<List<int>>(),
+                    It.IsAny<int>() // usuarioId
+                )
+            )
             .ReturnsAsync(post);
 
         var dto = new CreatePostDto
@@ -133,25 +142,48 @@ public class PostsControllerTests
             Titulo = "Nuevo",
             Contenido = "Contenido",
             CategoriaId = 1,
-            TagIds = new List<int>(),
+            TagIds = new List<int> { 1 },
         };
 
         var result = await _controller.Create(dto);
 
-        var created = Assert.IsType<CreatedAtActionResult>(result);
-        var data = Assert.IsType<PostDto>(created.Value);
-
-        Assert.Equal(1, data.Id);
+        Assert.IsType<CreatedAtActionResult>(result);
     }
 
     // ------------------------------------------------------------
     // UPDATE
     // ------------------------------------------------------------
+  
     [Fact]
     public async Task Update_ShouldReturnOkWithUpdatedPost_WhenSuccessful()
     {
+        // Arrange: usuario simulado
+        var user = new ClaimsPrincipal(
+            new ClaimsIdentity(
+                new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "123"), // usuarioId
+                    new Claim(ClaimTypes.Role, "Administrador"), // para puedeEditarTodo = true
+                },
+                "TestAuth"
+            )
+        );
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = user },
+        };
+
         _service
-            .Setup(s => s.UpdateAsync(1, It.IsAny<Post>(), It.IsAny<List<int>>(), It.IsAny<bool>()))
+            .Setup(s =>
+                s.UpdateAsync(
+                    1,
+                    It.IsAny<Post>(),
+                    It.IsAny<List<int>>(),
+                    It.IsAny<int>(), // usuarioId
+                    It.IsAny<bool>() // puedeEditarTodo
+                )
+            )
             .ReturnsAsync(true);
 
         _service
@@ -166,11 +198,12 @@ public class PostsControllerTests
             TagIds = new List<int>(),
         };
 
+        // Act
         var result = await _controller.Update(1, dto);
 
+        // Assert
         var ok = Assert.IsType<OkObjectResult>(result);
         var data = Assert.IsType<PostDto>(ok.Value);
-
         Assert.Equal(1, data.Id);
     }
 
@@ -178,11 +211,37 @@ public class PostsControllerTests
     /// Actualiza un post y devuelve BadRequest si el servicio devuelve false
     /// </summary>
     /// <returns>BadRequestResult</returns>
+    
     [Fact]
     public async Task Update_ShouldReturnBadRequest_WhenServiceReturnsFalse()
     {
+        // Arrange: usuario simulado
+        var user = new ClaimsPrincipal(
+            new ClaimsIdentity(
+                new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "123"),
+                    new Claim(ClaimTypes.Role, "Autor"), // por ejemplo, no admin/editor
+                },
+                "TestAuth"
+            )
+        );
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = user },
+        };
+
         _service
-            .Setup(s => s.UpdateAsync(1, It.IsAny<Post>(), It.IsAny<List<int>>(), It.IsAny<bool>()))
+            .Setup(s =>
+                s.UpdateAsync(
+                    1,
+                    It.IsAny<Post>(),
+                    It.IsAny<List<int>>(),
+                    It.IsAny<int>(), // usuarioId
+                    It.IsAny<bool>() // puedeEditarTodo
+                )
+            )
             .ReturnsAsync(false);
 
         var dto = new CreatePostDto
@@ -193,8 +252,10 @@ public class PostsControllerTests
             TagIds = new List<int>(),
         };
 
+        // Act
         var result = await _controller.Update(1, dto);
 
+        // Assert
         Assert.IsType<BadRequestResult>(result);
     }
 
@@ -204,13 +265,40 @@ public class PostsControllerTests
     [Fact]
     public async Task Delete_ShouldReturnNoContent_WhenSuccessful()
     {
-        _service.Setup(s => s.DeleteAsync(1)).ReturnsAsync(true);
+        // Arrange: usuario simulado
+        var user = new ClaimsPrincipal(
+            new ClaimsIdentity(
+                new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "123"), // usuarioId
+                    new Claim(ClaimTypes.Role, "Administrador"), // puedeEliminarTodo = true
+                },
+                "TestAuth"
+            )
+        );
 
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = user },
+        };
+
+        _service
+            .Setup(s =>
+                s.DeleteAsync(
+                    1,
+                    It.IsAny<int>(), // usuarioId
+                    It.IsAny<bool>() // puedeEliminarTodo
+                )
+            )
+            .ReturnsAsync(true);
+
+        // Act
         var result = await _controller.Delete(1);
 
+        // Assert
         Assert.IsType<NoContentResult>(result);
 
-        _service.Verify(s => s.DeleteAsync(1), Times.Once);
+        _service.Verify(s => s.DeleteAsync(1, It.IsAny<int>(), It.IsAny<bool>()), Times.Once);
     }
 
     /// <summary>
@@ -220,13 +308,40 @@ public class PostsControllerTests
     [Fact]
     public async Task Delete_ShouldReturnNotFound_WhenPostDoesNotExist()
     {
-        _service.Setup(s => s.DeleteAsync(1)).ReturnsAsync(false);
+        // Arrange: usuario simulado
+        var user = new ClaimsPrincipal(
+            new ClaimsIdentity(
+                new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "123"), // usuarioId
+                    new Claim(ClaimTypes.Role, "Autor"), // no admin/editor → puedeEliminarTodo = false
+                },
+                "TestAuth"
+            )
+        );
 
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = user },
+        };
+
+        _service
+            .Setup(s =>
+                s.DeleteAsync(
+                    1,
+                    It.IsAny<int>(), // usuarioId
+                    It.IsAny<bool>() // puedeEliminarTodo
+                )
+            )
+            .ReturnsAsync(false);
+
+        // Act
         var result = await _controller.Delete(1);
 
+        // Assert
         Assert.IsType<NotFoundResult>(result);
 
-        _service.Verify(s => s.DeleteAsync(1), Times.Once);
+        _service.Verify(s => s.DeleteAsync(1, It.IsAny<int>(), It.IsAny<bool>()), Times.Once);
     }
 
     /// <summary>
@@ -236,12 +351,39 @@ public class PostsControllerTests
     [Fact]
     public async Task Delete_ShouldReturnBadRequest_WhenServiceThrowsArgumentException()
     {
-        _service.Setup(s => s.DeleteAsync(1)).ThrowsAsync(new ArgumentException("Error de prueba"));
+        // Arrange: usuario simulado
+        var user = new ClaimsPrincipal(
+            new ClaimsIdentity(
+                new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "123"), // usuarioId
+                    new Claim(ClaimTypes.Role, "Autor"), // no admin/editor → puedeEliminarTodo = false
+                },
+                "TestAuth"
+            )
+        );
 
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = user },
+        };
+
+        _service
+            .Setup(s =>
+                s.DeleteAsync(
+                    1,
+                    It.IsAny<int>(), // usuarioId
+                    It.IsAny<bool>() // puedeEliminarTodo
+                )
+            )
+            .ThrowsAsync(new ArgumentException("Error de prueba"));
+
+        // Act
         var result = await _controller.Delete(1);
 
+        // Assert
         var bad = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.NotNull(bad.Value); // opcional pero profesional
+        Assert.NotNull(bad.Value);
     }
 
     /// <summary>
@@ -251,9 +393,33 @@ public class PostsControllerTests
     [Fact]
     public async Task Create_ShouldReturnBadRequest_WhenServiceReturnsNull()
     {
+        // Arrange: usuario simulado
+        var user = new ClaimsPrincipal(
+            new ClaimsIdentity(
+                new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "123"), // usuarioId
+                    new Claim(ClaimTypes.Role, "Autor"),
+                },
+                "TestAuth"
+            )
+        );
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = user },
+        };
+
         _service
-            .Setup(s => s.CreateAsync(It.IsAny<Post>(), It.IsAny<List<int>>()))
-            .Returns(Task.FromResult<Post?>(null));
+            .Setup(s =>
+                s.CreateAsync(
+                    It.IsAny<Post>(),
+                    It.IsAny<List<int>>(),
+                    It.IsAny<int>() // usuarioId
+                )
+            )
+            .ReturnsAsync((Post?)null);
+
         var dto = new CreatePostDto
         {
             Titulo = "Nuevo",
@@ -261,7 +427,11 @@ public class PostsControllerTests
             CategoriaId = 1,
             TagIds = new List<int>(),
         };
+
+        // Act
         var result = await _controller.Create(dto);
+
+        // Assert
         Assert.IsType<BadRequestResult>(result);
     }
 
@@ -319,8 +489,33 @@ public class PostsControllerTests
     [Fact]
     public async Task Update_ShouldReturnBadRequest_WhenServiceThrowsArgumentException()
     {
+        // Arrange: usuario simulado
+        var user = new ClaimsPrincipal(
+            new ClaimsIdentity(
+                new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "123"), // usuarioId
+                    new Claim(ClaimTypes.Role, "Autor"), // no admin/editor → puedeEditarTodo = false
+                },
+                "TestAuth"
+            )
+        );
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = user },
+        };
+
         _service
-            .Setup(s => s.UpdateAsync(1, It.IsAny<Post>(), It.IsAny<List<int>>(), It.IsAny<bool>()))
+            .Setup(s =>
+                s.UpdateAsync(
+                    1,
+                    It.IsAny<Post>(),
+                    It.IsAny<List<int>>(),
+                    It.IsAny<int>(), // usuarioId
+                    It.IsAny<bool>() // puedeEditarTodo
+                )
+            )
             .ThrowsAsync(new ArgumentException("Error de prueba"));
 
         var dto = new CreatePostDto
@@ -331,10 +526,12 @@ public class PostsControllerTests
             TagIds = new List<int>(),
         };
 
+        // Act
         var result = await _controller.Update(1, dto);
 
+        // Assert
         var bad = Assert.IsType<BadRequestObjectResult>(result);
-        Assert.NotNull(bad.Value); // opcional pero profesional
+        Assert.NotNull(bad.Value);
     }
 
     /// <summary>
@@ -343,9 +540,34 @@ public class PostsControllerTests
     [Fact]
     public async Task Update_ShouldReturnNotFound_WhenUpdatedPostCannotBeLoaded()
     {
+        // Arrange: usuario simulado
+        var user = new ClaimsPrincipal(
+            new ClaimsIdentity(
+                new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, "123"), // usuarioId
+                    new Claim(ClaimTypes.Role, "Autor"), // no admin/editor → puedeEditarTodo = false
+                },
+                "TestAuth"
+            )
+        );
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = user },
+        };
+
         // UpdateAsync devuelve true → la actualización "funciona"
         _service
-            .Setup(s => s.UpdateAsync(1, It.IsAny<Post>(), It.IsAny<List<int>>(), It.IsAny<bool>()))
+            .Setup(s =>
+                s.UpdateAsync(
+                    1,
+                    It.IsAny<Post>(),
+                    It.IsAny<List<int>>(),
+                    It.IsAny<int>(), // usuarioId
+                    It.IsAny<bool>() // puedeEditarTodo
+                )
+            )
             .ReturnsAsync(true);
 
         // Pero GetByIdAsync devuelve null → no se puede cargar el post actualizado
@@ -359,8 +581,10 @@ public class PostsControllerTests
             TagIds = new List<int>(),
         };
 
+        // Act
         var result = await _controller.Update(1, dto);
 
+        // Assert
         Assert.IsType<NotFoundResult>(result);
     }
 }

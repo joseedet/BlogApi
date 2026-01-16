@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using BlogApi.Domain.Factories;
 using BlogApi.DTO;
+using BlogApi.Mapper;
 using BlogApi.Models;
 using BlogApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;

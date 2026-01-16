@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Common/" />
     <Folder Include="Controllers/" />
     <Folder Include="Controllers/Auth/" />
     <Folder Include="Controllers/Posts/" />

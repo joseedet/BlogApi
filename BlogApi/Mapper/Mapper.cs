@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using BlogApi.DTO;
 using BlogApi.Models;
 
-namespace BlogApi.DTO;
+namespace BlogApi.Mapper;
 
 /// <summary>
 /// Clase estática que contiene métodos de mapeo entre entidades y DTOs.
@@ -85,7 +86,6 @@ public static class Mapper
     /// <returns>TagDto</returns>
     /// </summary>
     public static TagDto ToDto(this Tag tag) => new() { Id = tag.Id, Nombre = tag.Nombre };
-
 
     /// <summary>
     ///  Convierte una entidad Notificación a su DTO correspondiente.
