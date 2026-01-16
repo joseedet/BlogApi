@@ -1,23 +1,21 @@
-using System.Linq;
 using BlogApi.Models;
-using BlogApi.Repositories;
-using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
+using BlogApi.Tests.Common;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using Xunit;
 
 namespace BlogApi.Tests.Services.Posts;
 
-public class PostServiceGetAllAsyncTests
+/// <summary>
+/// Pruebas unitarias para el método GetAllAsync() de PostService
+/// </summary>
+public class PostServiceGetAllAsyncTests : PostServiceTestBase
 {
-    private readonly Mock<IPostRepository> _repo = new();
-    private readonly Mock<ITagRepository> _tagRepo = new();
     private readonly PostService _service;
 
     public PostServiceGetAllAsyncTests()
     {
-        _service = new PostService(_repo.Object, _tagRepo.Object);
+        _service = CreateService();
     }
 
     // Helper para simular Query() + ToListAsync()
@@ -26,10 +24,10 @@ public class PostServiceGetAllAsyncTests
         var queryable = posts.AsQueryable();
 
         // Query() devuelve el IQueryable simulado
-        _repo.Setup(r => r.Query()).Returns(queryable);
+        Repo.Setup(r => r.Query()).Returns(queryable);
 
         // ToListAsync() devuelve la lista simulada
-        _repo.Setup(r => r.Query().ToListAsync(default)).ReturnsAsync(posts);
+        Repo.Setup(r => r.Query().ToListAsync(default)).ReturnsAsync(posts);
     }
 
     // ------------------------------------------------------------
@@ -80,7 +78,7 @@ public class PostServiceGetAllAsyncTests
 
         await _service.GetAllAsync();
 
-        _repo.Verify(r => r.Query(), Times.Once);
+        Repo.Verify(r => r.Query(), Times.Once);
     }
 
     // ------------------------------------------------------------
@@ -95,6 +93,6 @@ public class PostServiceGetAllAsyncTests
 
         await _service.GetAllAsync();
 
-        _repo.Verify(r => r.Query().ToListAsync(default), Times.Once);
+        Repo.Verify(r => r.Query().ToListAsync(default), Times.Once);
     }
 }

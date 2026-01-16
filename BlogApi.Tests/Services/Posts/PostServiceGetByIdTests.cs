@@ -1,20 +1,19 @@
 using BlogApi.Models;
-using BlogApi.Repositories;
-using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
+using BlogApi.Tests.Common;
 using Moq;
 
 namespace BlogApi.Tests.Services.Posts;
 
-public class PostServiceGetByIdTests
+public class PostServiceGetByIdTests : PostServiceTestBase
 {
-    private readonly Mock<IPostRepository> _repo = new();
-    private readonly Mock<ITagRepository> _tagRepo = new();
+    //private readonly Mock<IPostRepository> _repo = new();
+    //private readonly Mock<ITagRepository> _tagRepo = new();
     private readonly PostService _service;
 
     public PostServiceGetByIdTests()
     {
-        _service = new PostService(_repo.Object, _tagRepo.Object);
+        _service = CreateService();
     }
 
     // ------------------------------------------------------------
@@ -30,7 +29,7 @@ public class PostServiceGetByIdTests
             Slug = "hola-mundo",
         };
 
-        _repo.Setup(r => r.GetPostCompletoAsync(1)).ReturnsAsync(post);
+        Repo.Setup(r => r.GetPostCompletoAsync(1)).ReturnsAsync(post);
 
         var result = await _service.GetByIdAsync(1);
 
@@ -42,7 +41,7 @@ public class PostServiceGetByIdTests
     [Fact]
     public async Task GetByIdAsync_ShouldReturnNull_WhenNotFound()
     {
-        _repo.Setup(r => r.GetPostCompletoAsync(99)).ReturnsAsync((Post?)null);
+        Repo.Setup(r => r.GetPostCompletoAsync(99)).ReturnsAsync((Post?)null);
 
         var result = await _service.GetByIdAsync(99);
 
@@ -52,10 +51,10 @@ public class PostServiceGetByIdTests
     [Fact]
     public async Task GetByIdAsync_ShouldCallRepositoryWithCorrectId()
     {
-        _repo.Setup(r => r.GetPostCompletoAsync(It.IsAny<int>())).ReturnsAsync((Post?)null);
+        Repo.Setup(r => r.GetPostCompletoAsync(It.IsAny<int>())).ReturnsAsync((Post?)null);
 
         await _service.GetByIdAsync(5);
 
-        _repo.Verify(r => r.GetPostCompletoAsync(5), Times.Once);
+        Repo.Verify(r => r.GetPostCompletoAsync(5), Times.Once);
     }
 }

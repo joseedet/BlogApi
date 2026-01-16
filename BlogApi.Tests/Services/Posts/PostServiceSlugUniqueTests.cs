@@ -1,23 +1,18 @@
-using System.Linq;
 using BlogApi.Models;
-using BlogApi.Repositories;
-using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
+using BlogApi.Tests.Common;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using Xunit;
 
 namespace BlogApi.Tests.Services.Posts;
 
-public class PostServiceSlugUniqueTests
+public class PostServiceSlugUniqueTests : PostServiceTestBase
 {
-    private readonly Mock<IPostRepository> _repo = new();
-    private readonly Mock<ITagRepository> _tagRepo = new();
     private readonly PostService _service;
 
     public PostServiceSlugUniqueTests()
     {
-        _service = new PostService(_repo.Object, _tagRepo.Object);
+        _service = CreateService();
     }
 
     // Helper para simular Query().AnyAsync()
@@ -25,8 +20,7 @@ public class PostServiceSlugUniqueTests
     {
         var queue = new Queue<bool>(existsSequence);
 
-        _repo
-            .Setup(r =>
+        Repo.Setup(r =>
                 r.Query().AnyAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Post, bool>>>())
             )
             .ReturnsAsync(() => queue.Dequeue());
@@ -42,11 +36,11 @@ public class PostServiceSlugUniqueTests
 
         SetupSlugExistsSequence(false); // No existe ningún slug igual
 
-        _tagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
-        _repo.Setup(r => r.AddAsync(It.IsAny<Post>())).Returns(Task.CompletedTask);
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+        TagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
+        Repo.Setup(r => r.AddAsync(It.IsAny<Post>())).Returns(Task.CompletedTask);
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        var result = await _service.CreateAsync(post, new List<int>());
+        var result = await _service.CreateAsync(post, new List<int>(), 123);
 
         Assert.Equal("hola-mundo", result.Slug);
     }
@@ -63,11 +57,11 @@ public class PostServiceSlugUniqueTests
         // 1) "hola-mundo" existe
         // 2) "hola-mundo-1" NO existe
 
-        _tagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
-        _repo.Setup(r => r.AddAsync(It.IsAny<Post>())).Returns(Task.CompletedTask);
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+        TagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
+        Repo.Setup(r => r.AddAsync(It.IsAny<Post>())).Returns(Task.CompletedTask);
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        var result = await _service.CreateAsync(post, new List<int>());
+        var result = await _service.CreateAsync(post, new List<int>(), 123);
 
         Assert.Equal("hola-mundo-1", result.Slug);
     }
@@ -86,11 +80,11 @@ public class PostServiceSlugUniqueTests
         // "hola-mundo-2" existe
         // "hola-mundo-3" NO existe
 
-        _tagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
-        _repo.Setup(r => r.AddAsync(It.IsAny<Post>())).Returns(Task.CompletedTask);
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+        TagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
+        Repo.Setup(r => r.AddAsync(It.IsAny<Post>())).Returns(Task.CompletedTask);
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        var result = await _service.CreateAsync(post, new List<int>());
+        var result = await _service.CreateAsync(post, new List<int>(), 123);
 
         Assert.Equal("hola-mundo-3", result.Slug);
     }
@@ -105,11 +99,11 @@ public class PostServiceSlugUniqueTests
 
         SetupSlugExistsSequence(false);
 
-        _tagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
-        _repo.Setup(r => r.AddAsync(It.IsAny<Post>())).Returns(Task.CompletedTask);
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+        TagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
+        Repo.Setup(r => r.AddAsync(It.IsAny<Post>())).Returns(Task.CompletedTask);
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        var result = await _service.CreateAsync(post, new List<int>());
+        var result = await _service.CreateAsync(post, new List<int>(), 123);
 
         Assert.Equal("hola-mundo", result.Slug);
     }
@@ -124,11 +118,11 @@ public class PostServiceSlugUniqueTests
 
         SetupSlugExistsSequence(false);
 
-        _tagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
-        _repo.Setup(r => r.AddAsync(It.IsAny<Post>())).Returns(Task.CompletedTask);
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+        TagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
+        Repo.Setup(r => r.AddAsync(It.IsAny<Post>())).Returns(Task.CompletedTask);
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        var result = await _service.CreateAsync(post, new List<int>());
+        var result = await _service.CreateAsync(post, new List<int>(), 123);
 
         Assert.Equal("hola-mundo-nuevo", result.Slug);
     }
@@ -143,11 +137,11 @@ public class PostServiceSlugUniqueTests
 
         SetupSlugExistsSequence(false);
 
-        _tagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
-        _repo.Setup(r => r.AddAsync(It.IsAny<Post>())).Returns(Task.CompletedTask);
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+        TagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
+        Repo.Setup(r => r.AddAsync(It.IsAny<Post>())).Returns(Task.CompletedTask);
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        var result = await _service.CreateAsync(post, new List<int>());
+        var result = await _service.CreateAsync(post, new List<int>(), 123);
 
         Assert.Equal("hola-mundo", result.Slug);
     }
@@ -162,11 +156,11 @@ public class PostServiceSlugUniqueTests
 
         SetupSlugExistsSequence(false);
 
-        _tagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
-        _repo.Setup(r => r.AddAsync(It.IsAny<Post>())).Returns(Task.CompletedTask);
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+        TagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
+        Repo.Setup(r => r.AddAsync(It.IsAny<Post>())).Returns(Task.CompletedTask);
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        var result = await _service.CreateAsync(post, new List<int>());
+        var result = await _service.CreateAsync(post, new List<int>(), 123);
 
         Assert.Equal("cancion-unica", result.Slug);
     }
@@ -181,14 +175,14 @@ public class PostServiceSlugUniqueTests
 
         SetupSlugExistsSequence(true, true, false);
 
-        _tagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
-        _repo.Setup(r => r.AddAsync(It.IsAny<Post>())).Returns(Task.CompletedTask);
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+        TagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
+        Repo.Setup(r => r.AddAsync(It.IsAny<Post>())).Returns(Task.CompletedTask);
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        await _service.CreateAsync(post, new List<int>());
+        await _service.CreateAsync(post, new List<int>(), 123);
 
         // Debe llamar 3 veces a AnyAsync()
-        _repo.Verify(
+        Repo.Verify(
             r =>
                 r.Query()
                     .AnyAsync(It.IsAny<System.Linq.Expressions.Expression<Func<Post, bool>>>()),
