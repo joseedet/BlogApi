@@ -136,7 +136,12 @@ public class NotificacionRepository : INotificacionRepository
         _context.Notificaciones.Remove(notificacion);
         await Task.CompletedTask;
     }
-
+    /// <summary>
+    /// Marca todas las notificaciones como leidas
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
     public Task MarcarTodasComoLeidasAsync(int usuarioId)
     {
         throw new NotImplementedException();
