@@ -1,4 +1,3 @@
-using System;
 using System.Security.Claims;
 using BlogApi.Controllers;
 using BlogApi.DTO;
@@ -138,9 +137,9 @@ public class NotificacionesControllerTests
         var paginado = new PaginacionResultado<NotificacionDto>
         {
             Items = new List<NotificacionDto>(),
-            TotalRegistros = 0,
+            TotalRegistros = 10,
             PaginaActual = 1,
-            TotalPaginas = 1,
+            TotalPaginas = 0,
         };
 
         _repo.Setup(r => r.ObtenerNoLeidasPaginadasAsync(10, 1, 10)).ReturnsAsync(paginado);
@@ -152,6 +151,9 @@ public class NotificacionesControllerTests
         Assert.IsType<OkObjectResult>(result.Result);
     }
 
+    // ------------------------------------------------------------
+    // DELETE /api/notificaciones/{id}
+    // ------------------------------------------------------------
     [Fact]
     public async Task Eliminar_ShouldReturnOk_WhenSuccessful()
     {
