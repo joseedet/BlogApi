@@ -404,4 +404,71 @@ public class PostsControllerTests : ControllerTestBase
 
         Assert.IsType<BadRequestObjectResult>(result);
     }
+
+    [Fact]
+    public async Task Update_ShouldReturnBadRequest_WhenUserHasNoPermissions()
+    {
+        var controller = CreateController<PostsController>();
+        SetUser(controller, FakeUser(role: "Autor")); // no admin/editor
+
+        PostService
+            .Setup(s =>
+                s.UpdateAsync(
+                    1,
+                    It.IsAny<Post>(),
+                    It.IsAny<List<int>>(),
+                    It.IsAny<int>(),
+                    It.IsAny<bool>() // aquí el controller pasará false
+                )
+            )
+            .ReturnsAsync(false);
+
+        var dto = new CreatePostDto
+        {
+            Titulo = "Editado",
+            Contenido = "Nuevo contenido",
+            CategoriaId = 2,
+            TagIds = new List<int>(),
+        };
+
+        var result = await controller.Update(1, dto);
+
+        Assert.IsType<BadRequestResult>(result);
+    }
+
+    [Fact]
+    public async Task Update_ShouldSucceed_WhenUserHasPermissions()
+    {
+        var controller = CreateController<PostsController>();
+        SetUser(controller, FakeUser(role: "Administrador")); // puedeEditarTodo = true
+
+        PostService
+            .Setup(s =>
+                s.UpdateAsync(
+                    1,
+                    It.IsAny<Post>(),
+                    It.IsAny<List<int>>(),
+                    It.IsAny<int>(),
+                    It.IsAny<bool>() // aquí el controller pasará true
+                )
+            )
+            .ReturnsAsync(true);
+
+        PostService
+            .Setup(s => s.GetByIdAsync(1))
+            .ReturnsAsync(new Post { Id = 1, Titulo = "Editado" });
+
+        var dto = new CreatePostDto
+        {
+            Titulo = "Editado",
+            Contenido = "Nuevo contenido",
+            CategoriaId = 2,
+            TagIds = new List<int>(),
+        };
+
+        var result = await controller.Update(1, dto);
+
+        Assert.IsType<OkObjectResult>(result);
+    }
+    
 }

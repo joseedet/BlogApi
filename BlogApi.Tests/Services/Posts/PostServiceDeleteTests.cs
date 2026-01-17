@@ -1,8 +1,5 @@
 using BlogApi.Models;
-using BlogApi.Repositories;
-using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
-using BlogApi.Services.Interfaces;
 using BlogApi.Tests.Common;
 using Moq;
 
@@ -86,5 +83,18 @@ public class PostServiceDeleteTests : PostServiceTestBase
         await _service.DeleteAsync(1, 1, false);
 
         Repo.Verify(r => r.SaveChangesAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ShouldReturnFalse_WhenUserHasNoPermissions()
+    {
+        //var service = CreateService();
+
+        var post = new Post { Id = 1, UsuarioId = 999 }; // otro autor
+        Repo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(post);
+
+        var result = await _service.DeleteAsync(1, usuarioId: 123, puedeEditarTodo: false);
+
+        Assert.False(result);
     }
 }
