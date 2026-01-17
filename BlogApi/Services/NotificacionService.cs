@@ -40,9 +40,8 @@ public class NotificacionService : INotificacionService
     /// <summary>
     /// Crea una nueva notificación para un usuario
     /// </summary>
-    /// <param name="usuarioId"></param>
-    /// <param name="mensaje"></param>
-    /// <returns></returns>
+    /// <param name="notificacion"></param>
+    /// <returns>Task</returns>
     public async Task CrearAsync(Notificacion notificacion)
     {
         //var n = new Notificacion { UsuarioId = usuarioId, Mensaje = mensaje };
@@ -166,5 +165,24 @@ public class NotificacionService : INotificacionService
             n.Leida = true;
         }
         await _context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Elimina una notificación
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="usuarioId"></param>
+    /// <returns>bool</returns>
+    public async Task<bool> EliminarAsync(int id, int usuarioId)
+    {
+        var notif = await _notificacionRepository.GetByIdAsync(id);
+
+        if (notif == null || notif.UsuarioId != usuarioId)
+            return false;
+
+        await _notificacionRepository.EliminarAsync(notif);
+        await _context.SaveChangesAsync();
+
+        return true;
     }
 }

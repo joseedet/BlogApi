@@ -52,4 +52,24 @@ public interface INotificacionRepository
         int page,
         int pageSize
     );
+    /// <summary>
+    /// Marca todas las notificaciones de un usuario como leídas
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <returns>Task</returns>
+    Task MarcarTodasComoLeidasAsync(int usuarioId);
+
+    /// <summary>
+    /// Elimina una notificación
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Task</returns>
+    Task<Notificacion?> GetByIdAsync(int id);
+
+    /// <summary>
+    /// Elimina una notificación
+    /// </summary>
+    /// <param name="notificacion"></param>
+    /// <returns>Task</returns>
+    Task EliminarAsync(Notificacion notificacion);
 }

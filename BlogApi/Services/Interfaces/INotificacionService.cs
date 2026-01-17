@@ -62,4 +62,12 @@ public interface INotificacionService
     /// <param name="usuarioId"></param>
     /// <returns>Task</returns>
     Task MarcarTodasComoLeidasAsync(int usuarioId);
+
+    /// <summary>
+    /// Elimina una notificación
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="usuarioId"></param>
+    /// <returns>bool</returns>
+    Task<bool> EliminarAsync(int id, int usuarioId);
 }

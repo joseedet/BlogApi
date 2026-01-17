@@ -115,4 +115,30 @@ public class NotificacionRepository : INotificacionRepository
             TotalRegistros = total,
         };
     }
+
+    /// <summary>
+    /// Marca todas las notificaciones de un usuario como leídas
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Task</returns>
+    public async Task<Notificacion?> GetByIdAsync(int id)
+    {
+        return await _context.Notificaciones.FirstOrDefaultAsync(n => n.Id == id);
+    }
+
+    /// <summary>
+    /// Elimina una notificación
+    /// </summary>
+    /// <param name="notificacion"></param>
+    /// <returns>Task</returns>
+    public async Task EliminarAsync(Notificacion notificacion)
+    {
+        _context.Notificaciones.Remove(notificacion);
+        await Task.CompletedTask;
+    }
+
+    public Task MarcarTodasComoLeidasAsync(int usuarioId)
+    {
+        throw new NotImplementedException();
+    }
 }

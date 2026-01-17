@@ -27,6 +27,7 @@
   <ItemGroup>
     <Folder Include="Controllers/" />
     <Folder Include="Controllers/Auth/" />
+    <Folder Include="Controllers/Notifications/" />
     <Folder Include="Controllers/Posts/" />
     <Folder Include="Controllers/Users/" />
     <Folder Include="Integration/" />

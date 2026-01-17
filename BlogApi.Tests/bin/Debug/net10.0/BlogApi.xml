@@ -985,6 +985,27 @@
             <param name="pageSize"></param>
             <returns>PaginacionResultado de NotificacionDto</returns>
         </member>
+        <member name="M:BlogApi.Repositories.INotificacionRepository.MarcarTodasComoLeidasAsync(System.Int32)">
+            <summary>
+            Marca todas las notificaciones de un usuario como leídas
+            </summary>
+            <param name="usuarioId"></param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.INotificacionRepository.GetByIdAsync(System.Int32)">
+            <summary>
+            Elimina una notificación
+            </summary>
+            <param name="id"></param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.INotificacionRepository.EliminarAsync(BlogApi.Models.Notificacion)">
+            <summary>
+            Elimina una notificación
+            </summary>
+            <param name="notificacion"></param>
+            <returns>Task</returns>
+        </member>
         <member name="T:BlogApi.Repositories.ITagRepository">
             <summary>
             Repositorio específico para la entidad Tag
@@ -1079,6 +1100,20 @@
             <param name="page"></param>
             <param name="pageSize"></param>
             <returns>PaginacionResultado de NotificacionDto</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.NotificacionRepository.GetByIdAsync(System.Int32)">
+            <summary>
+            Marca todas las notificaciones de un usuario como leídas
+            </summary>
+            <param name="id"></param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:BlogApi.Repositories.NotificacionRepository.EliminarAsync(BlogApi.Models.Notificacion)">
+            <summary>
+            Elimina una notificación
+            </summary>
+            <param name="notificacion"></param>
+            <returns>Task</returns>
         </member>
         <member name="T:BlogApi.Repositories.PostRepository">
             <summary>
@@ -1386,6 +1421,14 @@
             <param name="usuarioId"></param>
             <returns>Task</returns>
         </member>
+        <member name="M:BlogApi.Services.Interfaces.INotificacionService.EliminarAsync(System.Int32,System.Int32)">
+            <summary>
+            Elimina una notificación
+            </summary>
+            <param name="id"></param>
+            <param name="usuarioId"></param>
+            <returns>bool</returns>
+        </member>
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IPostService.GetAllAsync" -->
         <member name="M:BlogApi.Services.Interfaces.IPostService.GetByIdAsync(System.Int32)">
             <summary>
@@ -1506,9 +1549,8 @@
             <summary>
             Crea una nueva notificación para un usuario
             </summary>
-            <param name="usuarioId"></param>
-            <param name="mensaje"></param>
-            <returns></returns>
+            <param name="notificacion"></param>
+            <returns>Task</returns>
         </member>
         <member name="M:BlogApi.Services.Interfaces.NotificacionService.GetByUsuarioAsync(System.Int32)">
             <summary>
@@ -1549,6 +1591,14 @@
             </summary>
             <param name="usuarioId"></param>
             <returns>Task</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.NotificacionService.EliminarAsync(System.Int32,System.Int32)">
+            <summary>
+            Elimina una notificación
+            </summary>
+            <param name="id"></param>
+            <param name="usuarioId"></param>
+            <returns>bool</returns>
         </member>
         <member name="T:BlogApi.Services.Interfaces.ISanitizerService">
             <summary>
@@ -1737,7 +1787,7 @@
             </summary>
             <param name="id"></param>
             <param name="usuarioId"></param>
-            <param name="puedeEditarTodo"></param>
+            <param name="puedeElimarTodo"></param>
             <returns>bool</returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.PostService.GetPagedAsync(System.Int32,System.Int32)" -->
