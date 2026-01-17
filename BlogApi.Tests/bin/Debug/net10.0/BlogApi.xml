@@ -1972,7 +1972,7 @@
         <member name="F:BlogApi.Utils.TipoNotificacion.NuevoPost">
             <summary>
             Tipos de notificaciones disponibles
-            </summary>/
+            </summary>
         </member>
         <member name="F:BlogApi.Utils.TipoNotificacion.Moderacion">
             <summary>
