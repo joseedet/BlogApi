@@ -4,6 +4,9 @@ using BlogApi.Utils;
 
 namespace BlogApi.Domain.Factories;
 
+/// <summary>
+/// Factory para crear notificaciones
+/// /// </summary>
 public static class NotificacionFactory
 {
     /// <summary>
@@ -46,6 +49,7 @@ public static class NotificacionFactory
             Mensaje = $"Nuevo comentario en tu post: {contenido}",
             Payload = JsonSerializer.Serialize(new { postId, comentarioId }),
         };
+
     /// <summary>
     /// Crea una notificación de nuevo comentario
     /// </summary>

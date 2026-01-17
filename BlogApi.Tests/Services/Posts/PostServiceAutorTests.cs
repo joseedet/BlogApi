@@ -1,33 +1,16 @@
 using BlogApi.Models;
-using BlogApi.Repositories;
-using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
-using BlogApi.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using Moq;
-using Xunit;
+using BlogApi.Tests.Common;
 
 namespace BlogApi.Tests.Services.Posts;
 
-public class PostServiceAutorTests
+public class PostServiceAutorTests : PostServiceTestBase
 {
-    private readonly Mock<IPostRepository> _repo = new();
-    private readonly Mock<ITagRepository> _tagRepo = new();
-    private readonly Mock<ICategoriaRepository> _categoriaRepo = new();
-    private readonly Mock<ISanitizerService> _sanitizer = new();
-    private readonly Mock<INotificacionService> _notificaciones = new();
-
     private readonly PostService _service;
 
     public PostServiceAutorTests()
     {
-        _service = new PostService(
-            _repo.Object,
-            _tagRepo.Object,
-            _categoriaRepo.Object,
-            _sanitizer.Object,
-            _notificaciones.Object
-        );
+        _service = CreateService();
     }
 
     // ------------------------------------------------------------
@@ -42,7 +25,7 @@ public class PostServiceAutorTests
             new Post { Id = 2, UsuarioId = 10 },
         }.AsQueryable();
 
-        _repo.Setup(r => r.Query()).Returns(posts);
+        Repo.Setup(r => r.Query()).Returns(posts);
 
         var result = await _service.GetByAutorAsync(10);
 
@@ -55,7 +38,7 @@ public class PostServiceAutorTests
     {
         var posts = new List<Post>().AsQueryable();
 
-        _repo.Setup(r => r.Query()).Returns(posts);
+        Repo.Setup(r => r.Query()).Returns(posts);
 
         var result = await _service.GetByAutorAsync(99);
 
@@ -82,7 +65,7 @@ public class PostServiceAutorTests
             },
         }.AsQueryable();
 
-        _repo.Setup(r => r.Query()).Returns(posts);
+        Repo.Setup(r => r.Query()).Returns(posts);
 
         var result = await _service.GetByAutorNombreAsync("jose");
 
@@ -95,7 +78,7 @@ public class PostServiceAutorTests
     {
         var posts = new List<Post>().AsQueryable();
 
-        _repo.Setup(r => r.Query()).Returns(posts);
+        Repo.Setup(r => r.Query()).Returns(posts);
 
         var result = await _service.GetByAutorNombreAsync("no-existe");
 

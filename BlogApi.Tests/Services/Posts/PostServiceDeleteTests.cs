@@ -3,28 +3,23 @@ using BlogApi.Repositories;
 using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
 using BlogApi.Services.Interfaces;
+using BlogApi.Tests.Common;
 using Moq;
 
 namespace BlogApi.Tests.Services.Posts;
 
-public class PostServiceDeleteTests
+public class PostServiceDeleteTests : PostServiceTestBase
 {
-    private readonly Mock<IPostRepository> _repo = new();
+    /*private readonly Mock<IPostRepository> _repo = new();
     private readonly Mock<ITagRepository> _tagRepo = new();
     private readonly Mock<ICategoriaRepository> _categoriaRepo = new();
     private readonly Mock<ISanitizerService> _sanitizerService = new();
-    private readonly Mock<INotificacionService> _notificationService = new();
+    private readonly Mock<INotificacionService> _notificationService = new();*/
     private readonly PostService _service;
 
     public PostServiceDeleteTests()
     {
-        _service = new PostService(
-            _repo.Object,
-            _tagRepo.Object,
-            _categoriaRepo.Object,
-            _sanitizerService.Object,
-            _notificationService.Object
-        );
+        _service = CreateService();
     }
 
     // ------------------------------------------------------------
@@ -33,13 +28,13 @@ public class PostServiceDeleteTests
     [Fact]
     public async Task DeleteAsync_ShouldReturnFalse_WhenPostNotFound()
     {
-        _repo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((Post?)null);
+        Repo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((Post?)null);
 
         var result = await _service.DeleteAsync(1, 1, puedeEditarTodo: false);
 
         Assert.False(result);
-        _repo.Verify(r => r.Remove(It.IsAny<Post>()), Times.Never);
-        _repo.Verify(r => r.SaveChangesAsync(), Times.Never);
+        Repo.Verify(r => r.Remove(It.IsAny<Post>()), Times.Never);
+        Repo.Verify(r => r.SaveChangesAsync(), Times.Never);
     }
 
     // ------------------------------------------------------------
@@ -50,9 +45,9 @@ public class PostServiceDeleteTests
     {
         var post = new Post { Id = 1 };
 
-        _repo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(post);
+        Repo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(post);
 
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
         var result = await _service.DeleteAsync(1, 1, false);
 
@@ -67,13 +62,13 @@ public class PostServiceDeleteTests
     {
         var post = new Post { Id = 1 };
 
-        _repo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(post);
+        Repo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(post);
 
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
         await _service.DeleteAsync(1, 1, false);
 
-        _repo.Verify(r => r.Remove(post), Times.Once);
+        Repo.Verify(r => r.Remove(post), Times.Once);
     }
 
     // ------------------------------------------------------------
@@ -84,12 +79,12 @@ public class PostServiceDeleteTests
     {
         var post = new Post { Id = 1 };
 
-        _repo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(post);
+        Repo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(post);
 
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
         await _service.DeleteAsync(1, 1, false);
 
-        _repo.Verify(r => r.SaveChangesAsync(), Times.Once);
+        Repo.Verify(r => r.SaveChangesAsync(), Times.Once);
     }
 }

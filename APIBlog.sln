@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlogAdmin", "BlogAdmin\Blog
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlogApi.Tests", "BlogApi.Tests\BlogApi.Tests.csproj", "{B05DD425-5D1B-466F-A8A7-90A62000CB18}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +68,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{F670F030-5E12-BFCE-D4D7-8375E9ECF56B} = {A1A1A1A1-1111-1111-1111-111111111111}
 		{ED53C22C-27CF-49DB-B237-6CD9BEE80FCB} = {B2B2B2B2-2222-2222-2222-222222222222}
+		{B05DD425-5D1B-466F-A8A7-90A62000CB18} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {81C7DA15-E14C-423D-955A-049498D3069A}

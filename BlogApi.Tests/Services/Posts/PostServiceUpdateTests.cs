@@ -3,31 +3,29 @@ using BlogApi.Repositories;
 using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
 using BlogApi.Services.Interfaces;
+using BlogApi.Tests.Common;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
 
 namespace BlogApi.Tests.Services.Posts;
 
-public class PostServiceUpdateTests
+/// <summary>
+/// Tests para PostService - Método UpdateAsync
+/// </summary>
+public class PostServiceUpdateTests : PostServiceTestBase
 {
-    private readonly Mock<IPostRepository> _repo = new();
+    /*private readonly Mock<IPostRepository> _repo = new();
     private readonly Mock<ITagRepository> _tagRepo = new();
     private readonly Mock<ICategoriaRepository> _categoriaRepo = new();
     private readonly Mock<ISanitizerService> _sanitizer = new();
-    private readonly Mock<INotificacionService> _notificaciones = new();
+    private readonly Mock<INotificacionService> _notificaciones = new();*/
 
     private readonly PostService _service;
 
     public PostServiceUpdateTests()
     {
-        _service = new PostService(
-            _repo.Object,
-            _tagRepo.Object,
-            _categoriaRepo.Object,
-            _sanitizer.Object,
-            _notificaciones.Object
-        );
+        _service = CreateService();
     }
 
     // ------------------------------------------------------------
@@ -36,8 +34,7 @@ public class PostServiceUpdateTests
     [Fact]
     public async Task UpdateAsync_ShouldReturnFalse_WhenPostNotFound()
     {
-        _repo
-            .Setup(r =>
+        Repo.Setup(r =>
                 r.Query()
                     .Include(It.IsAny<string>())
                     .FirstOrDefaultAsync(
@@ -70,8 +67,7 @@ public class PostServiceUpdateTests
             Tags = new List<Tag>(),
         };
 
-        _repo
-            .Setup(r =>
+        Repo.Setup(r =>
                 r.Query()
                     .Include(It.IsAny<string>())
                     .FirstOrDefaultAsync(
@@ -113,8 +109,7 @@ public class PostServiceUpdateTests
 
         var tags = new List<Tag> { new Tag { Id = 1 } };
 
-        _repo
-            .Setup(r =>
+        Repo.Setup(r =>
                 r.Query()
                     .Include(It.IsAny<string>())
                     .FirstOrDefaultAsync(
@@ -123,12 +118,11 @@ public class PostServiceUpdateTests
             )
             .ReturnsAsync(existing);
 
-        _tagRepo.Setup(r => r.Query()).Returns(tags.AsQueryable());
-        _categoriaRepo.Setup(r => r.GetByIdAsync(2)).ReturnsAsync(new Categoria { Id = 2 });
+        TagRepo.Setup(r => r.Query()).Returns(tags.AsQueryable());
+        CategoriaRepo.Setup(r => r.GetByIdAsync(2)).ReturnsAsync(new Categoria { Id = 2 });
 
-        _repo.Setup(r => r.Update(existing));
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
-
+        Repo.Setup(r => r.Update(existing));
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
         var result = await _service.UpdateAsync(
             id: 1,
             post: updated,
@@ -164,8 +158,7 @@ public class PostServiceUpdateTests
             UsuarioId = 999, // intento de cambiarlo
         };
 
-        _repo
-            .Setup(r =>
+        Repo.Setup(r =>
                 r.Query()
                     .Include(It.IsAny<string>())
                     .FirstOrDefaultAsync(
@@ -174,12 +167,11 @@ public class PostServiceUpdateTests
             )
             .ReturnsAsync(existing);
 
-        _tagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
-        _categoriaRepo.Setup(r => r.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(new Categoria());
+        TagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
+        CategoriaRepo.Setup(r => r.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(new Categoria());
 
-        _repo.Setup(r => r.Update(existing));
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
-
+        Repo.Setup(r => r.Update(existing));
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
         await _service.UpdateAsync(1, updated, new List<int>(), 10, true);
 
         Assert.Equal(10, existing.UsuarioId);
@@ -200,14 +192,12 @@ public class PostServiceUpdateTests
 
         var updated = new Post { Titulo = " Título ", Contenido = "<script>alert(1)</script>" };
 
-        _sanitizer.Setup(s => s.SanitizePlainText(" Título ")).Returns("Título");
-        _sanitizer
+        Sanitizer.Setup(s => s.SanitizePlainText(" Título ")).Returns("Título");
+        Sanitizer
             .Setup(s => s.SanitizeMarkdown("<script>alert(1)</script>"))
             .Returns("contenido-limpio");
-        _sanitizer.Setup(s => s.ContainsDangerousPattern(It.IsAny<string>())).Returns(false);
-
-        _repo
-            .Setup(r =>
+        Sanitizer.Setup(s => s.ContainsDangerousPattern(It.IsAny<string>())).Returns(false);
+        Repo.Setup(r =>
                 r.Query()
                     .Include(It.IsAny<string>())
                     .FirstOrDefaultAsync(
@@ -216,11 +206,11 @@ public class PostServiceUpdateTests
             )
             .ReturnsAsync(existing);
 
-        _tagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
-        _categoriaRepo.Setup(r => r.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(new Categoria());
+        TagRepo.Setup(r => r.Query()).Returns(new List<Tag>().AsQueryable());
+        CategoriaRepo.Setup(r => r.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(new Categoria());
 
-        _repo.Setup(r => r.Update(existing));
-        _repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+        Repo.Setup(r => r.Update(existing));
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
         await _service.UpdateAsync(1, updated, new List<int>(), 10, true);
 

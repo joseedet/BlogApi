@@ -3,30 +3,28 @@ using BlogApi.Repositories;
 using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
 using BlogApi.Services.Interfaces;
+using BlogApi.Tests.Common;
 using Moq;
 using Xunit;
 
 namespace BlogApi.Tests.Services.Posts;
 
-public class PostServiceCategoriaTests
+/// <summary>
+/// Tests para PostService - Métodos relacionados con Categoría
+/// </summary>
+public class PostServiceCategoriaTests : PostServiceTestBase
 {
-    private readonly Mock<IPostRepository> _repo = new();
+    /*private readonly Mock<IPostRepository> _repo = new();
     private readonly Mock<ITagRepository> _tagRepo = new();
     private readonly Mock<ICategoriaRepository> _categoriaRepo = new();
     private readonly Mock<ISanitizerService> _sanitizer = new();
-    private readonly Mock<INotificacionService> _notificaciones = new();
+    private readonly Mock<INotificacionService> _notificaciones = new();*/
 
     private readonly PostService _service;
 
     public PostServiceCategoriaTests()
     {
-        _service = new PostService(
-            _repo.Object,
-            _tagRepo.Object,
-            _categoriaRepo.Object,
-            _sanitizer.Object,
-            _notificaciones.Object
-        );
+        _service = CreateService();
     }
 
     // ------------------------------------------------------------
@@ -41,7 +39,7 @@ public class PostServiceCategoriaTests
             new Post { Id = 2, CategoriaId = 10 },
         }.AsQueryable();
 
-        _repo.Setup(r => r.Query()).Returns(posts);
+        Repo.Setup(r => r.Query()).Returns(posts);
 
         var result = await _service.GetByCategoriaAsync(10);
 
@@ -54,7 +52,7 @@ public class PostServiceCategoriaTests
     {
         var posts = new List<Post>().AsQueryable();
 
-        _repo.Setup(r => r.Query()).Returns(posts);
+        Repo.Setup(r => r.Query()).Returns(posts);
 
         var result = await _service.GetByCategoriaAsync(99);
 
@@ -81,7 +79,7 @@ public class PostServiceCategoriaTests
             },
         }.AsQueryable();
 
-        _repo.Setup(r => r.Query()).Returns(posts);
+        Repo.Setup(r => r.Query()).Returns(posts);
 
         var result = await _service.GetByCategoriaSlugAsync("backend");
 
@@ -94,7 +92,7 @@ public class PostServiceCategoriaTests
     {
         var posts = new List<Post>().AsQueryable();
 
-        _repo.Setup(r => r.Query()).Returns(posts);
+        Repo.Setup(r => r.Query()).Returns(posts);
 
         var result = await _service.GetByCategoriaSlugAsync("no-existe");
 

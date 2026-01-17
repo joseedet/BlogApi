@@ -12,7 +12,7 @@ public enum TipoNotificacion
 
     /// <summary>
     /// Tipos de notificaciones disponibles
-    /// </summary>/
+    /// </summary>
     NuevoPost,
 
     /// <summary>
@@ -49,4 +49,9 @@ public enum TipoNotificacion
     /// Respuesta a un comentario
     /// </summary>
     RespuestaAComentario,
+
+    /// <summary>
+    /// Nuevo comentario en tu post
+    /// </summary>
+    NuevoComentario,
 }

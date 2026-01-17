@@ -192,6 +192,11 @@
             <param name="args"></param>
             <returns></returns>
         </member>
+        <member name="T:BlogApi.Domain.Factories.NotificacionFactory">
+            <summary>
+            Factory para crear notificaciones
+            /// </summary>
+        </member>
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.NuevoPost(System.Int32,System.Int32,System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.NuevoComentario(System.Int32,System.Int32,System.String,System.Int32)" -->
         <member name="M:BlogApi.Domain.Factories.NotificacionFactory.NuevoComentario(System.Int32,System.Int32,System.String,System.Int32,System.String)">
@@ -1329,12 +1334,16 @@
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.ILikeService.UnlikePostAsync(System.Int32,System.Int32)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.ILikeService.LikeComentarioAsync(System.Int32,System.Int32)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.ILikeService.UnlikeComentarioAsync(System.Int32,System.Int32)" -->
+        <member name="T:BlogApi.Services.Interfaces.INotificacionService">
+            <summary>
+            Interfaz para el servicio de notificaciones
+            </summary>
+        </member>
         <member name="M:BlogApi.Services.Interfaces.INotificacionService.CrearAsync(BlogApi.Models.Notificacion)">
             <summary>
-            Crea una nueva notificación para un usuario
+            Crea una nueva notificación
             </summary>
-            <param name="usuarioId"></param>
-            <param name="mensaje"></param>
+            <param name="notificacion"></param>
             <returns>Task</returns>
         </member>
         <member name="M:BlogApi.Services.Interfaces.INotificacionService.GetByUsuarioAsync(System.Int32)">
@@ -1826,6 +1835,11 @@
             Detecta patrones peligrosos (XSS)
             </summary>
         </member>
+        <member name="T:BlogApi.Services.SmtpEmailService">
+            <summary>
+            Servicio para enviar correos electrónicos usando SMTP
+            </summary>
+        </member>
         <member name="F:BlogApi.Services.SmtpEmailService._config">
             <summary>
             Configuración de la aplicación
@@ -1838,6 +1852,11 @@
             <param name="config"></param>
         </member>
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.SmtpEmailService.EnviarAsync(System.String,System.String,System.String)" -->
+        <member name="T:BlogApi.Services.TagService">
+            <summary>
+            Servicio para gestionar tags
+            </summary>
+        </member>
         <member name="F:BlogApi.Services.TagService._repo">
             <summary>
             Repositorio de tags
@@ -1927,6 +1946,73 @@
             </summary>
             <param name="dto"></param>
             <returns>Resultado del intento de login</returns>
+        </member>
+        <member name="T:BlogApi.Utils.SlugHelper">
+            <summary>
+            Helper para generar slugs a partir de textos
+            </summary>
+        </member>
+        <member name="M:BlogApi.Utils.SlugHelper.GenerateSlug(System.String)">
+            <summary>
+            Genera un slug a partir de un texto
+            </summary>
+            <param name="text">Texto de entrada</param>
+            <returns>Slug generado</returns>
+        </member>
+        <member name="T:BlogApi.Utils.TipoNotificacion">
+            <summary>
+            Tipos de notificaciones disponibles
+            </summary>
+        </member>
+        <member name="F:BlogApi.Utils.TipoNotificacion.RespuestaComentario">
+            <summary>
+            Respuesta a un comentario
+            </summary>
+        </member>
+        <member name="F:BlogApi.Utils.TipoNotificacion.NuevoPost">
+            <summary>
+            Tipos de notificaciones disponibles
+            </summary>/
+        </member>
+        <member name="F:BlogApi.Utils.TipoNotificacion.Moderacion">
+            <summary>
+            Tipos de notificaciones disponibles
+            </summary>
+        </member>
+        <member name="F:BlogApi.Utils.TipoNotificacion.Sistema">
+            <summary>
+            Sistema
+            </summary>
+        </member>
+        <member name="F:BlogApi.Utils.TipoNotificacion.MensajePrivado">
+            <summary>
+            Mensaje privado
+            </summary>
+        </member>
+        <member name="F:BlogApi.Utils.TipoNotificacion.LikePost">
+            <summary>
+            Like a un post
+            </summary>
+        </member>
+        <member name="F:BlogApi.Utils.TipoNotificacion.LikeComentario">
+            <summary>
+            Like a un comentario
+            </summary>
+        </member>
+        <member name="F:BlogApi.Utils.TipoNotificacion.ComentarioEnPost">
+            <summary>
+            /// Nuevo comentario en un post
+            </summary>
+        </member>
+        <member name="F:BlogApi.Utils.TipoNotificacion.RespuestaAComentario">
+            <summary>
+            Respuesta a un comentario
+            </summary>
+        </member>
+        <member name="F:BlogApi.Utils.TipoNotificacion.NuevoComentario">
+            <summary>
+            Nuevo comentario en tu post
+            </summary>
         </member>
         <member name="T:ComentariosController">
             <summary>
