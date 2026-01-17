@@ -205,9 +205,9 @@ public class PostService : IPostService
     /// </summary>
     /// <param name="id"></param>
     /// <param name="usuarioId"></param>
-    /// <param name="puedeEditarTodo"></param>
+    /// <param name="puedeElimarTodo"></param>
     /// <returns>bool</returns>
-    public async Task<bool> DeleteAsync(int id, int usuarioId, bool puedeEditarTodo)
+    public async Task<bool> DeleteAsync(int id, int usuarioId, bool puedeElimarTodo)
     {
         var existing = await _repo.GetByIdAsync(id);
 
@@ -215,7 +215,7 @@ public class PostService : IPostService
             return false;
 
         // Validación de permisos
-        if (!puedeEditarTodo && existing.UsuarioId != usuarioId)
+        if (!puedeElimarTodo && existing.UsuarioId != usuarioId)
             return false;
 
         _repo.Remove(existing);

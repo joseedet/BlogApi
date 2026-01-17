@@ -27,7 +27,7 @@ public class PostServiceDeleteTests : PostServiceTestBase
     {
         Repo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync((Post?)null);
 
-        var result = await _service.DeleteAsync(1, 1, puedeEditarTodo: false);
+        var result = await _service.DeleteAsync(1, 1, puedeElimarTodo: false);
 
         Assert.False(result);
         Repo.Verify(r => r.Remove(It.IsAny<Post>()), Times.Never);
@@ -93,7 +93,7 @@ public class PostServiceDeleteTests : PostServiceTestBase
         var post = new Post { Id = 1, UsuarioId = 999 }; // otro autor
         Repo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(post);
 
-        var result = await _service.DeleteAsync(1, usuarioId: 123, puedeEditarTodo: false);
+        var result = await _service.DeleteAsync(1, usuarioId: 123, puedeElimarTodo: false);
 
         Assert.False(result);
     }
