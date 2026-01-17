@@ -151,4 +151,55 @@ public class NotificacionesControllerTests
 
         Assert.IsType<OkObjectResult>(result.Result);
     }
+
+    [Fact]
+    public async Task Eliminar_ShouldReturnOk_WhenSuccessful()
+    {
+        var notif = new Notificacion
+        {
+            Id = 1,
+            UsuarioDestinoId = 10,
+            Mensaje = "Hola",
+        };
+
+        _repo.Setup(r => r.ObtenerPorIdAsync(1)).ReturnsAsync(notif);
+        _repo.Setup(r => r.EliminarAsync(notif)).Returns(Task.CompletedTask);
+
+        var controller = CreateController();
+
+        var result = await controller.Eliminar(1);
+
+        Assert.IsType<OkObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task Eliminar_ShouldReturnNotFound_WhenNotExists()
+    {
+        _repo.Setup(r => r.ObtenerPorIdAsync(1)).ReturnsAsync((Notificacion?)null);
+
+        var controller = CreateController();
+
+        var result = await controller.Eliminar(1);
+
+        Assert.IsType<NotFoundObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task Eliminar_ShouldReturnForbid_WhenUserNotOwner()
+    {
+        var notif = new Notificacion
+        {
+            Id = 1,
+            UsuarioDestinoId = 999,
+            Mensaje = "Hola",
+        };
+
+        _repo.Setup(r => r.ObtenerPorIdAsync(1)).ReturnsAsync(notif);
+
+        var controller = CreateController(usuarioId: 10);
+
+        var result = await controller.Eliminar(1);
+
+        Assert.IsType<ForbidResult>(result);
+    }
 }

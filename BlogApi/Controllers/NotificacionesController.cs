@@ -181,4 +181,36 @@ public class NotificacionesController : ControllerBase
             );
         }
     }
+    /// <summary>
+    /// Elimina una notificación del usuario autenticado
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Eliminar(int id)
+    {
+        try
+        {
+            int usuarioId = GetUsuarioId();
+
+            var notificacion = await _notificacionRepository.ObtenerPorIdAsync(id);
+
+            if (notificacion == null)
+                return NotFound(new { Message = "La notificación no existe." });
+
+            if (notificacion.UsuarioDestinoId != usuarioId)
+                return Forbid("No puedes eliminar notificaciones de otro usuario.");
+
+            await _notificacionRepository.EliminarAsync(notificacion);
+
+            return Ok(new { Message = "Notificación eliminada correctamente." });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(
+                500,
+                new { Message = "Error al eliminar la notificación.", Error = ex.Message }
+            );
+        }
+    }
 }
