@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using BlogApi.Models;
 using BlogApi.Repositories;
 using BlogApi.Repositories.Interfaces;
@@ -216,5 +217,168 @@ public class PostServiceUpdateTests : PostServiceTestBase
 
         Assert.Equal("Título", existing.Titulo);
         Assert.Equal("contenido-limpio", existing.Contenido);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldReturnTrue_WhenUserHasPermission()
+    {
+        var existing = new Post
+        {
+            Id = 1,
+            UsuarioId = 99, // otro usuario
+            Tags = new List<Tag>(),
+        };
+
+        Repo.Setup(r =>
+                r.Query()
+                    .Include(It.IsAny<string>())
+                    .FirstOrDefaultAsync(It.IsAny<Expression<Func<Post, bool>>>())
+            )
+            .ReturnsAsync(existing);
+
+        CategoriaRepo.Setup(r => r.GetByIdAsync(2)).ReturnsAsync(new Categoria());
+        TagRepo
+            .Setup(r => r.GetByIdsAsync(new List<int> { 1 }))
+            .ReturnsAsync(new List<Tag> { new Tag { Id = 1 } });
+
+        Sanitizer.Setup(s => s.SanitizePlainText(It.IsAny<string>())).Returns("Titulo");
+        Sanitizer.Setup(s => s.SanitizeMarkdown(It.IsAny<string>())).Returns("Contenido");
+        Sanitizer.Setup(s => s.ContainsDangerousPattern(It.IsAny<string>())).Returns(false);
+
+        Repo.Setup(r => r.Update(existing));
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+
+        var updated = new Post
+        {
+            Titulo = "Titulo",
+            Contenido = "Contenido",
+            CategoriaId = 2,
+        };
+
+        var result = await _service.UpdateAsync(
+            id: 1,
+            post: updated,
+            tagIds: new List<int> { 1 },
+            usuarioId: 123,
+            puedeEditarTodo: true // ADMIN
+        );
+
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldReturnFalse_WhenCategoriaDoesNotExist()
+    {
+        var existing = new Post
+        {
+            Id = 1,
+            UsuarioId = 10,
+            Tags = new List<Tag>(),
+        };
+
+        Repo.Setup(r =>
+                r.Query()
+                    .Include(It.IsAny<string>())
+                    .FirstOrDefaultAsync(It.IsAny<Expression<Func<Post, bool>>>())
+            )
+            .ReturnsAsync(existing);
+
+        CategoriaRepo.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((Categoria?)null);
+
+        var updated = new Post
+        {
+            Titulo = "Nuevo",
+            Contenido = "Contenido",
+            CategoriaId = 999,
+        };
+
+        var result = await _service.UpdateAsync(
+            1,
+            updated,
+            new List<int>(),
+            usuarioId: 10,
+            puedeEditarTodo: true
+        );
+
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldReturnFalse_WhenTagsDoNotExist()
+    {
+        var existing = new Post
+        {
+            Id = 1,
+            UsuarioId = 10,
+            Tags = new List<Tag>(),
+        };
+
+        Repo.Setup(r =>
+                r.Query()
+                    .Include(It.IsAny<string>())
+                    .FirstOrDefaultAsync(It.IsAny<Expression<Func<Post, bool>>>())
+            )
+            .ReturnsAsync(existing);
+
+        CategoriaRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new Categoria());
+
+        TagRepo.Setup(r => r.GetByIdsAsync(new List<int> { 1, 2 })).ReturnsAsync(new List<Tag>()); // vacío → no existen
+
+        var updated = new Post
+        {
+            Titulo = "Nuevo",
+            Contenido = "Contenido",
+            CategoriaId = 1,
+        };
+
+        var result = await _service.UpdateAsync(
+            1,
+            updated,
+            new List<int> { 1, 2 },
+            usuarioId: 10,
+            puedeEditarTodo: true
+        );
+
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldReturnFalse_WhenContentIsDangerous()
+    {
+        var existing = new Post
+        {
+            Id = 1,
+            UsuarioId = 10,
+            Tags = new List<Tag>(),
+        };
+
+        Repo.Setup(r =>
+                r.Query()
+                    .Include(It.IsAny<string>())
+                    .FirstOrDefaultAsync(It.IsAny<Expression<Func<Post, bool>>>())
+            )
+            .ReturnsAsync(existing);
+
+        CategoriaRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new Categoria());
+        TagRepo.Setup(r => r.GetByIdsAsync(It.IsAny<List<int>>())).ReturnsAsync(new List<Tag>());
+
+        Sanitizer.Setup(s => s.ContainsDangerousPattern(It.IsAny<string>())).Returns(true);
+
+        var updated = new Post
+        {
+            Titulo = "Nuevo",
+            Contenido = "<script>mal</script>",
+            CategoriaId = 1,
+        };
+
+        var result = await _service.UpdateAsync(
+            1,
+            updated,
+            new List<int>(),
+            usuarioId: 10,
+            puedeEditarTodo: true
+        );
+
+        Assert.False(result);
     }
 }

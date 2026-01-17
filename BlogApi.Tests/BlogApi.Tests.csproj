@@ -25,7 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common/" />
     <Folder Include="Controllers/" />
     <Folder Include="Controllers/Auth/" />
     <Folder Include="Controllers/Posts/" />
@@ -33,6 +32,9 @@
     <Folder Include="Integration/" />
     <Folder Include="Repositories/" />
     <Folder Include="Services/Auth/" />
+    <Folder Include="Services/Categorias/" />
+    <Folder Include="Services/Notifications/" />
+    <Folder Include="Services/Tags/" />
     <Folder Include="Services/Users/" />
     <Folder Include="Utils/" />
   </ItemGroup>

@@ -40,15 +40,24 @@ public class PostServiceDeleteTests : PostServiceTestBase
     [Fact]
     public async Task DeleteAsync_ShouldReturnTrue_WhenPostExists()
     {
-        var post = new Post { Id = 1 };
+        // Arrange: el usuario es el autor del post
+        var post = new Post { Id = 1, UsuarioId = 123 };
 
         Repo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(post);
-
+        Repo.Setup(r => r.Remove(post));
         Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
 
-        var result = await _service.DeleteAsync(1, 1, false);
+        // Act
+        var result = await _service.DeleteAsync(
+            id: 1,
+            usuarioId: 123, // es el autor
+            puedeElimarTodo: false // no admin/editor, pero es el autor → permitido
+        );
 
+        // Assert
         Assert.True(result);
+        Repo.Verify(r => r.Remove(post), Times.Once);
+        Repo.Verify(r => r.SaveChangesAsync(), Times.Once);
     }
 
     // ------------------------------------------------------------
@@ -94,6 +103,59 @@ public class PostServiceDeleteTests : PostServiceTestBase
         Repo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(post);
 
         var result = await _service.DeleteAsync(1, usuarioId: 123, puedeElimarTodo: false);
+
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ShouldReturnTrue_WhenUserIsAuthor()
+    {
+        var post = new Post { Id = 1, UsuarioId = 123 };
+
+        Repo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(post);
+        Repo.Setup(r => r.Remove(post));
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+
+        var result = await _service.DeleteAsync(
+            id: 1,
+            usuarioId: 123, // es el autor
+            puedeElimarTodo: false // no admin/editor
+        );
+
+        Assert.True(result);
+        Repo.Verify(r => r.Remove(post), Times.Once);
+        Repo.Verify(r => r.SaveChangesAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ShouldReturnTrue_WhenUserHasPermission()
+    {
+        var post = new Post { Id = 1, UsuarioId = 999 }; // otro autor
+
+        Repo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(post);
+        Repo.Setup(r => r.Remove(post));
+        Repo.Setup(r => r.SaveChangesAsync()).Returns(Task.CompletedTask);
+
+        var result = await _service.DeleteAsync(
+            id: 1,
+            usuarioId: 123,
+            puedeElimarTodo: true // admin/editor
+        );
+
+        Assert.True(result);
+        Repo.Verify(r => r.Remove(post), Times.Once);
+        Repo.Verify(r => r.SaveChangesAsync(), Times.Once);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ShouldReturnFalse_WhenRepositoryThrows()
+    {
+        var post = new Post { Id = 1, UsuarioId = 123 };
+
+        Repo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(post);
+        Repo.Setup(r => r.Remove(post)).Throws(new Exception("DB error"));
+
+        var result = await _service.DeleteAsync(id: 1, usuarioId: 123, puedeElimarTodo: true);
 
         Assert.False(result);
     }

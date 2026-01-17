@@ -1,12 +1,8 @@
 using BlogApi.Models;
-using BlogApi.Repositories;
-using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
-using BlogApi.Services.Interfaces;
 using BlogApi.Tests.Common;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using Xunit;
 
 namespace BlogApi.Tests.Services.Posts;
 
@@ -180,5 +176,51 @@ public class PostServiceCreateTests : PostServiceTestBase
         Assert.Equal(99, result.UsuarioId);
         Assert.NotEqual(default, result.FechaCreacion);
         Assert.NotEqual(default, result.FechaActualizacion);
+    }
+
+    [Fact]
+    public async Task CreateAsync_ShouldReturnNull_WhenCategoriaDoesNotExist()
+    {
+        var post = new Post { Titulo = "Test", CategoriaId = 999 };
+
+        CategoriaRepo.Setup(r => r.GetByIdAsync(999)).ReturnsAsync((Categoria?)null);
+
+        var result = await _service.CreateAsync(post, new List<int>(), usuarioId: 10);
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task CreateAsync_ShouldReturnNull_WhenTagsDoNotExist()
+    {
+        var post = new Post { Titulo = "Test", CategoriaId = 1 };
+
+        CategoriaRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new Categoria());
+
+        TagRepo.Setup(r => r.GetByIdsAsync(new List<int> { 1, 2 })).ReturnsAsync(new List<Tag>()); // vacío → no existen
+
+        var result = await _service.CreateAsync(post, new List<int> { 1, 2 }, usuarioId: 10);
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task CreateAsync_ShouldReturnNull_WhenContentIsDangerous()
+    {
+        var post = new Post
+        {
+            Titulo = "Test",
+            Contenido = "<script>malicioso</script>",
+            CategoriaId = 1,
+        };
+
+        CategoriaRepo.Setup(r => r.GetByIdAsync(1)).ReturnsAsync(new Categoria());
+        TagRepo.Setup(r => r.GetByIdsAsync(It.IsAny<List<int>>())).ReturnsAsync(new List<Tag>());
+
+        Sanitizer.Setup(s => s.ContainsDangerousPattern(post.Contenido)).Returns(true);
+
+        var result = await _service.CreateAsync(post, new List<int>(), usuarioId: 10);
+
+        Assert.Null(result);
     }
 }
