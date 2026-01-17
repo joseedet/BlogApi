@@ -12,12 +12,6 @@ namespace BlogApi.Tests.Services.Posts;
 
 public class PostServiceCreateTests : PostServiceTestBase
 {
-    /*private readonly Mock<IPostRepository> _repo = new();
-    private readonly Mock<ITagRepository> _tagRepo = new();
-    private readonly Mock<ICategoriaRepository> _categoriaRepo = new();
-    private readonly Mock<ISanitizerService> _sanitizer = new();
-    private readonly Mock<INotificacionService> _notificaciones = new();*/
-
     private readonly PostService _service;
 
     /// <summary>
