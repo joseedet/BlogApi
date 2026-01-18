@@ -1,23 +1,20 @@
 using System.Security.Claims;
 using BlogApi.Controllers;
 using BlogApi.DTO;
-using BlogApi.Models;
-using BlogApi.Repositories;
 using BlogApi.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
-namespace BlogApi.Tests.Controllers.Notifications;
+namespace BlogApi.Tests.Controllers;
 
 public class NotificacionesControllerTests
 {
-    private readonly Mock<INotificacionService> _service = new();
-    private readonly Mock<INotificacionRepository> _repo = new();
+    private readonly Mock<INotificacionesService> _service = new();
 
     private NotificacionesController CreateController(int usuarioId = 10)
     {
-        var controller = new NotificacionesController(_service.Object, _repo.Object);
+        var controller = new NotificacionesController(_service.Object);
 
         var user = new ClaimsPrincipal(
             new ClaimsIdentity(new[] { new Claim("id", usuarioId.ToString()) }, "mock")
@@ -37,55 +34,72 @@ public class NotificacionesControllerTests
     [Fact]
     public async Task ObtenerNotificaciones_ShouldReturnOk()
     {
-        var lista = new List<Notificacion>
-        {
-            new Notificacion
-            {
-                Id = 1,
-                UsuarioDestinoId = 10,
-                Mensaje = "Hola",
-            },
-        };
-
-        _repo.Setup(r => r.ObtenerPorUsuarioAsync(10)).ReturnsAsync(lista);
+        _service.Setup(s => s.ObtenerPorUsuarioAsync(10)).ReturnsAsync(new List<NotificacionDto>());
 
         var controller = CreateController();
 
         var result = await controller.ObtenerNotificaciones();
 
-        var ok = Assert.IsType<OkObjectResult>(result.Result);
-        var dto = Assert.IsAssignableFrom<IEnumerable<NotificacionDto>>(ok.Value);
+        Assert.IsType<OkObjectResult>(result.Result);
+    }
 
-        Assert.Single(dto);
+    // ------------------------------------------------------------
+    // GET /api/notificaciones/no-leidas
+    // ------------------------------------------------------------
+    [Fact]
+    public async Task ObtenerNoLeidas_ShouldReturnOk()
+    {
+        _service.Setup(s => s.ObtenerNoLeidasAsync(10)).ReturnsAsync(new List<NotificacionDto>());
+
+        var controller = CreateController();
+
+        var result = await controller.ObtenerNoLeidas();
+
+        Assert.IsType<OkObjectResult>(result.Result);
+    }
+
+    // ------------------------------------------------------------
+    // GET /api/notificaciones/paginadas
+    // ------------------------------------------------------------
+    [Fact]
+    public async Task ObtenerPaginadas_ShouldReturnOk()
+    {
+        var paginado = new PaginacionResultado<NotificacionDto>
+        {
+            Items = new List<NotificacionDto>(),
+            TotalRegistros = 10,
+            PaginaActual = 1,
+            TotalPaginas = 1,
+        };
+
+        _service.Setup(s => s.GetPaginadasAsync(10, 1, 10)).ReturnsAsync(paginado);
+
+        var controller = CreateController();
+
+        var result = await controller.ObtenerPaginadas(1, 10);
+
+        Assert.IsType<OkObjectResult>(result.Result);
     }
 
     // ------------------------------------------------------------
     // PUT /api/notificaciones/{id}/leer
     // ------------------------------------------------------------
     [Fact]
-    public async Task MarcarComoLeida_ShouldReturnOk_WhenSuccessful()
+    public async Task MarcarComoLeida_ShouldReturnNoContent_WhenSuccessful()
     {
-        var notif = new Notificacion
-        {
-            Id = 1,
-            UsuarioDestinoId = 10,
-            Mensaje = "Hola",
-        };
-
-        _repo.Setup(r => r.ObtenerPorIdAsync(1)).ReturnsAsync(notif);
-        _repo.Setup(r => r.MarcarComoLeidaAsync(1)).Returns(Task.CompletedTask);
+        _service.Setup(s => s.MarcarComoLeidaAsync(1, 10)).ReturnsAsync(true);
 
         var controller = CreateController();
 
         var result = await controller.MarcarComoLeida(1);
 
-        Assert.IsType<OkObjectResult>(result);
+        Assert.IsType<NoContentResult>(result);
     }
 
     [Fact]
     public async Task MarcarComoLeida_ShouldReturnNotFound_WhenNotExists()
     {
-        _repo.Setup(r => r.ObtenerPorIdAsync(1)).ReturnsAsync((Notificacion?)null);
+        _service.Setup(s => s.MarcarComoLeidaAsync(1, 10)).ReturnsAsync(false);
 
         var controller = CreateController();
 
@@ -94,30 +108,11 @@ public class NotificacionesControllerTests
         Assert.IsType<NotFoundObjectResult>(result);
     }
 
-    [Fact]
-    public async Task MarcarComoLeida_ShouldReturnForbid_WhenUserNotOwner()
-    {
-        var notif = new Notificacion
-        {
-            Id = 1,
-            UsuarioDestinoId = 999,
-            Mensaje = "Hola",
-        };
-
-        _repo.Setup(r => r.ObtenerPorIdAsync(1)).ReturnsAsync(notif);
-
-        var controller = CreateController(usuarioId: 10);
-
-        var result = await controller.MarcarComoLeida(1);
-
-        Assert.IsType<ForbidResult>(result);
-    }
-
     // ------------------------------------------------------------
     // PUT /api/notificaciones/leer-todas
     // ------------------------------------------------------------
     [Fact]
-    public async Task MarcarTodasComoLeidas_ShouldReturnOk()
+    public async Task MarcarTodasComoLeidas_ShouldReturnNoContent()
     {
         _service.Setup(s => s.MarcarTodasComoLeidasAsync(10)).Returns(Task.CompletedTask);
 
@@ -125,83 +120,33 @@ public class NotificacionesControllerTests
 
         var result = await controller.MarcarTodasComoLeidas();
 
-        Assert.IsType<OkObjectResult>(result);
-    }
-
-    // ------------------------------------------------------------
-    // GET /api/notificaciones/no-leidas
-    // ------------------------------------------------------------
-    [Fact]
-    public async Task ObtenerNoLeidasPaginadas_ShouldReturnOk()
-    {
-        var paginado = new PaginacionResultado<NotificacionDto>
-        {
-            Items = new List<NotificacionDto>(),
-            TotalRegistros = 10,
-            PaginaActual = 1,
-            TotalPaginas = 0,
-        };
-
-        _repo.Setup(r => r.ObtenerNoLeidasPaginadasAsync(10, 1, 10)).ReturnsAsync(paginado);
-
-        var controller = CreateController();
-
-        var result = await controller.ObtenerNoLeidasPaginadas();
-
-        Assert.IsType<OkObjectResult>(result.Result);
+        Assert.IsType<NoContentResult>(result);
     }
 
     // ------------------------------------------------------------
     // DELETE /api/notificaciones/{id}
     // ------------------------------------------------------------
     [Fact]
-    public async Task Eliminar_ShouldReturnOk_WhenSuccessful()
+    public async Task Eliminar_ShouldReturnNoContent_WhenSuccessful()
     {
-        var notif = new Notificacion
-        {
-            Id = 1,
-            UsuarioDestinoId = 10,
-            Mensaje = "Hola",
-        };
-
-        _repo.Setup(r => r.ObtenerPorIdAsync(1)).ReturnsAsync(notif);
-        _repo.Setup(r => r.EliminarAsync(notif)).Returns(Task.CompletedTask);
+        _service.Setup(s => s.EliminarAsync(1, 10)).ReturnsAsync(true);
 
         var controller = CreateController();
 
         var result = await controller.Eliminar(1);
 
-        Assert.IsType<OkObjectResult>(result);
+        Assert.IsType<NoContentResult>(result);
     }
 
     [Fact]
     public async Task Eliminar_ShouldReturnNotFound_WhenNotExists()
     {
-        _repo.Setup(r => r.ObtenerPorIdAsync(1)).ReturnsAsync((Notificacion?)null);
+        _service.Setup(s => s.EliminarAsync(1, 10)).ReturnsAsync(false);
 
         var controller = CreateController();
 
         var result = await controller.Eliminar(1);
 
         Assert.IsType<NotFoundObjectResult>(result);
-    }
-
-    [Fact]
-    public async Task Eliminar_ShouldReturnForbid_WhenUserNotOwner()
-    {
-        var notif = new Notificacion
-        {
-            Id = 1,
-            UsuarioDestinoId = 999,
-            Mensaje = "Hola",
-        };
-
-        _repo.Setup(r => r.ObtenerPorIdAsync(1)).ReturnsAsync(notif);
-
-        var controller = CreateController(usuarioId: 10);
-
-        var result = await controller.Eliminar(1);
-
-        Assert.IsType<ForbidResult>(result);
     }
 }

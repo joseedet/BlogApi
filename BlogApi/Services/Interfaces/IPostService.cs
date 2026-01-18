@@ -80,6 +80,14 @@ public interface IPostService
     /// <param name="texto"></param>
     /// <returns>IEnumerable<Post></returns>
     Task<IEnumerable<Post>> SearchAsync(string texto);
+
+    /// <summary>
+    /// Búsqueda
+    /// </summary>
+    /// <param name="texto"></param>
+    /// <param name="pagina"></param>
+    /// <param name="tamano"></param>
+    /// <returns>Pagina con los post encontrados</returns>
     Task<PaginationDto<Post>> SearchPagedAsync(string texto, int pagina, int tamano);
 
     /// <summary>

@@ -54,8 +54,7 @@ builder.Services.AddScoped<ILikeService, LikeService>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<ISanitizerService, SanitizerService>();
 builder.Services.AddSingleton<IAuthorizationHandler, PuedeEditarPostHandler>();
-
-//builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Configuración de autenticación JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt");

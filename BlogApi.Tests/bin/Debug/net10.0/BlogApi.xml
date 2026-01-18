@@ -84,58 +84,45 @@
         </member>
         <member name="T:BlogApi.Controllers.NotificacionesController">
             <summary>
-            Controlador para gestionar notificaciones
+            Controlador NotificacionesController
             </summary>
         </member>
-        <member name="F:BlogApi.Controllers.NotificacionesController._notificacionService">
+        <member name="F:BlogApi.Controllers.NotificacionesController._service">
             <summary>
-            Servicio de notificaciones
+            INotificaciones Service _service
             </summary>
         </member>
-        <member name="M:BlogApi.Controllers.NotificacionesController.#ctor(BlogApi.Services.Interfaces.INotificacionService,BlogApi.Repositories.INotificacionRepository)">
+        <member name="M:BlogApi.Controllers.NotificacionesController.#ctor(BlogApi.Services.Interfaces.INotificacionesService)">
             <summary>
-            Constructor de NotificacionesController
+            Constructor NotificacionesController
             </summary>
-            <param name="notificacionService"></param>
-            <param name="notificacionRepository"></param>
-        </member>
-        <member name="M:BlogApi.Controllers.NotificacionesController.GetUsuarioId">
-            <summary>
-                Obtiene el ID del usuario autenticado
-            </summary>
-            <returns></returns>
-            <exception cref="T:System.UnauthorizedAccessException"></exception>
+            <param name="service"></param>
         </member>
         <member name="M:BlogApi.Controllers.NotificacionesController.ObtenerNotificaciones">
             <summary>
-                Obtiene todas las notificaciones del usuario autenticado
-            </summary>
-            <returns>IEnumerable de NotificacionDto</returns>
-        </member>
-        <member name="M:BlogApi.Controllers.NotificacionesController.MarcarComoLeida(System.Int32)">
-            <summary>
-              Marca una notificación como leída
+            Obtiene notificaciones
             </summary>
             <param name="id"></param>
-            <returns>ActionResult</returns>
+            <returns>IEnumerable de NotificacionDto</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Controllers.NotificacionesController.ObtenerNoLeidas" -->
+        <!-- Badly formed XML comment ignored for member "M:BlogApi.Controllers.NotificacionesController.ObtenerPaginadas(System.Int32,System.Int32)" -->
+        <member name="M:BlogApi.Controllers.NotificacionesController.MarcarComoLeida(System.Int32)">
+            <summary>
+            Marcar como leida
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
         </member>
         <member name="M:BlogApi.Controllers.NotificacionesController.MarcarTodasComoLeidas">
             <summary>
-                Marca todas las notificaciones del usuario autenticado como leídas
+            Marcar todas las notificaciones como leídas
             </summary>
-            <returns>ActionResult</returns>
-        </member>
-        <member name="M:BlogApi.Controllers.NotificacionesController.ObtenerNoLeidasPaginadas(System.Int32,System.Int32)">
-            <summary>
-                Obtiene las notificaciones no leídas del usuario autenticado con paginación
-            </summary>
-            <param name="page"></param>
-            <param name="pageSize"></param>
-            <returns>PaginacionResultado de NotificacionDto</returns>
+            <returns></returns>
         </member>
         <member name="M:BlogApi.Controllers.NotificacionesController.Eliminar(System.Int32)">
             <summary>
-            Elimina una notificación del usuario autenticado
+            Elimina la notificación
             </summary>
             <param name="id"></param>
             <returns></returns>
@@ -1401,6 +1388,20 @@
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IComentarioService.GetByEstadoAsync(System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IComentarioService.GetByIdAsync(System.Int32)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IComentarioService.EliminarComentarioAsync(System.Int32,System.Int32,System.Boolean)" -->
+        <member name="T:BlogApi.Services.Interfaces.IEmailService">
+             <summary>
+            Interfaz servicio de email
+             </summary>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.IEmailService.EnviarAsync(System.String,System.String,System.String)">
+            <summary>
+            Método para enviar email
+            </summary>
+            <param name="toEmail"></param>
+            <param name="subject"></param>
+            <param name="message"></param>
+            <returns>Task</returns>
+        </member>
         <member name="T:BlogApi.Services.Interfaces.ILikeService">
             <summary>
               Servicio para manejar los "Me gusta" en posts y comentarios
@@ -1435,6 +1436,29 @@
             </summary>
             <param name="notificacion"></param>
             <returns></returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.INotificacionesService.ObtenerPorUsuarioAsync(System.Int32)">
+            <summary>
+            Obtiene IEnumerable de NotificacionDto
+            </summary>
+            <param name="usuarioId"></param>
+            <returns>IEnumerable de NotificacionesDto</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.INotificacionesService.MarcarComoLeidaAsync(System.Int32,System.Int32)">
+            <summary>
+            Marca las notificaciones como leídas
+            </summary>
+            <param name="id"></param>
+            <param name="usuarioId"></param>
+            <returns>Verdadero si ha marcado como leidas en caso contrario falso</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.INotificacionesService.EliminarAsync(System.Int32,System.Int32)">
+            <summary>
+            Elimina notificacion
+            </summary>
+            <param name="id"></param>
+            <param name="usuarioId"></param>
+            <returns>Verdadero si ha sido eliminada en caso contrario falso.</returns>
         </member>
         <member name="T:BlogApi.Services.Interfaces.INotificacionService">
             <summary>
@@ -1728,75 +1752,94 @@
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.LikeService.UnlikeComentarioAsync(System.Int32,System.Int32)" -->
         <member name="T:BlogApi.Services.NotificacionesService">
             <summary>
-            Clase servicio de notificaciones
+            Clase NotificacionesService
             </summary>
         </member>
-        <member name="M:BlogApi.Services.NotificacionesService.#ctor(BlogApi.Data.BlogDbContext,Microsoft.AspNetCore.SignalR.IHubContext{BlogApi.Hubs.NotificacionesHub})">
+        <member name="M:BlogApi.Services.NotificacionesService.#ctor(BlogApi.Data.BlogDbContext,Microsoft.AspNetCore.SignalR.IHubContext{BlogApi.Hubs.NotificacionesHub},BlogApi.Services.Interfaces.IEmailService)">
             <summary>
-            Constructor
+            Constructor NotificacionesService
             </summary>
             <param name="db"></param>
             <param name="hub"></param>
+            <param name="email"></param>
         </member>
         <member name="M:BlogApi.Services.NotificacionesService.CrearAsync(BlogApi.Models.Notificacion)">
             <summary>
-            CreateAsync, creamos la notificación
+            Crea notificación
             </summary>
             <param name="notificacion"></param>
             <returns></returns>
         </member>
+        <member name="M:BlogApi.Services.NotificacionesService.CrearNotificacionLikePostAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Crea notificacion cuando hay un Like en un post
+            </summary>
+            <param name="usuarioDestinoId"></param>
+            <param name="usuarioOrigenId"></param>
+            <param name="postId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionesService.CrearNotificacionLikeComentarioAsync(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Crea notificacion cuando hay un like en un comentario
+            </summary>
+            <param name="usuarioDestinoId"></param>
+            <param name="usuarioOrigenId"></param>
+            <param name="comentarioId"></param>
+            <returns></returns>
+        </member>
         <member name="M:BlogApi.Services.NotificacionesService.ObtenerPorUsuarioAsync(System.Int32)">
             <summary>
-            Obtenmos una lista de usuarios por id
+            obtiene notificaciones por usuario
             </summary>
             <param name="usuarioId"></param>
-            <returns>IEnumerable NotificacionDto</returns>
+            <returns>IEnumerable de NotificacionDto</returns>
         </member>
         <member name="M:BlogApi.Services.NotificacionesService.ObtenerPorIdAsync(System.Int32)">
             <summary>
-            Obtenemos una notificacion.
+            Obtiene notificación
             </summary>
             <param name="id"></param>
-            <returns>Notificación</returns>
+            <returns>Notificación o un valor null</returns>
         </member>
         <member name="M:BlogApi.Services.NotificacionesService.MarcarComoLeidaAsync(System.Int32,System.Int32)">
             <summary>
-            Marcamos como leidas las nofificaciones
+            Marcar como leído
             </summary>
             <param name="id"></param>
             <param name="usuarioId"></param>
-            <returns>verdadero si están marcadas y falso en caso contrario</returns>
+            <returns>Devuelve verdadero si ha sido marcada como leida en caso contrario falso</returns>
         </member>
         <member name="M:BlogApi.Services.NotificacionesService.MarcarTodasComoLeidasAsync(System.Int32)">
             <summary>
-            Marcamos todas las notificaciones como leidas
+            Marca todas las notificaciones como leidas.
             </summary>
             <param name="usuarioId"></param>
             <returns></returns>
         </member>
         <member name="M:BlogApi.Services.NotificacionesService.EliminarAsync(System.Int32,System.Int32)">
             <summary>
-            Elimina notificación
+            Elimina notificacion
             </summary>
             <param name="id"></param>
             <param name="usuarioId"></param>
-            <returns></returns>
+            <returns>Verdadero si ha sido eliminada, en caso contrario falso </returns>
         </member>
         <member name="M:BlogApi.Services.NotificacionesService.ObtenerNoLeidasAsync(System.Int32)">
             <summary>
-            Obtenmos una lista de NotificacionDto
+            Obtiene notificaciones no leidas
             </summary>
             <param name="usuarioId"></param>
-            <returns>Lista de Notificaciones</returns>
+            <returns>Lista de NotificacionesDto</returns>
         </member>
         <member name="M:BlogApi.Services.NotificacionesService.GetPaginadasAsync(System.Int32,System.Int32,System.Int32)">
             <summary>
-            Paginación de resultado 
+            Pagina los resultados de NotificacionDto
             </summary>
             <param name="usuarioId"></param>
             <param name="page"></param>
             <param name="pageSize"></param>
-            <returns>Paginacion de resultado de la NotificacionDto</returns>
+            <returns>PaginacionResultado NotificacionDto</returns>
         </member>
         <member name="T:BlogApi.Services.PostService">
             <summary>

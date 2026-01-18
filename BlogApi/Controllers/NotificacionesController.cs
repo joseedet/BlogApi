@@ -1,6 +1,5 @@
+using System.Security.Claims;
 using BlogApi.DTO;
-using BlogApi.Repositories;
-using BlogApi.Services;
 using BlogApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BlogApi.Controllers;
 
 /// <summary>
-/// Controlador para gestionar notificaciones
+/// Controlador NotificacionesController
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
@@ -16,201 +15,139 @@ namespace BlogApi.Controllers;
 public class NotificacionesController : ControllerBase
 {
     /// <summary>
-    /// Servicio de notificaciones
+    /// INotificaciones Service _service
     /// </summary>
-    [Obsolete("NotificacionService está obsoleto. Usa NotificacionesService en su lugar.")]
-    private readonly INotificacionService _notificacionService;
-    private readonly INotificacionRepository _notificacionRepository;
+    private readonly INotificacionesService _service;
 
     /// <summary>
-    /// Constructor de NotificacionesController
+    /// Constructor NotificacionesController
     /// </summary>
-    /// <param name="notificacionService"></param>
-    /// <param name="notificacionRepository"></param>
-    [Obsolete("NotificacionService está obsoleto. Usa NotificacionesService en su lugar.")]
-    public NotificacionesController(
-        INotificacionService notificacionService,
-        INotificacionRepository notificacionRepository
-    )
+    /// <param name="service"></param>
+    public NotificacionesController(INotificacionesService service)
     {
-        _notificacionService = notificacionService;
-        _notificacionRepository = notificacionRepository;
+        _service = service;
     }
 
-    /// <summary>
-    ///     Obtiene el ID del usuario autenticado
-    /// </summary>
-    /// <returns></returns>
-    /// <exception cref="UnauthorizedAccessException"></exception>
     private int GetUsuarioId()
     {
-        var claim = User.FindFirst("id") ?? User.FindFirst("sub");
+        var claim = User.FindFirst("id") ?? User.FindFirst(ClaimTypes.NameIdentifier);
         if (claim == null)
             throw new UnauthorizedAccessException("No se pudo obtener el id del usuario.");
         return int.Parse(claim.Value);
     }
 
     /// <summary>
-    ///     Obtiene todas las notificaciones del usuario autenticado
+    /// Obtiene notificaciones
     /// </summary>
+    /// <param name="id"></param>
     /// <returns>IEnumerable de NotificacionDto</returns>
+    // ------------------------------------------------------------
+    // GET: api/notificaciones
+    // ------------------------------------------------------------
     [HttpGet]
     public async Task<ActionResult<IEnumerable<NotificacionDto>>> ObtenerNotificaciones()
     {
-        try
-        {
-            int usuarioId = GetUsuarioId();
-
-            var notificaciones = await _notificacionRepository.ObtenerPorUsuarioAsync(usuarioId);
-
-            var dto = notificaciones.Select(n => new NotificacionDto
-            {
-                Id = n.Id,
-                UsuarioDestinoId = n.UsuarioDestinoId,
-                UsuarioOrigenId = n.UsuarioOrigenId,
-                Tipo = n.Tipo,
-                PostId = n.PostId,
-                ComentarioId = n.ComentarioId,
-                Mensaje = n.Mensaje,
-                Fecha = n.Fecha,
-                Leida = n.Leida,
-                Payload = n.Payload,
-            });
-
-            return Ok(dto);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(
-                500,
-                new { Message = "Error al obtener las notificaciones.", Error = ex.Message }
-            );
-        }
+        int usuarioId = GetUsuarioId();
+        var notificaciones = await _service.ObtenerPorUsuarioAsync(usuarioId);
+        return Ok(notificaciones);
     }
 
+    // ------------------------------------------------------------
+    // GET: api/notificaciones/no-leidas
+    // ------------------------------------------------------------
+
     /// <summary>
-    ///   Marca una notificación como leída
+    /// Obtiene notificaciones no leidas
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns>ActionResult</returns>
-    [HttpPut("{id}/leer")]
-    public async Task<ActionResult> MarcarComoLeida(int id)
+    /// <returns>IEnumerable de NotificacionDto<</returns>
+    [HttpGet("no-leidas")]
+    public async Task<ActionResult<IEnumerable<NotificacionDto>>> ObtenerNoLeidas()
     {
-        try
-        {
-            int usuarioId = GetUsuarioId();
-
-            var notificacion = await _notificacionRepository.ObtenerPorIdAsync(id);
-
-            if (notificacion == null)
-                return NotFound(new { Message = "La notificación no existe." });
-
-            if (notificacion.UsuarioDestinoId != usuarioId)
-                return Forbid("No puedes modificar notificaciones de otro usuario.");
-
-            await _notificacionRepository.MarcarComoLeidaAsync(id);
-
-            return Ok(new { Message = "Notificación marcada como leída." });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(
-                500,
-                new { Message = "Error al marcar la notificación.", Error = ex.Message }
-            );
-        }
+        int usuarioId = GetUsuarioId();
+        var notificaciones = await _service.ObtenerNoLeidasAsync(usuarioId);
+        return Ok(notificaciones);
     }
 
-    /// <summary>
-    ///     Marca todas las notificaciones del usuario autenticado como leídas
-    /// </summary>
-    /// <returns>ActionResult</returns>
-    [HttpPut("leer-todas")]
-    public async Task<ActionResult> MarcarTodasComoLeidas()
-    {
-        try
-        {
-            int usuarioId = GetUsuarioId();
-
-            await _notificacionService.MarcarTodasComoLeidasAsync(usuarioId);
-
-            return Ok(new { Message = "Todas las notificaciones han sido marcadas como leídas." });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(
-                500,
-                new { Message = "Error al marcar todas las notificaciones.", Error = ex.Message }
-            );
-        }
-    }
+    // ------------------------------------------------------------
+    // GET: api/notificaciones/paginadas?page=1&pageSize=10
+    // ------------------------------------------------------------
 
     /// <summary>
-    ///     Obtiene las notificaciones no leídas del usuario autenticado con paginación
+    /// Número de páginas
     /// </summary>
     /// <param name="page"></param>
     /// <param name="pageSize"></param>
-    /// <returns>PaginacionResultado de NotificacionDto</returns>
-    [HttpGet("no-leidas")]
-    public async Task<ActionResult<PaginacionResultado<NotificacionDto>>> ObtenerNoLeidasPaginadas(
+    /// <returns>PaginacionResultado NotificacionDto/returns>
+    [HttpGet("paginadas")]
+    public async Task<ActionResult<PaginacionResultado<NotificacionDto>>> ObtenerPaginadas(
         int page = 1,
         int pageSize = 10
     )
     {
-        try
-        {
-            int usuarioId = GetUsuarioId();
-
-            var resultado = await _notificacionRepository.ObtenerNoLeidasPaginadasAsync(
-                usuarioId,
-                page,
-                pageSize
-            );
-
-            return Ok(resultado);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(
-                500,
-                new
-                {
-                    Message = "Error al obtener las notificaciones no leídas.",
-                    Error = ex.Message,
-                }
-            );
-        }
+        int usuarioId = GetUsuarioId();
+        var resultado = await _service.GetPaginadasAsync(usuarioId, page, pageSize);
+        return Ok(resultado);
     }
+
+    // ------------------------------------------------------------
+    // PUT: api/notificaciones/{id}/leer
+    // ------------------------------------------------------------
+
     /// <summary>
-    /// Elimina una notificación del usuario autenticado
+    /// Marcar como leida
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpPut("{id}/leer")]
+    public async Task<ActionResult> MarcarComoLeida(int id)
+    {
+        int usuarioId = GetUsuarioId();
+        var ok = await _service.MarcarComoLeidaAsync(id, usuarioId);
+
+        if (!ok)
+            return NotFound(
+                new { Message = "La notificación no existe o no pertenece al usuario." }
+            );
+
+        return NoContent();
+    }
+
+    // ------------------------------------------------------------
+    // PUT: api/notificaciones/leer-todas
+    // ------------------------------------------------------------
+
+    /// <summary>
+    /// Marcar todas las notificaciones como leídas
+    /// </summary>
+    /// <returns></returns>
+    [HttpPut("leer-todas")]
+    public async Task<ActionResult> MarcarTodasComoLeidas()
+    {
+        int usuarioId = GetUsuarioId();
+        await _service.MarcarTodasComoLeidasAsync(usuarioId);
+        return NoContent();
+    }
+
+    // ------------------------------------------------------------
+    // DELETE: api/notificaciones/{id}
+    // ------------------------------------------------------------
+
+    /// <summary>
+    /// Elimina la notificación
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
     [HttpDelete("{id}")]
     public async Task<ActionResult> Eliminar(int id)
     {
-        try
-        {
-            int usuarioId = GetUsuarioId();
+        int usuarioId = GetUsuarioId();
+        var ok = await _service.EliminarAsync(id, usuarioId);
 
-            var notificacion = await _notificacionRepository.ObtenerPorIdAsync(id);
-
-            if (notificacion == null)
-                return NotFound(new { Message = "La notificación no existe." });
-
-            if (notificacion.UsuarioDestinoId != usuarioId)
-                return Forbid("No puedes eliminar notificaciones de otro usuario.");
-
-            await _notificacionRepository.EliminarAsync(notificacion);
-
-            return Ok(new { Message = "Notificación eliminada correctamente." });
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(
-                500,
-                new { Message = "Error al eliminar la notificación.", Error = ex.Message }
+        if (!ok)
+            return NotFound(
+                new { Message = "La notificación no existe o no pertenece al usuario." }
             );
-        }
+
+        return NoContent();
     }
 }
