@@ -133,6 +133,13 @@
             <param name="pageSize"></param>
             <returns>PaginacionResultado de NotificacionDto</returns>
         </member>
+        <member name="M:BlogApi.Controllers.NotificacionesController.Eliminar(System.Int32)">
+            <summary>
+            Elimina una notificación del usuario autenticado
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Data.BlogDbContext.#ctor(Microsoft.EntityFrameworkCore.DbContextOptions{BlogApi.Data.BlogDbContext})" -->
         <member name="P:BlogApi.Data.BlogDbContext.Posts">
             <summary>
@@ -408,6 +415,32 @@
         <member name="P:BlogApi.DTO.NotificacionDto.Payload">
             <summary>
             Payload adicional de la notificación
+            </summary>
+        </member>
+        <member name="T:BlogApi.DTO.PaginacionResultado`1">
+            <summary>
+            Resultado de paginación
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="P:BlogApi.DTO.PaginacionResultado`1.Items">
+            <summary>
+            Elementos de la página actual
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PaginacionResultado`1.PaginaActual">
+            <summary>
+            Información de paginación
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PaginacionResultado`1.TotalPaginas">
+            <summary>
+            Número total de páginas
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.PaginacionResultado`1.TotalRegistros">
+            <summary>
+            Número total de registros
             </summary>
         </member>
         <member name="T:BlogApi.DTO.PaginationDto`1">
@@ -1115,6 +1148,14 @@
             <param name="notificacion"></param>
             <returns>Task</returns>
         </member>
+        <member name="M:BlogApi.Repositories.NotificacionRepository.MarcarTodasComoLeidasAsync(System.Int32)">
+            <summary>
+            Marca todas las notificaciones como leidas
+            </summary>
+            <param name="usuarioId"></param>
+            <returns></returns>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
         <member name="T:BlogApi.Repositories.PostRepository">
             <summary>
             Repositorio específico para Posts
@@ -1369,6 +1410,32 @@
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.ILikeService.UnlikePostAsync(System.Int32,System.Int32)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.ILikeService.LikeComentarioAsync(System.Int32,System.Int32)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.ILikeService.UnlikeComentarioAsync(System.Int32,System.Int32)" -->
+        <member name="T:BlogApi.Services.Interfaces.INotificacionesService">
+            <summary>
+            Interfaz INotificacionesService
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.INotificacionesService.ObtenerNoLeidasAsync(System.Int32)">
+            <summary>
+            Obtenemos notificaciones no leidas
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.INotificacionesService.MarcarTodasComoLeidasAsync(System.Int32)">
+            <summary>
+            Marcamos todas las notiicaciones com leídas
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.INotificacionesService.CrearAsync(BlogApi.Models.Notificacion)">
+            <summary>
+            Creamos notificación
+            </summary>
+            <param name="notificacion"></param>
+            <returns></returns>
+        </member>
         <member name="T:BlogApi.Services.Interfaces.INotificacionService">
             <summary>
             Interfaz para el servicio de notificaciones
@@ -1661,54 +1728,75 @@
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.LikeService.UnlikeComentarioAsync(System.Int32,System.Int32)" -->
         <member name="T:BlogApi.Services.NotificacionesService">
             <summary>
-            Servicio para gestionar notificaciones
-            </summary>
-        </member>
-        <member name="F:BlogApi.Services.NotificacionesService._db">
-            <summary>
-            Constructor de NotificacionesService
-            </summary>
-        </member>
-        <member name="F:BlogApi.Services.NotificacionesService._hub">
-            <summary>
-            Hub de notificaciones para SignalR
+            Clase servicio de notificaciones
             </summary>
         </member>
         <member name="M:BlogApi.Services.NotificacionesService.#ctor(BlogApi.Data.BlogDbContext,Microsoft.AspNetCore.SignalR.IHubContext{BlogApi.Hubs.NotificacionesHub})">
             <summary>
-            Constructor de NotificacionesService
+            Constructor
             </summary>
             <param name="db"></param>
             <param name="hub"></param>
         </member>
         <member name="M:BlogApi.Services.NotificacionesService.CrearAsync(BlogApi.Models.Notificacion)">
             <summary>
-            Crea una nueva notificación
+            CreateAsync, creamos la notificación
             </summary>
             <param name="notificacion"></param>
             <returns></returns>
         </member>
+        <member name="M:BlogApi.Services.NotificacionesService.ObtenerPorUsuarioAsync(System.Int32)">
+            <summary>
+            Obtenmos una lista de usuarios por id
+            </summary>
+            <param name="usuarioId"></param>
+            <returns>IEnumerable NotificacionDto</returns>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionesService.ObtenerPorIdAsync(System.Int32)">
+            <summary>
+            Obtenemos una notificacion.
+            </summary>
+            <param name="id"></param>
+            <returns>Notificación</returns>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionesService.MarcarComoLeidaAsync(System.Int32,System.Int32)">
+            <summary>
+            Marcamos como leidas las nofificaciones
+            </summary>
+            <param name="id"></param>
+            <param name="usuarioId"></param>
+            <returns>verdadero si están marcadas y falso en caso contrario</returns>
+        </member>
         <member name="M:BlogApi.Services.NotificacionesService.MarcarTodasComoLeidasAsync(System.Int32)">
             <summary>
-            Marca una notificación como leída
+            Marcamos todas las notificaciones como leidas
             </summary>
-            <param name="userId"></param>
+            <param name="usuarioId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BlogApi.Services.NotificacionesService.EliminarAsync(System.Int32,System.Int32)">
+            <summary>
+            Elimina notificación
+            </summary>
+            <param name="id"></param>
+            <param name="usuarioId"></param>
             <returns></returns>
         </member>
         <member name="M:BlogApi.Services.NotificacionesService.ObtenerNoLeidasAsync(System.Int32)">
             <summary>
-            Obtiene las notificaciones no leídas de un usuario
+            Obtenmos una lista de NotificacionDto
             </summary>
-            <param name="id"></param>
-            <returns>Lista de notificaciones no leídas</returns>
+            <param name="usuarioId"></param>
+            <returns>Lista de Notificaciones</returns>
         </member>
         <member name="M:BlogApi.Services.NotificacionesService.GetPaginadasAsync(System.Int32,System.Int32,System.Int32)">
             <summary>
-            Obtiene notificaciones paginadas de un usuario
+            Paginación de resultado 
             </summary>
-            <param name="userId"></param>
+            <param name="usuarioId"></param>
             <param name="page"></param>
             <param name="pageSize"></param>
+            <returns>Paginacion de resultado de la NotificacionDto</returns>
         </member>
         <member name="T:BlogApi.Services.PostService">
             <summary>

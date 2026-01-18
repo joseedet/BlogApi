@@ -9,21 +9,29 @@ using Microsoft.EntityFrameworkCore;
 namespace BlogApi.Services;
 
 /// <summary>
-/// Clase servicio de notificaciones
+/// Clase NotificacionesService
 /// </summary>
 public class NotificacionesService : INotificacionesService
 {
     private readonly BlogDbContext _db;
     private readonly IHubContext<NotificacionesHub> _hub;
+    private readonly IEmailService _email;
+
     /// <summary>
-    /// Constructor
+    /// Constructor de NotificacionesService
     /// </summary>
     /// <param name="db"></param>
     /// <param name="hub"></param>
-    public NotificacionesService(BlogDbContext db, IHubContext<NotificacionesHub> hub)
+    /// <param name="email"></param>
+    public NotificacionesService(
+        BlogDbContext db,
+        IHubContext<NotificacionesHub> hub,
+        IEmailService email
+    )
     {
         _db = db;
         _hub = hub;
+        _email = email;
     }
 
     // ------------------------------------------------------------
@@ -31,7 +39,7 @@ public class NotificacionesService : INotificacionesService
     // ------------------------------------------------------------
 
     /// <summary>
-    /// CreateAsync, creamos la notificación
+    /// Crea Notificación
     /// </summary>
     /// <param name="notificacion"></param>
     /// <returns></returns>
@@ -40,75 +48,39 @@ public class NotificacionesService : INotificacionesService
         _db.Notificaciones.Add(notificacion);
         await _db.SaveChangesAsync();
 
+        // SignalR
         await _hub
             .Clients.User(notificacion.UsuarioDestinoId.ToString())
             .SendAsync("NuevaNotificacion", notificacion);
+
+        // Email
+        await EnviarEmailNotificacion(notificacion);
     }
 
     // ------------------------------------------------------------
-    // Obtener todas las notificaciones del usuario
+    // Enviar email (método privado reutilizable)
     // ------------------------------------------------------------
 
-    /// <summary>
-    /// Obtenmos una lista de usuarios por id
-    /// </summary>
-    /// <param name="usuarioId"></param>
-    /// <returns>IEnumerable NotificacionDto</returns>
-    public async Task<IEnumerable<NotificacionDto>> ObtenerPorUsuarioAsync(int usuarioId)
+    private async Task EnviarEmailNotificacion(Notificacion notificacion)
     {
-        return await _db
-            .Notificaciones.Where(n => n.UsuarioDestinoId == usuarioId)
-            .OrderByDescending(n => n.Fecha)
-            .Select(n => new NotificacionDto
-            {
-                Id = n.Id,
-                UsuarioDestinoId = n.UsuarioDestinoId,
-                UsuarioOrigenId = n.UsuarioOrigenId,
-                Tipo = n.Tipo,
-                PostId = n.PostId,
-                ComentarioId = n.ComentarioId,
-                Mensaje = n.Mensaje,
-                Fecha = n.Fecha,
-                Leida = n.Leida,
-                Payload = n.Payload,
-            })
-            .ToListAsync();
-    }
+        // Obtener email del usuario destino
+        var emailDestino = await _db
+            .Usuarios.Where(u => u.Id == notificacion.UsuarioDestinoId)
+            .Select(u => u.Email)
+            .FirstOrDefaultAsync();
 
-    // ------------------------------------------------------------
-    // Obtener una notificación por ID
-    // ------------------------------------------------------------
+        if (string.IsNullOrWhiteSpace(emailDestino))
+            return;
 
-    /// <summary>
-    /// Obtenemos una notificacion.
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns>Notificación</returns>
-    public async Task<Notificacion?> ObtenerPorIdAsync(int id)
-    {
-        return await _db.Notificaciones.FirstOrDefaultAsync(n => n.Id == id);
-    }
+        var asunto = $"Nueva notificación: {notificacion.Tipo}";
+        var cuerpo =
+            $@"
+            <h2>Tienes una nueva notificación</h2>
+            <p>{notificacion.Mensaje}</p>
+            <p><small>Fecha: {notificacion.Fecha}</small></p>
+        ";
 
-    // ------------------------------------------------------------
-    // Marcar una notificación como leída
-    // ------------------------------------------------------------
-
-    /// <summary>
-    /// Marcamos como leidas las nofificaciones
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="usuarioId"></param>
-    /// <returns>verdadero si están marcadas y falso en caso contrario</returns>
-    public async Task<bool> MarcarComoLeidaAsync(int id, int usuarioId)
-    {
-        var notif = await ObtenerPorIdAsync(id);
-
-        if (notif == null || notif.UsuarioDestinoId != usuarioId)
-            return false;
-
-        notif.Leida = true;
-        await _db.SaveChangesAsync();
-        return true;
+        await _email.EnviarAsync(emailDestino, asunto, cuerpo);
     }
 
     // ------------------------------------------------------------
@@ -116,14 +88,14 @@ public class NotificacionesService : INotificacionesService
     // ------------------------------------------------------------
 
     /// <summary>
-    /// Marcamos todas las notificaciones como leidas
+    /// Marca todas las notificaciones como leídas
     /// </summary>
-    /// <param name="usuarioId"></param>
+    /// <param name="userId"></param>
     /// <returns></returns>
-    public async Task MarcarTodasComoLeidasAsync(int usuarioId)
+    public async Task MarcarTodasComoLeidasAsync(int userId)
     {
         var notis = await _db
-            .Notificaciones.Where(n => n.UsuarioDestinoId == usuarioId && !n.Leida)
+            .Notificaciones.Where(n => n.UsuarioDestinoId == userId && !n.Leida)
             .ToListAsync();
 
         foreach (var n in notis)
@@ -133,76 +105,34 @@ public class NotificacionesService : INotificacionesService
     }
 
     // ------------------------------------------------------------
-    // Eliminar notificación
-    // ------------------------------------------------------------
-
-    /// <summary>
-    /// Elimina notificación
-    /// </summary>
-    /// <param name="id"></param>
-    /// <param name="usuarioId"></param>
-    /// <returns></returns>
-    public async Task<bool> EliminarAsync(int id, int usuarioId)
-    {
-        var notif = await ObtenerPorIdAsync(id);
-
-        if (notif == null || notif.UsuarioDestinoId != usuarioId)
-            return false;
-
-        _db.Notificaciones.Remove(notif);
-        await _db.SaveChangesAsync();
-        return true;
-    }
-
-    // ------------------------------------------------------------
     // Obtener no leídas
     // ------------------------------------------------------------
 
     /// <summary>
-    /// Obtenmos una lista de NotificacionDto
+    /// Obtiene las notificaciones no leídas
     /// </summary>
     /// <param name="usuarioId"></param>
-    /// <returns>Lista de Notificaciones</returns>
+    /// <returns>Lista de notificaciones no leídas</returns>
     public async Task<List<NotificacionDto>> ObtenerNoLeidasAsync(int usuarioId)
     {
         return await _db
             .Notificaciones.Where(n => n.UsuarioDestinoId == usuarioId && !n.Leida)
             .OrderByDescending(n => n.Fecha)
-            .Select(n => new NotificacionDto
-            {
-                Id = n.Id,
-                UsuarioDestinoId = n.UsuarioDestinoId,
-                UsuarioOrigenId = n.UsuarioOrigenId,
-                Tipo = n.Tipo,
-                PostId = n.PostId,
-                ComentarioId = n.ComentarioId,
-                Mensaje = n.Mensaje,
-                Fecha = n.Fecha,
-                Leida = n.Leida,
-                Payload = n.Payload,
-            })
+            .Select(n => ToDto(n))
             .ToListAsync();
     }
 
     // ------------------------------------------------------------
     // Obtener paginadas
     // ------------------------------------------------------------
-
-    /// <summary>
-    /// Paginación de resultado 
-    /// </summary>
-    /// <param name="usuarioId"></param>
-    /// <param name="page"></param>
-    /// <param name="pageSize"></param>
-    /// <returns>Paginacion de resultado de la NotificacionDto</returns>
     public async Task<PaginacionResultado<NotificacionDto>> GetPaginadasAsync(
-        int usuarioId,
+        int userId,
         int page,
         int pageSize
     )
     {
         var query = _db
-            .Notificaciones.Where(n => n.UsuarioDestinoId == usuarioId)
+            .Notificaciones.Where(n => n.UsuarioDestinoId == userId)
             .OrderByDescending(n => n.Fecha);
 
         var total = await query.CountAsync();
@@ -210,19 +140,7 @@ public class NotificacionesService : INotificacionesService
         var items = await query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Select(n => new NotificacionDto
-            {
-                Id = n.Id,
-                UsuarioDestinoId = n.UsuarioDestinoId,
-                UsuarioOrigenId = n.UsuarioOrigenId,
-                Tipo = n.Tipo,
-                PostId = n.PostId,
-                ComentarioId = n.ComentarioId,
-                Mensaje = n.Mensaje,
-                Fecha = n.Fecha,
-                Leida = n.Leida,
-                Payload = n.Payload,
-            })
+            .Select(n => ToDto(n))
             .ToListAsync();
 
         return new PaginacionResultado<NotificacionDto>
@@ -233,4 +151,22 @@ public class NotificacionesService : INotificacionesService
             TotalRegistros = total,
         };
     }
+
+    // ------------------------------------------------------------
+    // Conversión a DTO
+    // ------------------------------------------------------------
+    private static NotificacionDto ToDto(Notificacion n) =>
+        new()
+        {
+            Id = n.Id,
+            UsuarioDestinoId = n.UsuarioDestinoId,
+            UsuarioOrigenId = n.UsuarioOrigenId,
+            Tipo = n.Tipo,
+            PostId = n.PostId,
+            ComentarioId = n.ComentarioId,
+            Mensaje = n.Mensaje,
+            Fecha = n.Fecha,
+            Leida = n.Leida,
+            Payload = n.Payload,
+        };
 }
