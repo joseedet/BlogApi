@@ -1566,6 +1566,15 @@
             <returns>Post</returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IPostService.SearchAsync(System.String)" -->
+        <member name="M:BlogApi.Services.Interfaces.IPostService.SearchPagedAsync(System.String,System.Int32,System.Int32)">
+            <summary>
+            Búsqueda
+            </summary>
+            <param name="texto"></param>
+            <param name="pagina"></param>
+            <param name="tamano"></param>
+            <returns>Pagina con los post encontrados</returns>
+        </member>
         <member name="M:BlogApi.Services.Interfaces.IPostService.GetByCategoriaAsync(System.Int32)">
             <summary>
             Obtiene los posts de una categoría específica
@@ -1579,6 +1588,46 @@
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IPostService.GetByAutorAsync(System.Int32)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IPostService.GetByAutorNombreAsync(System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.Interfaces.IPostService.GetCursorPagedAsync(System.Nullable{System.Int32},System.Int32)" -->
+        <member name="T:BlogApi.Services.Interfaces.ITagService">
+            <summary>
+            Interfaz
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.ITagService.GetAllAsync">
+            <summary>
+            Dame todos los tag
+            </summary>
+            <returns>IEnumerable Tag</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.ITagService.GetByIdAsync(System.Int32)">
+            <summary>
+            Obtener por Tag por id
+            </summary>
+            <param name="id"></param>
+            <returns>Tag</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.ITagService.CreateAsync(BlogApi.Models.Tag)">
+            <summary>
+            Crear tag
+            </summary>
+            <param name="tag"></param>
+            <returns>Tag</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.ITagService.UpdateAsync(System.Int32,BlogApi.Models.Tag)">
+            <summary>
+            Actualiza el tag
+            </summary>
+            <param name="id"></param>
+            <param name="tag"></param>
+            <returns>Verdadero se se ha actualizado en caso contrario falso</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.ITagService.DeleteAsync(System.Int32)">
+            <summary>
+            Elimina el tag
+            </summary>
+            <param name="id"></param>
+            <returns>Verdadero si se ha eliminado en caso contrario falso</returns>
+        </member>
         <member name="T:BlogApi.Services.Interfaces.IUsuarioService">
              <summary>
             

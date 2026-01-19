@@ -89,3 +89,4 @@
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogAdmin/obj/Debug/net10.0/BlogAdmin.pdb
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogAdmin/obj/Debug/net10.0/BlogAdmin.genruntimeconfig.cache
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogAdmin/obj/Debug/net10.0/ref/BlogAdmin.dll
+/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogAdmin/obj/Debug/net10.0/BlogAdmin.sourcelink.json

@@ -44,7 +44,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
-builder.Services.AddScoped<INotificacionService, NotificacionService>();
+//builder.Services.AddScoped<INotificacionService, NotificacionService>();
 builder.Services.AddScoped<IComentarioService, ComentarioService>();
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
