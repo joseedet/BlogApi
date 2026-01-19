@@ -1,3 +1,6 @@
 {
-  "dotnet.defaultSolution": "BlogAPI+.sln"
+  "dotnet.defaultSolution": "BlogAPI+.sln",
+  "cSpell.words": [
+    "relaciones"
+  ]
 }

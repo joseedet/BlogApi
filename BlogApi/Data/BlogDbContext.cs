@@ -56,7 +56,12 @@ public class BlogDbContext : DbContext
     ///  Likes en comentarios del blog
     /// </summary>
     public DbSet<LikeComentario> LikesComentario { get; set; }
-    
+
+    /// <summary>
+    /// Banner
+    /// </summary>
+    public DbSet<Banner> Banners { get; set; }
+
     /// <summary>
     ///  Configuración de las relaciones entre entidades
     /// </summary>
