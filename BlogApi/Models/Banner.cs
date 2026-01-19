@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using BlogApi.Utils;
 
 /// <summary>
 /// Clase Banner
@@ -85,4 +86,9 @@ public class Banner
     /// </summary>
     [MaxLength(500)]
     public string Descripcion { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Tipo de Banner
+    /// </summary>
+    public TipoBanner Tipo { get; set; } = TipoBanner.Slider;
 }

@@ -99,6 +99,8 @@ public class BlogDbContext : DbContext
             .WithMany(t => t.Posts)
             .UsingEntity(j => j.ToTable("PostTags"));
 
+        modelBuilder.Entity<Banner>().Property(b => b.Tipo).HasConversion<string>();
+
         base.OnModelCreating(modelBuilder);
     }
 }
