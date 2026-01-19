@@ -12,7 +12,7 @@ namespace BlogApi.Services;
 /// <summary>
 /// Servicio para gestionar comentarios
 /// </summary>
-[Obsolete("NotificacionService está obsoleto. Usa NotificacionesService en su lugar.")]
+//[Obsolete("NotificacionService está obsoleto. Usa NotificacionesService en su lugar.")]
 public class ComentarioService : IComentarioService
 {
     /// <summary>
@@ -23,8 +23,8 @@ public class ComentarioService : IComentarioService
     /// <summary>
     ///   Servicio de notificaciones
     /// </summary>
-    [Obsolete]
-    private readonly INotificacionService _notificacionService;
+    //[Obsolete]
+    private readonly INotificacionesService _notificacionesService;
 
     /// <summary>
     ///     Contexto de la base de datos
@@ -54,18 +54,18 @@ public class ComentarioService : IComentarioService
     /// <param name="notificacionService"></param>
     /// <param name="emailService"></param>
     /// <param name="hub"></param>
-    [Obsolete("NotificacionService está obsoleto. Usa NotificacionesService en su lugar.")]
+    //[Obsolete("NotificacionService está obsoleto. Usa NotificacionesService en su lugar.")]
     public ComentarioService(
         IComentarioRepository repo,
         BlogDbContext context,
-        INotificacionService notificacionService,
+        INotificacionesService notificacionService,
         IEmailService emailService,
         IHubContext<NotificacionesHub> hub
     )
     {
         _repo = repo;
         _context = context;
-        _notificacionService = notificacionService;
+        _notificacionesService = notificacionService;
         _emailService = emailService;
         _hub = hub;
     }
@@ -136,7 +136,7 @@ public class ComentarioService : IComentarioService
             comentario.Id,
             autorComentario
         );
-        await _notificacionService.CrearAsync(notificacion);
+        await _notificacionesService.CrearAsync(notificacion);
 
         // Enviar notificación en tiempo real vía SignalR
         await _hub
