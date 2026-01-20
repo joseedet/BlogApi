@@ -11,19 +11,23 @@ public class EmailService : IEmailService
 {
     private readonly IEmailSettingsService _settingsService;
     private readonly ISendGridClientFactory _clientFactory;
+    private readonly IEmailLogService _logService;
 
     /// <summary>
     /// Constructor de EmailService
     /// </summary>
     /// <param name="settingsService"></param>
     /// <param name="sendGridClient"></param>
+    /// <param name="logService"></param>
     public EmailService(
         IEmailSettingsService settingsService,
-        ISendGridClientFactory sendGridClient
+        ISendGridClientFactory sendGridClient,
+        IEmailLogService logService
     )
     {
         _settingsService = settingsService;
         _clientFactory = sendGridClient;
+        _logService = logService;
     }
 
     /// <summary>
@@ -39,28 +43,22 @@ public class EmailService : IEmailService
         // Obtener configuración desde la BD
         var settings = await _settingsService.ObtenerEntidadAsync();
 
-        if (!settings.Activo)
-            throw new InvalidOperationException(
-                "El envío de emails está desactivado por el administrador."
-            );
-
-        if (
-            string.IsNullOrWhiteSpace(settings.Usuario)
-            || string.IsNullOrWhiteSpace(settings.Password)
-            || string.IsNullOrWhiteSpace(settings.Remitente)
-        )
+        try
         {
-            throw new InvalidOperationException("La configuración de email no está completa.");
+            var client = _clientFactory.Create(settings.Password);
+
+            var from = new EmailAddress(settings.Remitente, settings.NombreRemitente);
+            var to = new EmailAddress(toEmail);
+
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, message, message);
+
+            await client.SendEmailAsync(msg);
+            await _logService.RegistrarExitoAsync(toEmail, subject, "SendGrid");
         }
-
-        // SendGrid usa API Key en lugar de usuario/contraseña
-        var client = _clientFactory.Create(settings.Password); // Password = API Key
-
-        var from = new EmailAddress(settings.Remitente, settings.NombreRemitente);
-        var to = new EmailAddress(toEmail);
-
-        var msg = MailHelper.CreateSingleEmail(from, to, subject, message, message);
-
-        await client.SendEmailAsync(msg);
+        catch (Exception ex)
+        {
+            await _logService.RegistrarErrorAsync(toEmail, subject, "SendGrid", ex.Message);
+            throw;
+        }
     }
 }
