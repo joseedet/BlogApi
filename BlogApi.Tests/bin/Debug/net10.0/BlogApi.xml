@@ -92,6 +92,14 @@
             <param name="id"></param>
             <returns>BannerDto</returns>
         </member>
+        <member name="M:BlogApi.Controllers.BannerController.Actualizar(System.Int32,BlogApi.DTO.BannerUpdateDto)">
+            <summary>
+            Actualizar
+            </summary>
+            <param name="id"></param>
+            <param name="dto"></param>
+            <returns>BannerDto</returns>
+        </member>
         <member name="M:BlogApi.Controllers.BannerController.Eliminar(System.Int32)">
             <summary>
             Elimina un banner
@@ -880,6 +888,11 @@
         </member>
         <member name="M:BlogApi.Migrations.InitialCreate.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <inheritdoc />
+        </member>
+        <member name="T:BlogApi.Models.EmailSettings">
+            <summary>
+            Clase de configuración del email
+            </summary>
         </member>
         <member name="T:BlogApi.Models.LikeComentario">
             <summary>
