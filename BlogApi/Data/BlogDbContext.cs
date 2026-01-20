@@ -71,6 +71,11 @@ public class BlogDbContext : DbContext
     public DbSet<EmailSettings> EmailSettings { get; set; }
 
     /// <summary>
+    /// Log de Email
+    /// </summary>
+    public DbSet<EmailLog> EmailLogs { get; set; }
+
+    /// <summary>
     ///  Configuración de las relaciones entre entidades
     /// </summary>
     /// <param name="modelBuilder"></param>
