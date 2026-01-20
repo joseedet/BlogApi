@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore.SqlServer;
 
 namespace BlogApi.Data;
 
+/// <summary>
+/// Clase del contexto
+/// </summary>
 public class BlogDbContext : DbContext
 {
     /// <summary>
@@ -63,6 +66,11 @@ public class BlogDbContext : DbContext
     public DbSet<Banner> Banners { get; set; }
 
     /// <summary>
+    /// EmailSettings
+    /// </summary>
+    public DbSet<EmailSettings> EmailSettings { get; set}
+
+    /// <summary>
     ///  Configuración de las relaciones entre entidades
     /// </summary>
     /// <param name="modelBuilder"></param>
@@ -100,6 +108,20 @@ public class BlogDbContext : DbContext
             .UsingEntity(j => j.ToTable("PostTags"));
 
         modelBuilder.Entity<Banner>().Property(b => b.Tipo).HasConversion<string>();
+
+        modelBuilder
+            .Entity<EmailSettings>()
+            .HasData( new EmailSettings {
+                Id = 1,
+                Host = "",
+                Puerto = 587,
+                Usuario = "",
+                Password = "",
+                Remitente = "",
+                NombreRemitente = "",
+                UsarSSL = true,
+                Activo = false
+            } );
 
         base.OnModelCreating(modelBuilder);
     }
