@@ -58,6 +58,7 @@ builder.Services.AddSingleton<IAuthorizationHandler, PuedeEditarPostHandler>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IBannerService, BannerService>();
 builder.Services.AddScoped<IEmailSettingsService, EmailSettingsService>();
+builder.Services.AddSingleton<ISendGridClientFactory, SendGridClientFactory>();
 
 // Configuración de autenticación JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt");

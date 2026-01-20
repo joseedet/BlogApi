@@ -10,14 +10,20 @@ namespace BlogApi.Services;
 public class EmailService : IEmailService
 {
     private readonly IEmailSettingsService _settingsService;
+    private readonly ISendGridClientFactory _clientFactory;
 
     /// <summary>
     /// Constructor de EmailService
     /// </summary>
     /// <param name="settingsService"></param>
-    public EmailService(IEmailSettingsService settingsService)
+    /// <param name="sendGridClient"></param>
+    public EmailService(
+        IEmailSettingsService settingsService,
+        ISendGridClientFactory sendGridClient
+    )
     {
         _settingsService = settingsService;
+        _clientFactory = sendGridClient;
     }
 
     /// <summary>
@@ -48,7 +54,7 @@ public class EmailService : IEmailService
         }
 
         // SendGrid usa API Key en lugar de usuario/contraseña
-        var client = new SendGridClient(settings.Password); // Password = API Key
+        var client = _clientFactory.Create(settings.Password); // Password = API Key
 
         var from = new EmailAddress(settings.Remitente, settings.NombreRemitente);
         var to = new EmailAddress(toEmail);

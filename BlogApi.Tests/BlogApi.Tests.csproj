@@ -35,6 +35,7 @@
     <Folder Include="Repositories/" />
     <Folder Include="Services/Auth/" />
     <Folder Include="Services/Categorias/" />
+    <Folder Include="Services/EmailService/" />
     <Folder Include="Services/Notifications/" />
     <Folder Include="Services/Tags/" />
     <Folder Include="Services/Users/" />
