@@ -68,7 +68,7 @@ public class BlogDbContext : DbContext
     /// <summary>
     /// EmailSettings
     /// </summary>
-    public DbSet<EmailSettings> EmailSettings { get; set}
+    public DbSet<EmailSettings> EmailSettings { get; set; }
 
     /// <summary>
     ///  Configuración de las relaciones entre entidades
@@ -111,17 +111,20 @@ public class BlogDbContext : DbContext
 
         modelBuilder
             .Entity<EmailSettings>()
-            .HasData( new EmailSettings {
-                Id = 1,
-                Host = "",
-                Puerto = 587,
-                Usuario = "",
-                Password = "",
-                Remitente = "",
-                NombreRemitente = "",
-                UsarSSL = true,
-                Activo = false
-            } );
+            .HasData(
+                new EmailSettings
+                {
+                    Id = 1,
+                    Host = "",
+                    Puerto = 587,
+                    Usuario = "",
+                    Password = "",
+                    Remitente = "",
+                    NombreRemitente = "",
+                    UsarSSL = true,
+                    Activo = false,
+                }
+            );
 
         base.OnModelCreating(modelBuilder);
     }
