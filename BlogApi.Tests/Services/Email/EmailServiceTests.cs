@@ -5,7 +5,7 @@ using Moq;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
-namespace BlogApi.Tests.Services;
+namespace BlogApi.Tests.Services.Email;
 
 public class EmailServiceTests
 {
