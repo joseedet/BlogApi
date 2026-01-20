@@ -62,6 +62,43 @@
             <param name="dto"></param>
             <returns>IActionResult</returns>
         </member>
+        <member name="T:BlogApi.Controllers.BannerController">
+            <summary>
+            Controlador del Banner
+            </summary>
+        </member>
+        <member name="M:BlogApi.Controllers.BannerController.#ctor(BlogApi.Services.Interfaces.IBannerService)">
+            <summary>
+            Constructor del controlador
+            </summary>
+            <param name="service"></param>
+        </member>
+        <member name="M:BlogApi.Controllers.BannerController.ObtenerTodos">
+            <summary>
+            Obtener todos los banners
+            </summary>
+            <returns>IEnumerable BannerDto</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.BannerController.ObtenerActivos">
+            <summary>
+            Obtener banners activos
+            </summary>
+            <returns>IEnumerable BannerDto</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.BannerController.ObtenerPorId(System.Int32)">
+            <summary>
+            Obtener por Id
+            </summary>
+            <param name="id"></param>
+            <returns>BannerDto</returns>
+        </member>
+        <member name="M:BlogApi.Controllers.BannerController.Eliminar(System.Int32)">
+            <summary>
+            Elimina un banner
+            </summary>
+            <param name="id"></param>
+            <returns>Verdadero si se ha eliminado en caso contrario falso</returns>
+        </member>
         <member name="M:BlogApi.Controllers.LikesController.LikePost(System.Int32)">
             <summary>
             Da "Me gusta" a un post
@@ -168,6 +205,11 @@
              Likes en comentarios del blog
             </summary>
         </member>
+        <member name="P:BlogApi.Data.BlogDbContext.Banners">
+            <summary>
+            Banner
+            </summary>
+        </member>
         <member name="M:BlogApi.Data.BlogDbContext.OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder)">
             <summary>
              Configuración de las relaciones entre entidades
@@ -204,6 +246,206 @@
         </member>
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.RespuestaComentario(System.Int32,System.Int32,System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Domain.Factories.NotificacionFactory.Sistema(System.Int32,System.String)" -->
+        <member name="T:BlogApi.DTO.BannerCreateDto">
+            <summary>
+            Clase Dto de creación de Banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerCreateDto.Titulo">
+            <summary>
+            Título del banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerCreateDto.Subtitulo">
+            <summary>
+            Subtitulo del banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerCreateDto.ImagenFile">
+            <summary>
+            Url de la imagen
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerCreateDto.Enlace">
+            <summary>
+            Enlace del banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerCreateDto.Activo">
+            <summary>
+            Estado en el que se encuentra el banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerCreateDto.FechaInicio">
+            <summary>
+            Fecha de inicio de la ejecución  del banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerCreateDto.FechaFin">
+            <summary>
+            Fecha final de la ejecución del banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerCreateDto.Orden">
+            <summary>
+            Orden en el cual se ejecutan los banners
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerCreateDto.Alt">
+            <summary>
+            Texto alternativo(SEO/accesibilidad)
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerCreateDto.AbrirEnNuevaPestana">
+            <summary>
+            Target del enlace
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerCreateDto.Descripcion">
+            <summary>
+            Descripción
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerCreateDto.Tipo">
+            <summary>
+            Tipo de Banner
+            </summary>
+        </member>
+        <member name="T:BlogApi.DTO.BannerDto">
+            <summary>
+            Clase BannerDto
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerDto.Id">
+            <summary>
+            Identificación única del banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerDto.Titulo">
+            <summary>
+            Título del banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerDto.Subtitulo">
+            <summary>
+            Subtitulo del banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerDto.ImagenUrl">
+            <summary>
+            Url de la imagen
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerDto.Enlace">
+            <summary>
+            Enlace del banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerDto.Activo">
+            <summary>
+            Estado en el que se encuentra el banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerDto.FechaInicio">
+            <summary>
+            Fecha de inicio de la ejecución  del banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerDto.FechaFin">
+            <summary>
+            Fecha final de la ejecución del banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerDto.Orden">
+            <summary>
+            Orden en el cual se ejecutan los banners
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerDto.Alt">
+            <summary>
+            Texto alternativo(SEO/accesibilidad)
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerDto.AbrirEnNuevaPestana">
+            <summary>
+            Target del enlace
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerDto.Descripcion">
+            <summary>
+            Descripción
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerDto.Tipo">
+            <summary>
+            Tipo de Banner
+            </summary>
+        </member>
+        <member name="T:BlogApi.DTO.BannerUpdateDto">
+            <summary>
+            Clase para actualizar BannerDto
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerUpdateDto.Titulo">
+            <summary>
+            Título del banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerUpdateDto.Subtitulo">
+            <summary>
+            Subtitulo del banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerUpdateDto.ImagenFile">
+            <summary>
+            Url de la imagen
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerUpdateDto.Enlace">
+            <summary>
+            Enlace del banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerUpdateDto.Activo">
+            <summary>
+            Estado en el que se encuentra el banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerUpdateDto.FechaInicio">
+            <summary>
+            Fecha de inicio de la ejecución  del banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerUpdateDto.FechaFin">
+            <summary>
+            Fecha final de la ejecución del banner
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerUpdateDto.Orden">
+            <summary>
+            Orden en el cual se ejecutan los banners
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerUpdateDto.Alt">
+            <summary>
+            Texto alternativo(SEO/accesibilidad)
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerUpdateDto.AbrirEnNuevaPestana">
+            <summary>
+            Target del enlace
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerUpdateDto.Descripcion">
+            <summary>
+            Descripción
+            </summary>
+        </member>
+        <member name="P:BlogApi.DTO.BannerUpdateDto.Tipo">
+            <summary>
+            Tipo de Banner
+            </summary>
+        </member>
         <member name="T:BlogApi.DTO.ComentarioLikesDto">
             <summary>
             Data Transfer Object para los "Me gusta" de un comentario
@@ -1254,6 +1496,59 @@
             <param name="ids"></param>
             <returns>List&lt;Tag&gt;</returns>
         </member>
+        <member name="T:BlogApi.Services.BannerService">
+            <summary>
+            clase de servicio de Banner
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.BannerService.#ctor(BlogApi.Data.BlogDbContext,Microsoft.AspNetCore.Hosting.IWebHostEnvironment)">
+            <summary>
+            Constructor de Banner
+            </summary>
+            <param name="db"></param>
+            <param name="env"></param>
+        </member>
+        <member name="M:BlogApi.Services.BannerService.CrearAsync(BlogApi.DTO.BannerCreateDto)">
+            <summary>
+            Creación del Banner
+            </summary>
+            <param name="dto"></param>
+            <returns>BannerDto</returns>
+        </member>
+        <member name="M:BlogApi.Services.BannerService.ObtenerPorIdAsync(System.Int32)">
+            <summary>
+            Obtener por Id
+            </summary>
+            <param name="id"></param>
+            <returns>BannerDto</returns>
+        </member>
+        <member name="M:BlogApi.Services.BannerService.ObtenerTodosAsync">
+            <summary>
+            Obtener todos los banners
+            </summary>
+            <returns>IEnumerable BannerDto</returns>
+        </member>
+        <member name="M:BlogApi.Services.BannerService.ObtenerActivosAsync">
+            <summary>
+            Obtener banners activos
+            </summary>
+            <returns>IEnumerable BannerDto</returns>
+        </member>
+        <member name="M:BlogApi.Services.BannerService.ActualizarAsync(System.Int32,BlogApi.DTO.BannerUpdateDto)">
+            <summary>
+            Actualización del Banner
+            </summary>
+            <param name="id"></param>
+            <param name="dto"></param>
+            <returns>BannerDto</returns>
+        </member>
+        <member name="M:BlogApi.Services.BannerService.EliminarAsync(System.Int32)">
+            <summary>
+            Elimina un banner
+            </summary>
+            <param name="id"></param>
+            <returns>Verdadero si se ha eliminado en caso contrario falso</returns>
+        </member>
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.#ctor(BlogApi.Repositories.Interfaces.ICategoriaRepository)" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.GetAllAsync" -->
         <!-- Badly formed XML comment ignored for member "M:BlogApi.Services.CategoriaService.GetByIdAsync(System.Int32)" -->
@@ -1270,7 +1565,7 @@
                 Repositorio de comentarios
             </summary>
         </member>
-        <member name="F:BlogApi.Services.ComentarioService._notificacionService">
+        <member name="F:BlogApi.Services.ComentarioService._notificacionesService">
             <summary>
               Servicio de notificaciones
             </summary>
@@ -1295,7 +1590,7 @@
                Hub de notificaciones para SignalR
             </summary>
         </member>
-        <member name="M:BlogApi.Services.ComentarioService.#ctor(BlogApi.Repositories.Interfaces.IComentarioRepository,BlogApi.Data.BlogDbContext,BlogApi.Services.Interfaces.INotificacionService,BlogApi.Services.Interfaces.IEmailService,Microsoft.AspNetCore.SignalR.IHubContext{BlogApi.Hubs.NotificacionesHub})">
+        <member name="M:BlogApi.Services.ComentarioService.#ctor(BlogApi.Repositories.Interfaces.IComentarioRepository,BlogApi.Data.BlogDbContext,BlogApi.Services.Interfaces.INotificacionesService,BlogApi.Services.Interfaces.IEmailService,Microsoft.AspNetCore.SignalR.IHubContext{BlogApi.Hubs.NotificacionesHub})">
             <summary>
             Constructor de ComentarioService
             </summary>
@@ -1370,6 +1665,52 @@
             <summary>
             Cierra la conexión al Hub.
             </summary>
+        </member>
+        <member name="T:BlogApi.Services.Interfaces.IBannerService">
+            <summary>
+            Interfaz de servicio de Banner
+            </summary>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.IBannerService.CrearAsync(BlogApi.DTO.BannerCreateDto)">
+            <summary>
+            Creación del Banner
+            </summary>
+            <param name="dto"></param>
+            <returns>BannerDto</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.IBannerService.ObtenerPorIdAsync(System.Int32)">
+            <summary>
+            Obtener por Id
+            </summary>
+            <param name="id"></param>
+            <returns>BannerDto</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.IBannerService.ObtenerTodosAsync">
+            <summary>
+            Obtener todos los banners
+            </summary>
+            <returns>IEnumerable BannerDto</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.IBannerService.ObtenerActivosAsync">
+            <summary>
+            Obtener banners activos
+            </summary>
+            <returns>IEnumerable BannerDto</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.IBannerService.ActualizarAsync(System.Int32,BlogApi.DTO.BannerUpdateDto)">
+            <summary>
+            Actualización del Banner
+            </summary>
+            <param name="id"></param>
+            <param name="dto"></param>
+            <returns>BannerDto</returns>
+        </member>
+        <member name="M:BlogApi.Services.Interfaces.IBannerService.EliminarAsync(System.Int32)">
+            <summary>
+            Elimina un banner
+            </summary>
+            <param name="id"></param>
+            <returns>Verdadero si se ha eliminado en caso contrario falso</returns>
         </member>
         <member name="T:BlogApi.Services.Interfaces.IComentarioService">
             <summary>
@@ -2189,6 +2530,36 @@
             <param name="text">Texto de entrada</param>
             <returns>Slug generado</returns>
         </member>
+        <member name="T:BlogApi.Utils.TipoBanner">
+            <summary>
+            Enum Tipo de Banner
+            </summary>
+        </member>
+        <member name="F:BlogApi.Utils.TipoBanner.Slider">
+            <summary>
+            Slider
+            </summary>
+        </member>
+        <member name="F:BlogApi.Utils.TipoBanner.Hero">
+            <summary>
+            Hero
+            </summary>
+        </member>
+        <member name="F:BlogApi.Utils.TipoBanner.Lateral">
+            <summary>
+            Lateral
+            </summary>
+        </member>
+        <member name="F:BlogApi.Utils.TipoBanner.Popup">
+            <summary>
+            Popup
+            </summary>
+        </member>
+        <member name="F:BlogApi.Utils.TipoBanner.Anuncio">
+            <summary>
+            Anuncio
+            </summary>
+        </member>
         <member name="T:BlogApi.Utils.TipoNotificacion">
             <summary>
             Tipos de notificaciones disponibles
@@ -2270,6 +2641,81 @@
         <!-- Badly formed XML comment ignored for member "M:ComentariosController.Delete(System.Int32)" -->
         <!-- Badly formed XML comment ignored for member "M:ComentariosController.CambiarEstado(System.Int32,System.String)" -->
         <!-- Badly formed XML comment ignored for member "M:ComentariosController.GetByEstado(System.String)" -->
+        <member name="T:Banner">
+            <summary>
+            Clase Banner
+            </summary>
+        </member>
+        <member name="P:Banner.Id">
+            <summary>
+            Identificación única del banner
+            </summary>
+        </member>
+        <member name="P:Banner.Titulo">
+            <summary>
+            Título del banner
+            </summary>
+        </member>
+        <member name="P:Banner.Subtitulo">
+            <summary>
+            Subtitulo del banner
+            </summary>
+        </member>
+        <member name="P:Banner.ImagenUrl">
+            <summary>
+            Url de la imagen
+            </summary>
+        </member>
+        <member name="P:Banner.Enlace">
+            <summary>
+            Enlace del banner
+            </summary>
+        </member>
+        <member name="P:Banner.Activo">
+            <summary>
+            Estado en el que se encuentra el banner
+            </summary>
+        </member>
+        <member name="P:Banner.FechaInicio">
+            <summary>
+            Fecha de inicio de la ejecución  del banner
+            </summary>
+        </member>
+        <member name="P:Banner.FechaFin">
+            <summary>
+            Fecha final de la ejecución del banner
+            </summary>
+        </member>
+        <member name="P:Banner.Orden">
+            <summary>
+            Orden en el cual se ejecutan los banners
+            </summary>
+        </member>
+        <member name="P:Banner.ImagenFile">
+            <summary>
+            Para subir la imagen
+            </summary>
+        </member>
+        <member name="P:Banner.Alt">
+            <summary>
+            Texto alternativo(SEO/accesibilidad)
+            </summary>
+        </member>
+        <member name="P:Banner.AbrirEnNuevaPestana">
+            <summary>
+            Target del enlace
+            </summary>
+        </member>
+        <member name="P:Banner.Descripcion">
+            <summary>
+            Descripción
+            </summary>
+        </member>
+        <member name="P:Banner.Tipo">
+            <summary>
+            Tipo de Banner
+            </summary>
+        </member>
         <member name="T:Program">
             <summary>
             Auto-generated public partial Program class for top-level statement apps.

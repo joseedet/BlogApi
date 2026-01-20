@@ -87,6 +87,13 @@ public class BannerController : ControllerBase
     // ------------------------------------------------------------
     // PUT /api/banner/{id}
     // ------------------------------------------------------------
+
+    /// <summary>
+    /// Actualizar
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="dto"></param>
+    /// <returns>BannerDto</returns>
     [HttpPut("{id:int}")]
     [Consumes("multipart/form-data")]
     public async Task<ActionResult<BannerDto>> Actualizar(int id, [FromForm] BannerUpdateDto dto)
