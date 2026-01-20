@@ -1,60 +1,60 @@
-using BlogApi.Services;
 using BlogApi.Services.Interfaces;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
 namespace BlogApi.Services;
 
+/// <summary>
+/// Clase de servicio de email
+/// </summary>
 public class EmailService : IEmailService
 {
-    /// <summary>
-    /// Constructor de EmailService
-    /// </summary>
-    private readonly string _apiKey;
-
-    /////// <summary>
-    /// Dirección de correo del remitente
-    /// </summary>
-    /// <param name="fromEmail"></param>
-    /// <param name="fromName"></param>
-    /// </summary>
-    private readonly string _fromEmail;
-
-    /// <summary>
-    ///     Nombre del remitente
-    /// </summary>
-    /// <param name="fromName"></param>
-    /// <returns></returns>
-    /// </summary>
-    private readonly string _fromName;
+    private readonly IEmailSettingsService _settingsService;
 
     /// <summary>
     /// Constructor de EmailService
     /// </summary>
-    /// <param name="config"></param>
-    /// <returns></returns>
-    /// <summary>
-    public EmailService(IConfiguration config)
+    /// <param name="settingsService"></param>
+    public EmailService(IEmailSettingsService settingsService)
     {
-        _apiKey = config["SendGrid:ApiKey"];
-        _fromEmail = config["SendGrid:FromEmail"];
-        _fromName = config["SendGrid:FromName"];
+        _settingsService = settingsService;
     }
 
     /// <summary>
-    /// Envía un correo electrónico
+    /// Enviar email.
     /// </summary>
     /// <param name="toEmail"></param>
     /// <param name="subject"></param>
     /// <param name="message"></param>
     /// <returns></returns>
-    /// </summary>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task EnviarAsync(string toEmail, string subject, string message)
     {
-        var client = new SendGridClient(_apiKey);
-        var from = new EmailAddress(_fromEmail, _fromName);
+        // Obtener configuración desde la BD
+        var settings = await _settingsService.ObtenerEntidadAsync();
+
+        if (!settings.Activo)
+            throw new InvalidOperationException(
+                "El envío de emails está desactivado por el administrador."
+            );
+
+        if (
+            string.IsNullOrWhiteSpace(settings.Usuario)
+            || string.IsNullOrWhiteSpace(settings.Password)
+            || string.IsNullOrWhiteSpace(settings.Remitente)
+        )
+        {
+            throw new InvalidOperationException("La configuración de email no está completa.");
+        }
+
+        // SendGrid usa API Key en lugar de usuario/contraseña
+        var client = new SendGridClient(settings.Password); // Password = API Key
+
+        var from = new EmailAddress(settings.Remitente, settings.NombreRemitente);
         var to = new EmailAddress(toEmail);
+
         var msg = MailHelper.CreateSingleEmail(from, to, subject, message, message);
+
         await client.SendEmailAsync(msg);
     }
 }

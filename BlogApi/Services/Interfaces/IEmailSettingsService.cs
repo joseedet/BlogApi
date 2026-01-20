@@ -1,4 +1,5 @@
 using BlogApi.DTO;
+using BlogApi.Models;
 
 /// <summary>
 /// Interfaz para EmailSettingsService
@@ -17,4 +18,10 @@ public interface IEmailSettingsService
     /// <param name="dto"></param>
     /// <returns>EmailSettingsDto</returns>
     Task<EmailSettingsDto> ActualizarAsync(EmailSettingsUpdateDto dto);
+
+    /// <summary>
+    /// Obtenemos la
+    /// </summary>
+    /// <returns></returns>
+    Task<EmailSettings> ObtenerEntidadAsync();
 }

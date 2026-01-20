@@ -99,4 +99,34 @@ public class EmailSettingsService : IEmailSettingsService
             UsarSSL = s.UsarSSL,
             Activo = s.Activo,
         };
+
+    // ...
+    /// <summary>
+    /// Obtiene la entindad
+    /// </summary>
+    /// <returns>EmailSettings</returns>
+    public async Task<EmailSettings> ObtenerEntidadAsync()
+    {
+        var settings = await _db.EmailSettings.FirstOrDefaultAsync();
+
+        if (settings == null)
+        {
+            settings = new EmailSettings
+            {
+                Host = "",
+                Puerto = 587,
+                Usuario = "",
+                Password = "",
+                Remitente = "",
+                NombreRemitente = "",
+                UsarSSL = true,
+                Activo = false,
+            };
+
+            _db.EmailSettings.Add(settings);
+            await _db.SaveChangesAsync();
+        }
+
+        return settings;
+    }
 }
