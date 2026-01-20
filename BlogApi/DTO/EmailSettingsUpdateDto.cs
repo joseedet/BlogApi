@@ -1,14 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace BlogApi.DTO;
-
 /// <summary>
-/// Clase EmailSettingsDto
+/// Clase EmailSettingUpdateDto
 /// </summary>
-public class EmailSettingsDto
+public class EmailSettingsUpdateDto
 {
     /// <summary>
     /// Host
@@ -24,6 +17,11 @@ public class EmailSettingsDto
     /// Usuario de email
     /// </summary>
     public string Usuario { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Password
+    /// </summary>
+    public string Password { get; set; } = string.Empty;
 
     /// <summary>
     /// Remitente
