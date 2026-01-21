@@ -49,7 +49,7 @@ builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<IComentarioService, ComentarioService>();
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
-builder.Services.AddSingleton<EmailTemplateService>();
+builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 builder.Services.AddScoped<INotificacionesService, NotificacionesService>();
 builder.Services.AddScoped<ILikeService, LikeService>();
 builder.Services.AddScoped<JwtService>();
