@@ -12,6 +12,7 @@ public class EmailServiceTests
     private readonly Mock<IEmailSettingsService> _settingsService = new();
     private readonly Mock<ISendGridClientFactory> _factory = new();
     private readonly Mock<SendGridClient> _sendGridMock;
+    private readonly Mock<IEmailLogService> _logService = new();
 
     public EmailServiceTests()
     {
@@ -22,7 +23,7 @@ public class EmailServiceTests
     {
         _factory.Setup(f => f.Create(It.IsAny<string>())).Returns(_sendGridMock.Object);
 
-        return new EmailService(_settingsService.Object, _factory.Object);
+        return new EmailService(_settingsService.Object, _factory.Object, _logService.Object);
     }
 
     // ------------------------------------------------------------
@@ -51,8 +52,15 @@ public class EmailServiceTests
 
         await service.EnviarAsync("dest@test.com", "Asunto", "Mensaje");
 
+        // Verifica que SendGrid fue llamado
         _sendGridMock.Verify(
             c => c.SendEmailAsync(It.IsAny<SendGridMessage>(), default),
+            Times.Once
+        );
+
+        // Verifica que se registró el log de éxito
+        _logService.Verify(
+            l => l.RegistrarExitoAsync("dest@test.com", "Asunto", "SendGrid"),
             Times.Once
         );
     }
@@ -71,6 +79,28 @@ public class EmailServiceTests
 
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
             service.EnviarAsync("dest@test.com", "Asunto", "Mensaje")
+        );
+
+        // No debe intentar enviar email
+        _sendGridMock.Verify(
+            c => c.SendEmailAsync(It.IsAny<SendGridMessage>(), default),
+            Times.Never
+        );
+
+        // No debe registrar logs
+        _logService.Verify(
+            l => l.RegistrarExitoAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()),
+            Times.Never
+        );
+        _logService.Verify(
+            l =>
+                l.RegistrarErrorAsync(
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>()
+                ),
+            Times.Never
         );
     }
 
@@ -95,6 +125,28 @@ public class EmailServiceTests
 
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
             service.EnviarAsync("dest@test.com", "Asunto", "Mensaje")
+        );
+
+        // No debe enviar email
+        _sendGridMock.Verify(
+            c => c.SendEmailAsync(It.IsAny<SendGridMessage>(), default),
+            Times.Never
+        );
+
+        // No debe registrar logs
+        _logService.Verify(
+            l => l.RegistrarExitoAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()),
+            Times.Never
+        );
+        _logService.Verify(
+            l =>
+                l.RegistrarErrorAsync(
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>()
+                ),
+            Times.Never
         );
     }
 }
