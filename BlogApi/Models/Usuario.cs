@@ -74,4 +74,9 @@ public class Usuario
     /// </summary>
     //  // Protección fuerza bruta public int IntentosFallidos { get; set; } public DateTime? BloqueadoHasta { get; set; }
     public RolUsuario Rol { get; set; } = RolUsuario.Suscriptor;
+
+    /// <summary>
+    /// Lista de tokens refrescados
+    /// </summary>
+    public List<RefreshToken> RefreshTokens { get; set; } = new();
 }

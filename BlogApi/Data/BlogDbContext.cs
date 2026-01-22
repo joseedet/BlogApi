@@ -136,6 +136,12 @@ public class BlogDbContext : DbContext
                 }
             );
 
+        modelBuilder
+            .Entity<RefreshToken>()
+            .HasOne(rt => rt.Usuario)
+            .WithMany(u => u.RefreshTokens)
+            .HasForeignKey(rt => rt.UsuarioId);
+
         base.OnModelCreating(modelBuilder);
     }
 }
