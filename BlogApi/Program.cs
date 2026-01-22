@@ -46,17 +46,16 @@ builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<IComentarioService, ComentarioService>();
 builder.Services.AddScoped<IPostService, PostService>();
-builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+
+//builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 builder.Services.AddScoped<INotificacionesService, NotificacionesService>();
 builder.Services.AddScoped<ILikeService, LikeService>();
-builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<ISanitizerService, SanitizerService>();
 builder.Services.AddSingleton<IAuthorizationHandler, PuedeEditarPostHandler>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IBannerService, BannerService>();
 builder.Services.AddScoped<IEmailSettingsService, EmailSettingsService>();
-builder.Services.AddSingleton<ISendGridClientFactory, SendGridClientFactory>();
 
 //builder.Services.AddScoped<INotificacionService, NotificacionService>();
 

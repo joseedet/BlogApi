@@ -14,23 +14,23 @@ public class AuthController : ControllerBase
 {
     private readonly IUsuarioService _usuarioService;
     private readonly ITokenService _tokenService;
-    private readonly JwtService _jwtService;
+
+    //private readonly JwtService _jwtService;
 
     /// <summary>
     /// Constructor del controlador de autenticación
     /// </summary>
     /// <param name="usuarioService"></param>
     /// <param name="tokenService"></param>
-    /// <param name="jwtService"></param>
     public AuthController(
         IUsuarioService usuarioService,
-        ITokenService tokenService,
-        JwtService jwtService
+        ITokenService tokenService
+    //JwtService jwtService
     )
     {
         _usuarioService = usuarioService;
         _tokenService = tokenService;
-        _jwtService = jwtService;
+        //_jwtService = jwtService;
     }
 
     /// <summary>
@@ -44,7 +44,7 @@ public class AuthController : ControllerBase
         var result = await _usuarioService.LoginAsync(dto);
         if (!result.Success)
             return Unauthorized(result.Error);
-        var token = _jwtService.GenerarToken(result.Usuario!);
+        var token = _tokenService.GenerateToken(result.Usuario!);
         return Ok(
             new
             {

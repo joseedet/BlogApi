@@ -1,6 +1,6 @@
+using System.Net;
+using System.Net.Mail;
 using BlogApi.Services.Interfaces;
-using SendGrid;
-using SendGrid.Helpers.Mail;
 
 namespace BlogApi.Services;
 
@@ -10,26 +10,24 @@ namespace BlogApi.Services;
 public class EmailService : IEmailService
 {
     private readonly IEmailSettingsService _settingsService;
-    private readonly ISendGridClientFactory _clientFactory;
-    private readonly IEmailLogService _logService;
     private readonly IEmailTemplateService _templateService;
+    private readonly IEmailLogService _logService;
+
     /// <summary>
     /// Constructor de EmailService
     /// </summary>
     /// <param name="settingsService"></param>
-    /// <param name="sendGridClient"></param>
+    /// <param name="templateService"></param>
     /// <param name="logService"></param>
     public EmailService(
         IEmailSettingsService settingsService,
-        ISendGridClientFactory sendGridClient,
         IEmailLogService logService,
-        IEmailTemplateService templateService;
+        IEmailTemplateService templateService
     )
     {
         _settingsService = settingsService;
-        _clientFactory = sendGridClient;
         _logService = logService;
-        _templateService=templateService;
+        _templateService = templateService;
     }
 
     /// <summary>
@@ -47,22 +45,30 @@ public class EmailService : IEmailService
 
         try
         {
-            var client = _clientFactory.Create(settings.Password);
-
-            var from = new EmailAddress(settings.Remitente, settings.NombreRemitente);
-            var to = new EmailAddress(toEmail);
-
-            var msg = MailHelper.CreateSingleEmail(from, to, subject, message, message);
-
-            await client.SendEmailAsync(msg);
-            await _logService.RegistrarExitoAsync(toEmail, subject, "SendGrid");
+            using var smtp = new SmtpClient(settings.Host)
+            {
+                Port = settings.Puerto,
+                Credentials = new NetworkCredential(settings.Usuario, settings.Password),
+                EnableSsl = settings.UsarSSL,
+            };
+            using var mail = new MailMessage
+            {
+                From = new MailAddress(settings.Remitente, settings.NombreRemitente),
+                Subject = subject,
+                Body = message,
+                IsBodyHtml = true,
+            };
+            mail.To.Add(toEmail);
+            await smtp.SendMailAsync(mail);
+            await _logService.RegistrarExitoAsync(toEmail, subject, "SMTP");
         }
         catch (Exception ex)
         {
-            await _logService.RegistrarErrorAsync(toEmail, subject, "SendGrid", ex.Message);
+            await _logService.RegistrarErrorAsync(toEmail, subject, "SMTP", ex.Message);
             throw;
         }
     }
+
     public async Task EnviarConPlantillaAsync(
         string destinatario,
         string asunto,
@@ -71,34 +77,34 @@ public class EmailService : IEmailService
     )
     {
         var settings = await _settingsService.ObtenerEntidadAsync();
-
         if (!settings.Activo)
             throw new InvalidOperationException("El envío de emails está desactivado.");
 
-        if (
-            string.IsNullOrWhiteSpace(settings.Password)
-            || string.IsNullOrWhiteSpace(settings.Remitente)
-        )
-        {
-            throw new InvalidOperationException("La configuración de email no está completa.");
-        }
-
-        // 1. Cargar plantilla
         var plantilla = await _templateService.CargarPlantillaAsync(nombrePlantilla);
-
-        // 2. Reemplazar variables
         var html = _templateService.ReemplazarVariables(plantilla, variables);
-
-        // 3. Crear cliente SendGrid
-        var client = _clientFactory.Create(settings.Password);
-
-        var from = new EmailAddress(settings.Remitente, settings.NombreRemitente);
-        var to = new EmailAddress(destinatario);
-
-        // 4. Crear email HTML
-        var msg = MailHelper.CreateSingleEmail(from, to, asunto, null, html);
-
-        // 5. Enviar
-        await client.SendEmailAsync(msg);
+        try
+        {
+            using var smtp = new SmtpClient(settings.Host)
+            {
+                Port = settings.Puerto,
+                Credentials = new NetworkCredential(settings.Usuario, settings.Password),
+                EnableSsl = settings.UsarSSL,
+            };
+            using var mail = new MailMessage
+            {
+                From = new MailAddress(settings.Remitente, settings.NombreRemitente),
+                Subject = asunto,
+                Body = html,
+                IsBodyHtml = true,
+            };
+            mail.To.Add(destinatario);
+            await smtp.SendMailAsync(mail);
+            await _logService.RegistrarExitoAsync(destinatario, asunto, "SMTP");
+        }
+        catch (Exception ex)
+        {
+            await _logService.RegistrarErrorAsync(destinatario, asunto, "SMTP", ex.Message);
+            throw;
+        }
     }
 }

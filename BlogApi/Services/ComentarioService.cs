@@ -39,7 +39,7 @@ public class ComentarioService : IComentarioService
     /// <summary>
     ///     Servicio de plantillas de email
     /// </summary>
-    private readonly EmailTemplateService _emailTemplateService = new();
+    private readonly IEmailTemplateService _emailTemplateService;
 
     /// <summary>
     ///    Hub de notificaciones para SignalR
@@ -60,7 +60,8 @@ public class ComentarioService : IComentarioService
         BlogDbContext context,
         INotificacionesService notificacionService,
         IEmailService emailService,
-        IHubContext<NotificacionesHub> hub
+        IHubContext<NotificacionesHub> hub,
+        IEmailTemplateService emailTemplateService
     )
     {
         _repo = repo;
@@ -68,6 +69,7 @@ public class ComentarioService : IComentarioService
         _notificacionesService = notificacionService;
         _emailService = emailService;
         _hub = hub;
+        _emailTemplateService = emailTemplateService;
     }
 
     /// <summary>
@@ -150,7 +152,7 @@ public class ComentarioService : IComentarioService
                 }
             );
         // Enviar email al autor del post
-        var plantilla = _emailTemplateService.CargarPlantilla("NuevoComentario.html");
+        var plantilla = await _emailTemplateService.CargarPlantillaAsync("NuevoComentario.html");
         var html = _emailTemplateService.ReemplazarVariables(
             plantilla,
             new Dictionary<string, string>
