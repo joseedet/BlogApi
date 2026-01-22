@@ -76,6 +76,11 @@ public class BlogDbContext : DbContext
     public DbSet<EmailLog> EmailLogs { get; set; }
 
     /// <summary>
+    /// Refresco del token
+    /// </summary>
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+
+    /// <summary>
     ///  Configuración de las relaciones entre entidades
     /// </summary>
     /// <param name="modelBuilder"></param>
