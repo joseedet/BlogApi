@@ -1,4 +1,5 @@
 using System.Text;
+using System.Security.Claims;
 using BlogApi.Authorization;
 using BlogApi.Data;
 using BlogApi.Hubs;
@@ -76,6 +77,7 @@ builder
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(jwtSettings["Key"]!)
             ),
+            ClockSkew = TimeSpan.Zero,
         };
         // 🔥 Necesario para SignalR
         options.Events = new JwtBearerEvents
@@ -100,7 +102,7 @@ builder.Services.PostConfigure<JwtBearerOptions>(
     JwtBearerDefaults.AuthenticationScheme,
     options =>
     {
-        options.TokenValidationParameters.RoleClaimType = "rol";
+        options.TokenValidationParameters.RoleClaimType = ClaimTypes.Role;
     }
 );
 
