@@ -57,6 +57,7 @@ builder.Services.AddSingleton<IAuthorizationHandler, PuedeEditarPostHandler>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IBannerService, BannerService>();
 builder.Services.AddScoped<IEmailSettingsService, EmailSettingsService>();
+builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 
 //builder.Services.AddScoped<INotificacionService, NotificacionService>();
 
