@@ -26,4 +26,6 @@ public class Comentario
     public int? ComentarioPadreId { get; set; }
     public Comentario? ComentarioPadre { get; set; }
     public List<Comentario> Respuestas { get; set; } = new();
+
+    public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
 }

@@ -1,5 +1,6 @@
 using BlogApi.Data;
 using BlogApi.Domain.Factories;
+using BlogApi.DTO;
 using BlogApi.Hubs;
 using BlogApi.Models;
 using BlogApi.Repositories.Interfaces;
@@ -257,18 +258,21 @@ public class ComentarioService : IComentarioService
         int pageSize
     )
     {
-        var query = _repository
+        var query = _repo
             .Query()
             .Where(c => c.Estado == "Pendiente")
             .OrderByDescending(c => c.FechaCreacion);
+
         var total = await query.CountAsync();
+
         var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
         return new PaginacionResultado<Comentario>
         {
             Items = items,
-            Total = total,
-            Page = page,
-            PageSize = pageSize,
+            PaginaActual = page,
+            TotalPaginas = (int)Math.Ceiling(total / (double)pageSize),
+            TotalRegistros = total,
         };
     }
 }

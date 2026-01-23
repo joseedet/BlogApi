@@ -1,3 +1,4 @@
+using BlogApi.DTO;
 using BlogApi.Models;
 
 namespace BlogApi.Services.Interfaces;
@@ -58,6 +59,4 @@ public interface IComentarioService
     Task<bool> EliminarComentarioAsync(int comentarioId, int usuarioId, bool puedeBorrarTodo);
 
     Task<PaginacionResultado<Comentario>> GetPendientesPaginadoAsync(int page, int pageSize);
-
-   
 }
