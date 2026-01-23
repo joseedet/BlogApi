@@ -14,6 +14,7 @@ public class AuthController : ControllerBase
 {
     private readonly IUsuarioService _usuarioService;
     private readonly ITokenService _tokenService;
+    private readonly IRefreshTokenService _refreshTokenService;
 
     //private readonly JwtService _jwtService;
 
@@ -24,13 +25,13 @@ public class AuthController : ControllerBase
     /// <param name="tokenService"></param>
     public AuthController(
         IUsuarioService usuarioService,
-        ITokenService tokenService
-    //JwtService jwtService
+        ITokenService tokenService,
+        IRefreshTokenService refreshTokenService
     )
     {
         _usuarioService = usuarioService;
         _tokenService = tokenService;
-        //_jwtService = jwtService;
+        _refreshTokenService = refreshTokenService;
     }
 
     /// <summary>
@@ -44,21 +45,33 @@ public class AuthController : ControllerBase
         var result = await _usuarioService.LoginAsync(dto);
         if (!result.Success)
             return Unauthorized(result.Error);
-        var token = _tokenService.GenerateToken(result.Usuario!);
-        return Ok(
-            new
+
+        var usuario = result.Usuario!;
+
+        // 1. Generar access token (JWT)
+        var accessToken = _tokenService.GenerateToken(result.Usuario!);
+
+        // 2. Generar refresh token
+        var refreshToken = _refreshTokenService.GenerarRefreshToken(usuario.Id);
+
+        // 3. Guardarlo en BD
+        await _refreshTokenService.GuardarRefreshTokenAsync(refreshToken);
+
+        // 4. Devolver ambos token
+
+        var response = new LoginResponseDto
+        {
+            Token = accessToken,
+            RefreshToken = refreshToken.Token,
+            Usuario = new
             {
-                mensaje = "Login correcto.",
-                token,
-                usuario = new
-                {
-                    result.Usuario!.Id,
-                    result.Usuario.Nombre,
-                    result.Usuario.Email,
-                    Rol = result.Usuario.Rol.ToString(),
-                },
-            }
-        );
+                usuario.Id,
+                usuario.Nombre,
+                usuario.Email,
+                Rol = usuario.Rol.ToString(),
+            },
+        };
+        return Ok(response);
     }
 
     /// <summary>
