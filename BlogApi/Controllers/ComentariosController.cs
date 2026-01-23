@@ -75,6 +75,8 @@ public class ComentariosController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(CreateComentarioDto dto)
     {
+        var userId = int.Parse(User.FindFirst("id")!.Value);
+        
         var comentario = new Comentario
         {
             Contenido = dto.Contenido,
@@ -155,5 +157,35 @@ public class ComentariosController : ControllerBase
     {
         var comentarios = await _service.GetByEstadoAsync(estado);
         return Ok(comentarios.Select(c => c.ToDto()));
+    }
+    [Authorize(Roles = "Administrador,Editor")]
+    [HttpPatch("{id}/aprobar")]
+    public async Task<IActionResult> Aprobar(int id)
+    {
+        var ok = await _service.CambiarEstadoAsync(id, "Aprobado");
+        if (!ok)
+            return NotFound();
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Administrador,Editor")]
+    [HttpPatch("{id}/rechazar")]
+    public async Task<IActionResult> Rechazar(int id)
+    {
+        var ok = await _service.CambiarEstadoAsync(id, "Rechazado");
+        if (!ok)
+            return NotFound();
+        return NoContent();
+    }
+
+    [Authorize(Roles = "Administrador,Editor")]
+    [HttpGet("pendientes")]
+    public async Task<IActionResult> GetPendientes(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20
+    )
+    {
+        var result = await _service.GetPendientesPaginadoAsync(page, pageSize);
+        return Ok(result);
     }
 }

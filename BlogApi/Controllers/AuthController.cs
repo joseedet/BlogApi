@@ -90,22 +90,21 @@ public class AuthController : ControllerBase
         return Ok("Usuario registrado. Revisa tu correo para verificar la cuenta.");
     }
 
-    /// <summary>
-    /// Verifica el email del usuario
-    /// </summary>
-    /// <param name="dto"></param>
-    /// <returns>IActionResult</returns>
-    [HttpPost("verificar-email")]
-    public async Task<IActionResult> VerificarEmail(VerificarEmailDto dto)
-    {
-        var ok = await _usuarioService.VerificarEmailAsync(dto.Token);
-
-        if (!ok)
-            return BadRequest("Token inválido o expirado.");
-
-        return Ok("Correo verificado correctamente. Ya puedes iniciar sesión.");
-    }
-    
+    /*  /// <summary>
+     /// Verifica el email del usuario
+     /// </summary>
+     /// <param name="dto"></param>
+     /// <returns>IActionResult</returns>
+     [HttpPost("verificar-email")]
+     public async Task<IActionResult> VerificarEmail(VerificarEmailDto dto)
+     {
+         var ok = await _usuarioService.VerificarEmailAsync(dto.Token);
+ 
+         if (!ok)
+             return BadRequest("Token inválido o expirado.");
+ 
+         return Ok("Correo verificado correctamente. Ya puedes iniciar sesión.");
+     } */
 
     [HttpPost("logout")]
     public async Task<IActionResult> Logout(LogoutDto dto)
@@ -132,5 +131,28 @@ public class AuthController : ControllerBase
         await _refreshTokenService.RevocarTokensDelUsuarioAsync(usuarioId);
 
         return Ok("Sesión cerrada en todos los dispositivos.");
+    }
+
+    [HttpPost("refresh")]
+    public async Task<IActionResult> Refresh(RefreshTokenDto dto)
+    {
+        var token = await _refreshTokenService.ObtenerRefreshTokenAsync(dto.RefreshToken);
+
+        if (token == null)
+            return Unauthorized("Refresh token inválido.");
+
+        if (!token.EstaActivo)
+            return Unauthorized("Refresh token expirado o revocado.");
+
+        var usuario = token.Usuario;
+
+        await _refreshTokenService.RevocarRefreshTokenAsync(token);
+
+        var nuevoAccessToken = _tokenService.GenerateToken(usuario);
+        var nuevoRefreshToken = _refreshTokenService.GenerarRefreshToken(usuario.Id);
+
+        await _refreshTokenService.GuardarRefreshTokenAsync(nuevoRefreshToken);
+
+        return Ok(new { token = nuevoAccessToken, refreshToken = nuevoRefreshToken.Token });
     }
 }

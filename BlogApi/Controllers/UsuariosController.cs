@@ -32,19 +32,19 @@ public class UsuariosController : ControllerBase
         return Ok(created.ToDto());
     }
 
-    [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginRequest request)
-    {
-        var usuario = await _service.GetByEmailAsync(request.Email);
-        if (usuario == null)
-            return Unauthorized("Usuario no encontrado");
-
-        if (!BCrypt.Net.BCrypt.Verify(request.Password, usuario.PasswordHash))
-            return Unauthorized("Contraseña incorrecta");
-        var token = _tokenService.GenerateToken(usuario);
-
-        return Ok(new { token });
-    }
+    /*  [HttpPost("login")]
+     public async Task<IActionResult> Login(LoginRequest request)
+     {
+         var usuario = await _service.GetByEmailAsync(request.Email);
+         if (usuario == null)
+             return Unauthorized("Usuario no encontrado");
+ 
+         if (!BCrypt.Net.BCrypt.Verify(request.Password, usuario.PasswordHash))
+             return Unauthorized("Contraseña incorrecta");
+         var token = _tokenService.GenerateToken(usuario);
+ 
+         return Ok(new { token });
+     } */
 
     // El login lo haremos cuando implementemos JWT
 }
