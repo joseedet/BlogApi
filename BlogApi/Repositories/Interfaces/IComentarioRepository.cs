@@ -11,4 +11,6 @@ public interface IComentarioRepository : IGenericRepository<Comentario>
     Task<IEnumerable<Comentario>> GetByPostIdAsync(int postId);
     Task<IEnumerable<Comentario>> GetRespuestasAsync(int comentarioId);
     Task<Comentario?> GetByIdAsync(int id);
+    IQueryable<Comentario> Query();
+
 }

@@ -57,5 +57,7 @@ public interface IComentarioService
     /// </summary>
     Task<bool> EliminarComentarioAsync(int comentarioId, int usuarioId, bool puedeBorrarTodo);
 
+    Task<PaginacionResultado<Comentario>> GetPendientesPaginadoAsync(int page, int pageSize);
+
    
 }

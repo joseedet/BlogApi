@@ -251,4 +251,24 @@ public class ComentarioService : IComentarioService
         // o con Include si necesitas navegación:
         return await _repo.Query().FirstOrDefaultAsync(c => c.Id == id);
     }
+
+    public async Task<PaginacionResultado<Comentario>> GetPendientesPaginadoAsync(
+        int page,
+        int pageSize
+    )
+    {
+        var query = _repository
+            .Query()
+            .Where(c => c.Estado == "Pendiente")
+            .OrderByDescending(c => c.FechaCreacion);
+        var total = await query.CountAsync();
+        var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+        return new PaginacionResultado<Comentario>
+        {
+            Items = items,
+            Total = total,
+            Page = page,
+            PageSize = pageSize,
+        };
+    }
 }

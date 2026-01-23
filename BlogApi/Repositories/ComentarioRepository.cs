@@ -58,4 +58,9 @@ public class ComentarioRepository : GenericRepository<Comentario>, IComentarioRe
     {
         return await _dbSet.FirstOrDefaultAsync(c => c.Id == id);
     }
+
+    public IQueryable<Comentario> Query()
+    {
+        return _context.Comentarios.AsQueryable();
+    }
 }
