@@ -105,4 +105,32 @@ public class AuthController : ControllerBase
 
         return Ok("Correo verificado correctamente. Ya puedes iniciar sesión.");
     }
+    
+
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout(LogoutDto dto)
+    {
+        var token = await _refreshTokenService.ObtenerRefreshTokenAsync(dto.RefreshToken);
+
+        if (token == null)
+            return NotFound("Refresh token no encontrado.");
+
+        if (!token.EstaActivo)
+            return BadRequest("El token ya está revocado o expirado.");
+
+        await _refreshTokenService.RevocarRefreshTokenAsync(token);
+
+        return Ok("Sesión cerrada correctamente.");
+    }
+
+    [HttpPost("logout-all")]
+    public async Task<IActionResult> LogoutAll()
+    {
+        // Requiere que el usuario esté autenticado
+        var usuarioId = int.Parse(User.FindFirst("id")!.Value);
+
+        await _refreshTokenService.RevocarTokensDelUsuarioAsync(usuarioId);
+
+        return Ok("Sesión cerrada en todos los dispositivos.");
+    }
 }
