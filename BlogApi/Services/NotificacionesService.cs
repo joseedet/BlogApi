@@ -18,6 +18,7 @@ public class NotificacionesService : INotificacionesService
     private readonly BlogDbContext _db;
     private readonly IHubContext<NotificacionesHub> _hub;
     private readonly IEmailService _email;
+    private readonly ILogger<NotificacionesService> _logger;
 
     /// <summary>
     /// Constructor NotificacionesService
@@ -28,12 +29,14 @@ public class NotificacionesService : INotificacionesService
     public NotificacionesService(
         BlogDbContext db,
         IHubContext<NotificacionesHub> hub,
-        IEmailService email
+        IEmailService email,
+        ILogger<NotificacionesService> logger
     )
     {
         _db = db;
         _hub = hub;
         _email = email;
+        _logger = logger;
     }
 
     // ------------------------------------------------------------
@@ -49,17 +52,23 @@ public class NotificacionesService : INotificacionesService
     {
         _db.Notificaciones.Add(notificacion);
         await _db.SaveChangesAsync();
-
-        // SignalR
-        await _hub
-            .Clients.User(notificacion.UsuarioDestinoId.ToString())
-            .SendAsync(
-                "NuevaNotificacion",
-                notificacion.ToDto() /*ToDto(notificacion)*/
+        try
+        {
+            // SignalR
+            await _hub
+                .Clients.User(notificacion.UsuarioDestinoId.ToString())
+                .SendAsync("NuevaNotificacion", notificacion.ToDto());
+            _logger.LogInformation(
+                "Notificación enviada por SignalR al usuario {UserId}",
+                notificacion.UsuarioDestinoId
             );
-
-        // Email
-        await EnviarEmailNotificacion(notificacion);
+            // Email
+            await EnviarEmailNotificacion(notificacion);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error enviando notificación por SignalR");
+        }
     }
 
     // ------------------------------------------------------------

@@ -1,5 +1,5 @@
-using System.Text;
 using System.Security.Claims;
+using System.Text;
 using BlogApi.Authorization;
 using BlogApi.Data;
 using BlogApi.Hubs;
@@ -81,6 +81,7 @@ builder
             ClockSkew = TimeSpan.Zero,
         };
         // 🔥 Necesario para SignalR
+        // Necesario para SignalR con WebSockets
         options.Events = new JwtBearerEvents
         {
             OnMessageReceived = context =>
