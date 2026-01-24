@@ -29,7 +29,7 @@ public class ComentarioRepository : GenericRepository<Comentario>, IComentarioRe
         return await _dbSet
             .Where(c => c.PostId == postId && c.ComentarioPadreId == null)
             .Include(c => c.Respuestas)
-            .OrderByDescending(c => c.Fecha)
+            .OrderByDescending(c => c.FechaCreacion)
             .ToListAsync();
     }
 
@@ -44,7 +44,7 @@ public class ComentarioRepository : GenericRepository<Comentario>, IComentarioRe
         return await _dbSet
             .Where(c => c.ComentarioPadreId == comentarioId)
             .Include(c => c.Respuestas)
-            .OrderBy(c => c.Fecha)
+            .OrderBy(c => c.FechaCreacion)
             .ToListAsync();
     }
 

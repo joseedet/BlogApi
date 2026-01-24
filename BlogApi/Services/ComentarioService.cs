@@ -89,6 +89,7 @@ public class ComentarioService : IComentarioService
                 .ThenInclude(r => r.Usuario)
             .Include(c => c.Respuestas)
                 .ThenInclude(r => r.Respuestas)
+            .OrderByDescending(c => c.FechaCreacion)
             .ToListAsync();
     }
 
@@ -100,8 +101,8 @@ public class ComentarioService : IComentarioService
     /// <returns>Comentario</returns>
     public async Task<Comentario> CrearComentarioAsync(Comentario comentario)
     {
-        comentario.Fecha = DateTime.UtcNow;
-        comentario.Estado = "pendiente";
+        comentario.FechaCreacion = DateTime.UtcNow;
+        comentario.Estado = "Pendiente";
 
         await _repo.AddAsync(comentario);
         await _repo.SaveChangesAsync();
@@ -149,7 +150,7 @@ public class ComentarioService : IComentarioService
                 new
                 {
                     mensaje = $"Tu post '{postAutor.Titulo}' ha recibido un nuevo comentario.",
-                    fecha = DateTime.UtcNow,
+                    FechaCreacion = DateTime.UtcNow,
                 }
             );
         // Enviar email al autor del post

@@ -9,8 +9,8 @@ public class ComentarioDto
 {
     public int Id { get; set; }
     public string Contenido { get; set; } = string.Empty;
-    public DateTime Fecha { get; set; }
-    public string Estado { get; set; } = "pendiente";
+    public DateTime FechaCreacion { get; set; }
+    public string Estado { get; set; } = "Pendiente";
     public UsuarioDto? Usuario { get; set; }
     public List<ComentarioDto> Respuestas { get; set; } = new();
 }
