@@ -4,108 +4,131 @@ using BlogApi.Utils;
 
 namespace BlogApi.Domain.Factories;
 
-/// <summary>
-/// Factory para crear notificaciones
-/// /// </summary>
 public static class NotificacionFactory
 {
-    /// <summary>
-    /// Crea una notificación de nuevo post
-    /// </summary>
-    /// <param name="usuarioId"></param>
-    /// <param name="postId"></param>
-    /// <param name="titulo"></param>
-    /// <returns>Notificación de nuevo post</returns>
-    /// </summary>
-    public static Notificacion NuevoPost(int usuarioId, int postId, string titulo) =>
-        new Notificacion
-        {
-            UsuarioId = usuarioId,
-            Tipo = TipoNotificacion.NuevoPost,
-            Mensaje = $"Has publicado un nuevo post: {titulo}",
-            Payload = JsonSerializer.Serialize(new { postId }),
-        };
-
-    /// <summary>
-    /// Crea una notificación de nuevo comentario
-    /// </summary>
-    /// <param name="usuarioId"></param>
-    /// <param name="postId"></param>
-    /// <param name="contenido"></param>
-    /// <returns>Notificación de nuevo comentario</returns>
-    /// </summary>
-    public static Notificacion NuevoComentario(
-        int usuarioId,
+    // ------------------------------------------------------------
+    // Nuevo Post
+    // ------------------------------------------------------------
+    public static Notificacion NuevoPost(
+        int usuarioDestinoId,
+        int usuarioOrigenId,
         int postId,
-        string contenido,
-        int comentarioId
-    //string autorComentario
-
+        string titulo
     ) =>
         new Notificacion
         {
-            UsuarioId = usuarioId,
-            Tipo = TipoNotificacion.NuevoComentario,
-            Mensaje = $"Nuevo comentario en tu post: {contenido}",
-            Payload = JsonSerializer.Serialize(new { postId, comentarioId }),
+            UsuarioDestinoId = usuarioDestinoId,
+            UsuarioOrigenId = usuarioOrigenId,
+            Tipo = TipoNotificacion.NuevoPost,
+            Mensaje = $"Has publicado un nuevo post: {titulo}",
+            FechaCreacion = DateTime.UtcNow,
+            Leida = false,
+            PostId = postId,
+            Payload = JsonSerializer.Serialize(new { postId }),
         };
 
-    /// <summary>
-    /// Crea una notificación de nuevo comentario
-    /// </summary>
-    /// <param name="usuarioId"></param>
-    /// <param name="postId"></param>
-    /// <param name="autorComentario"></param>
-    /// <returns>Notificación de nuevo comentario</returns>
+    // ------------------------------------------------------------
+    // Nuevo Comentario
+    // ------------------------------------------------------------
     public static Notificacion NuevoComentario(
-        int usuarioId,
+        int usuarioDestinoId,
+        int usuarioOrigenId,
         int postId,
-        string contenido,
-        int comentarioId,
-        string autorComentario
-    )
-    {
-        return new Notificacion
-        {
-            UsuarioId = usuarioId,
-            Tipo = TipoNotificacion.NuevoComentario,
-            Mensaje = $"Nuevo comentario de {autorComentario}: {contenido}",
-            Payload = JsonSerializer.Serialize(new { postId, comentarioId }),
-        };
-    }
-
-    /// <summary>
-    /// Crea una notificación de respuesta a un comentario
-    /// </summary>
-    /// <param name="usuarioId"></param>
-    /// <param name="comentarioId"></param>
-    /// <returns>Notificación de respuesta a comentario</returns>
-    /// </summary>
-    public static Notificacion RespuestaComentario(
-        int usuarioId,
         int comentarioId,
         string contenido
     ) =>
         new Notificacion
         {
-            UsuarioId = usuarioId,
-            Tipo = TipoNotificacion.RespuestaComentario,
-            Mensaje = "Alguien respondió a tu comentario",
-            Payload = JsonSerializer.Serialize(new { comentarioId, contenido }),
+            UsuarioDestinoId = usuarioDestinoId,
+            UsuarioOrigenId = usuarioOrigenId,
+            Tipo = TipoNotificacion.NuevoComentario,
+            Mensaje = $"Nuevo comentario en tu post: {contenido}",
+            FechaCreacion = DateTime.UtcNow,
+            Leida = false,
+            PostId = postId,
+            ComentarioId = comentarioId,
+            Payload = JsonSerializer.Serialize(new { postId, comentarioId }),
         };
 
-    /// <summary>
-    /// Crea una notificación del sistema
-    /// </summary>
-    /// <param name="usuarioId"></param>
-    /// <param name="mensaje"></param>
-    /// <returns>Notificación del sistema</returns>
-    /// </summary>
-    public static Notificacion Sistema(int usuarioId, string mensaje) =>
+    public static Notificacion NuevoComentario(
+        int usuarioDestinoId,
+        int usuarioOrigenId,
+        int postId,
+        int comentarioId,
+        string contenido,
+        string autorComentario
+    ) =>
         new Notificacion
         {
-            UsuarioId = usuarioId,
+            UsuarioDestinoId = usuarioDestinoId,
+            UsuarioOrigenId = usuarioOrigenId,
+            Tipo = TipoNotificacion.NuevoComentario,
+            Mensaje = $"Nuevo comentario de {autorComentario}: {contenido}",
+            FechaCreacion = DateTime.UtcNow,
+            Leida = false,
+            PostId = postId,
+            Payload = JsonSerializer.Serialize(new { postId, comentarioId }),
+        };
+
+    // ------------------------------------------------------------
+    // Respuesta a comentario
+    // ------------------------------------------------------------
+    public static Notificacion RespuestaComentario(
+        int usuarioDestinoId,
+        int usuarioOrigenId,
+        int postId,
+        int comentarioId,
+        string contenido
+    ) =>
+        new Notificacion
+        {
+            UsuarioDestinoId = usuarioDestinoId,
+            UsuarioOrigenId = usuarioOrigenId,
+            Tipo = TipoNotificacion.RespuestaComentario,
+            Mensaje = "Alguien respondió a tu comentario",
+            FechaCreacion = DateTime.UtcNow,
+            Leida = false,
+            PostId = postId,
+            ComentarioId = comentarioId,
+            Payload = JsonSerializer.Serialize(new { comentarioId, postId }),
+        };
+
+    // ------------------------------------------------------------
+    // Respuesta a comentario
+    // ------------------------------------------------------------
+    public static Notificacion RespuestaComentario(
+        int usuarioDestinoId,
+        int usuarioOrigenId,
+        int postId,
+        int comentarioId,
+        string contenido,
+        string autorComentario
+    ) =>
+        new Notificacion
+        {
+            UsuarioDestinoId = usuarioDestinoId,
+            UsuarioOrigenId = usuarioOrigenId,
+            Tipo = TipoNotificacion.RespuestaComentario,
+            Mensaje = "Alguien respondió a tu comentario",
+            FechaCreacion = DateTime.UtcNow,
+            Leida = false,
+            PostId = postId,
+            ComentarioId = comentarioId,
+            //autorComentario = autorComentario,
+            Payload = JsonSerializer.Serialize(new { comentarioId, postId }),
+        };
+
+    // ------------------------------------------------------------
+    // Notificación del sistema
+    // ------------------------------------------------------------
+    public static Notificacion Sistema(int usuarioDestinoId, string mensaje) =>
+        new Notificacion
+        {
+            UsuarioDestinoId = usuarioDestinoId,
+            UsuarioOrigenId = 0, // Sistema
             Tipo = TipoNotificacion.Sistema,
             Mensaje = mensaje,
+            FechaCreacion = DateTime.UtcNow,
+            Leida = false,
         };
 }

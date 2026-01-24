@@ -8,12 +8,12 @@ namespace BlogApi.Services.Interfaces;
 /// </summary>
 public interface INotificacionesService
 {
-    /// <summary>
-    /// Obtenemos notificaciones no leidas
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    public Task<List<NotificacionDto>> ObtenerNoLeidasAsync(int id);
+    // /// <summary>
+    // /// Obtenemos notificaciones no leidas
+    // /// </summary>
+    // /// <param name="id"></param>
+    // /// <returns></returns>
+    // public Task<List<NotificacionDto>> ObtenerNoLeidasAsync(int id);
 
     /// <summary>
     /// Marcamos todas las notiicaciones com leídas
@@ -21,6 +21,7 @@ public interface INotificacionesService
     /// <param name="id"></param>
     /// <returns></returns>
     public Task MarcarTodasComoLeidasAsync(int id);
+
     public Task<PaginacionResultado<NotificacionDto>> GetPaginadasAsync(
         int userId,
         int page,
@@ -56,4 +57,6 @@ public interface INotificacionesService
     /// <param name="usuarioId"></param>
     /// <returns>Verdadero si ha sido eliminada en caso contrario falso.</returns>
     public Task<bool> EliminarAsync(int id, int usuarioId);
+
+    Task<Notificacion?> GetByIdAsync(int id);
 }

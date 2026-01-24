@@ -1,6 +1,7 @@
 using BlogApi.Data;
 using BlogApi.DTO;
 using BlogApi.Hubs;
+using BlogApi.Mapper;
 using BlogApi.Models;
 using BlogApi.Services.Interfaces;
 using BlogApi.Utils;
@@ -52,7 +53,10 @@ public class NotificacionesService : INotificacionesService
         // SignalR
         await _hub
             .Clients.User(notificacion.UsuarioDestinoId.ToString())
-            .SendAsync("NuevaNotificacion", ToDto(notificacion));
+            .SendAsync(
+                "NuevaNotificacion",
+                notificacion.ToDto() /*ToDto(notificacion)*/
+            );
 
         // Email
         await EnviarEmailNotificacion(notificacion);
@@ -82,7 +86,7 @@ public class NotificacionesService : INotificacionesService
             Tipo = TipoNotificacion.LikePost,
             PostId = postId,
             Mensaje = $"Al usuario {usuarioOrigenId} le gustó tu post.",
-            Fecha = DateTime.UtcNow,
+            FechaCreacion = DateTime.UtcNow,
             Leida = false,
             Payload = $"{{ \"postId\": {postId}, \"usuarioOrigenId\": {usuarioOrigenId} }}",
         };
@@ -107,6 +111,13 @@ public class NotificacionesService : INotificacionesService
         int comentarioId
     )
     {
+        // Obtener el comentario para extraer el PostId
+        var comentario = await _db
+            .Comentarios.AsNoTracking()
+            .FirstOrDefaultAsync(c => c.Id == comentarioId);
+        if (comentario == null)
+            return; // o lanzar excepción si prefieres
+        var postId = comentario.PostId;
         var notificacion = new Notificacion
         {
             UsuarioDestinoId = usuarioDestinoId,
@@ -114,10 +125,9 @@ public class NotificacionesService : INotificacionesService
             Tipo = TipoNotificacion.LikeComentario,
             ComentarioId = comentarioId,
             Mensaje = $"Al usuario {usuarioOrigenId} le gustó tu comentario.",
-            Fecha = DateTime.UtcNow,
+            FechaCreacion = DateTime.UtcNow,
             Leida = false,
-            Payload =
-                $"{{ \"comentarioId\": {comentarioId}, \"usuarioOrigenId\": {usuarioOrigenId} }}",
+            Payload = $"{{ \"comentarioId\": {comentarioId}, \"postId\": {postId} }}",
         };
 
         await CrearAsync(notificacion);
@@ -136,8 +146,10 @@ public class NotificacionesService : INotificacionesService
     {
         return await _db
             .Notificaciones.Where(n => n.UsuarioDestinoId == usuarioId)
-            .OrderByDescending(n => n.Fecha)
-            .Select(n => ToDto(n))
+            .OrderByDescending(n => n.FechaCreacion)
+            .Select(n =>
+                n.ToDto() /*ToDto(n)*/
+            )
             .ToListAsync();
     }
 
@@ -150,7 +162,7 @@ public class NotificacionesService : INotificacionesService
     /// </summary>
     /// <param name="id"></param>
     /// <returns>Notificación o un valor null</returns>
-    public async Task<Notificacion?> ObtenerPorIdAsync(int id)
+    public async Task<Notificacion?> GetByIdAsync(int id)
     {
         return await _db.Notificaciones.FirstOrDefaultAsync(n => n.Id == id);
     }
@@ -167,7 +179,7 @@ public class NotificacionesService : INotificacionesService
     /// <returns>Devuelve verdadero si ha sido marcada como leida en caso contrario falso</returns>
     public async Task<bool> MarcarComoLeidaAsync(int id, int usuarioId)
     {
-        var notif = await ObtenerPorIdAsync(id);
+        var notif = await _db.Notificaciones.FirstOrDefaultAsync(n => n.Id == id);
 
         if (notif == null || notif.UsuarioDestinoId != usuarioId)
             return false;
@@ -210,7 +222,7 @@ public class NotificacionesService : INotificacionesService
     /// <returns>Verdadero si ha sido eliminada, en caso contrario falso </returns>
     public async Task<bool> EliminarAsync(int id, int usuarioId)
     {
-        var notif = await ObtenerPorIdAsync(id);
+        var notif = await GetByIdAsync(id);
 
         if (notif == null || notif.UsuarioDestinoId != usuarioId)
             return false;
@@ -220,23 +232,24 @@ public class NotificacionesService : INotificacionesService
         return true;
     }
 
-    // ------------------------------------------------------------
-    // Obtener no leídas
-    // ------------------------------------------------------------
-
-    /// <summary>
-    /// Obtiene notificaciones no leidas
-    /// </summary>
-    /// <param name="usuarioId"></param>
-    /// <returns>Lista de NotificacionesDto</returns>
-    public async Task<List<NotificacionDto>> ObtenerNoLeidasAsync(int usuarioId)
-    {
-        return await _db
-            .Notificaciones.Where(n => n.UsuarioDestinoId == usuarioId && !n.Leida)
-            .OrderByDescending(n => n.Fecha)
-            .Select(n => ToDto(n))
-            .ToListAsync();
-    }
+    /*     // ------------------------------------------------------------
+        // Obtener no leídas
+        // ------------------------------------------------------------
+    
+        /// <summary>
+        /// Obtiene notificaciones no leidas
+        /// </summary>
+        /// <param name="usuarioId"></param>
+        /// <returns>Lista de NotificacionesDto</returns>
+        public async Task<List<NotificacionDto>> ObtenerNoLeidasAsync(int usuarioId)
+        {
+            return await _db
+                .Notificaciones.Where(n => n.UsuarioDestinoId == usuarioId && !n.Leida)
+                .OrderByDescending(n => n.Fecha)
+                .Select(n => ToDto(n))
+                .ToListAsync();
+        }
+     */
 
     // ------------------------------------------------------------
     // Obtener paginadas
@@ -257,14 +270,14 @@ public class NotificacionesService : INotificacionesService
     {
         var query = _db
             .Notificaciones.Where(n => n.UsuarioDestinoId == usuarioId)
-            .OrderByDescending(n => n.Fecha);
+            .OrderByDescending(n => n.FechaCreacion);
 
         var total = await query.CountAsync();
 
         var items = await query
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Select(n => ToDto(n))
+            .Select(n => n.ToDto())
             .ToListAsync();
 
         return new PaginacionResultado<NotificacionDto>
@@ -276,23 +289,23 @@ public class NotificacionesService : INotificacionesService
         };
     }
 
-    // ------------------------------------------------------------
-    // Conversión a DTO
-    // ------------------------------------------------------------
-    private static NotificacionDto ToDto(Notificacion n) =>
-        new()
-        {
-            Id = n.Id,
-            UsuarioDestinoId = n.UsuarioDestinoId,
-            UsuarioOrigenId = n.UsuarioOrigenId,
-            Tipo = n.Tipo,
-            PostId = n.PostId,
-            ComentarioId = n.ComentarioId,
-            Mensaje = n.Mensaje,
-            Fecha = n.Fecha,
-            Leida = n.Leida,
-            Payload = n.Payload,
-        };
+    // // ------------------------------------------------------------
+    // // Conversión a DTO
+    // // ------------------------------------------------------------
+    // private static NotificacionDto ToDto(Notificacion n) =>
+    //     new()
+    //     {
+    //         Id = n.Id,
+    //         UsuarioDestinoId = n.UsuarioDestinoId,
+    //         UsuarioOrigenId = n.UsuarioOrigenId,
+    //         Tipo = n.Tipo,
+    //         PostId = n.PostId,
+    //         ComentarioId = n.ComentarioId,
+    //         Mensaje = n.Mensaje,
+    //         FechaCreacion = n.FechaCreacion,
+    //         Leida = n.Leida,
+    //         Payload = n.Payload,
+    //     };
 
     // ------------------------------------------------------------
     // Enviar email (método privado reutilizable)
@@ -312,7 +325,7 @@ public class NotificacionesService : INotificacionesService
             $@"
             <h2>Tienes una nueva notificación</h2>
             <p>{notificacion.Mensaje}</p>
-            <p><small>Fecha: {notificacion.Fecha}</small></p>
+            <p><small>Fecha: {notificacion.FechaCreacion}</small></p>
         ";
 
         await _email.EnviarAsync(emailDestino, asunto, cuerpo);

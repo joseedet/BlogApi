@@ -51,7 +51,7 @@ public class NotificacionRepository : INotificacionRepository
     {
         return await _context
             .Notificaciones.Where(n => n.UsuarioDestinoId == usuarioId)
-            .OrderByDescending(n => n.Fecha)
+            .OrderByDescending(n => n.FechaCreacion)
             .ToListAsync();
     }
 
@@ -85,7 +85,7 @@ public class NotificacionRepository : INotificacionRepository
     {
         var query = _context
             .Notificaciones.Where(n => n.UsuarioDestinoId == usuarioId && !n.Leida)
-            .OrderByDescending(n => n.Fecha);
+            .OrderByDescending(n => n.FechaCreacion);
 
         var total = await query.CountAsync();
 
@@ -101,7 +101,7 @@ public class NotificacionRepository : INotificacionRepository
                 PostId = n.PostId,
                 ComentarioId = n.ComentarioId,
                 Mensaje = n.Mensaje,
-                Fecha = n.Fecha,
+                FechaCreacion = n.FechaCreacion,
                 Leida = n.Leida,
                 Payload = n.Payload,
             })

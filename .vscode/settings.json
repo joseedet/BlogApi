@@ -2,5 +2,6 @@
   "dotnet.defaultSolution": "BlogAPI+.sln",
   "cSpell.words": [
     "relaciones"
-  ]
+  ],
+  "docomment.activateOnEnter": true
 }

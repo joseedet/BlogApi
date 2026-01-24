@@ -75,7 +75,10 @@ public class PostsController : ControllerBase
                 return BadRequest("No se pudo crear el post");
 
             var notificacion = NotificacionFactory.NuevoPost(
-                usuarioId: created.UsuarioId,
+                usuarioDestinoId: created.UsuarioId,
+                // el dueño del post
+                usuarioOrigenId: usuarioId,
+                // el que lo creó
                 postId: created.Id,
                 titulo: created.Titulo
             );

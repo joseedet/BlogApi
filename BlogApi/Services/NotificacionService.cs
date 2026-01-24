@@ -57,8 +57,8 @@ public class NotificacionService : INotificacionService
     public async Task<IEnumerable<Notificacion>> GetByUsuarioAsync(int usuarioId)
     {
         return await _context
-            .Notificaciones.Where(n => n.UsuarioId == usuarioId)
-            .OrderByDescending(n => n.Fecha)
+            .Notificaciones.Where(n => n.UsuarioDestinoId != usuarioId)
+            .OrderByDescending(n => n.FechaCreacion)
             .ToListAsync();
     }
 
@@ -71,7 +71,7 @@ public class NotificacionService : INotificacionService
     public async Task<bool> MarcarComoLeidaAsync(int id, int usuarioId)
     {
         var n = await _context.Notificaciones.FirstOrDefaultAsync(n =>
-            n.Id == id && n.UsuarioId == usuarioId
+            n.Id == id && n.UsuarioDestinoId == usuarioId
         );
         if (n == null)
             return false;
@@ -100,7 +100,7 @@ public class NotificacionService : INotificacionService
             UsuarioOrigenId = usuarioOrigenId,
             Tipo = TipoNotificacion.LikePost,
             PostId = postId,
-            Fecha = DateTime.UtcNow,
+            FechaCreacion = DateTime.UtcNow,
             Leida = false,
             Payload = $"{{ \"postId\": {postId}, \"usuarioOrigenId\": {usuarioOrigenId} }}",
         };
@@ -128,7 +128,7 @@ public class NotificacionService : INotificacionService
             Tipo = TipoNotificacion.LikeComentario,
             ComentarioId = comentarioId,
             Mensaje = $"Al usuario {usuarioOrigenId} le gustó tu comentario.",
-            Fecha = DateTime.UtcNow,
+            FechaCreacion = DateTime.UtcNow,
             Leida = false,
         };
 
@@ -145,7 +145,7 @@ public class NotificacionService : INotificacionService
                     Id = notificacion.Id,
                     Tipo = notificacion.Tipo.ToString(),
                     Mensaje = notificacion.Mensaje,
-                    Fecha = notificacion.Fecha,
+                    FechaCreacion = notificacion.FechaCreacion,
                     ComentarioId = comentarioId,
                     UsuarioOrigenId = usuarioOrigenId,
                 }
@@ -177,7 +177,7 @@ public class NotificacionService : INotificacionService
     {
         var notif = await _notificacionRepository.GetByIdAsync(id);
 
-        if (notif == null || notif.UsuarioId != usuarioId)
+        if (notif == null || notif.UsuarioDestinoId != usuarioId)
             return false;
 
         await _notificacionRepository.EliminarAsync(notif);

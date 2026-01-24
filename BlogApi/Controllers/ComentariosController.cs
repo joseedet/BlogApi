@@ -62,13 +62,18 @@ public class ComentariosController : ControllerBase
         if (dto.ComentarioPadreId != null)
         {
             var comentarioPadre = await _service.GetByIdAsync(dto.ComentarioPadreId.Value);
+            var autorComentario = User.FindFirstValue(ClaimTypes.Name);
+            var postId = dto.PostId;
 
             if (comentarioPadre != null && comentarioPadre.UsuarioId != null)
             {
                 var notificacion = NotificacionFactory.RespuestaComentario(
-                    usuarioId: comentarioPadre.UsuarioId.Value,
+                    usuarioDestinoId: comentario.UsuarioId.Value,
+                    usuarioOrigenId: comentarioPadre.UsuarioId.Value,
+                    postId: postId,
                     comentarioId: comentarioPadre.Id,
-                    contenido: created.Contenido
+                    contenido: created.Contenido,
+                    autorComentario: autorComentario
                 );
 
                 await _notificaciones.CrearAsync(notificacion);

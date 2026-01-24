@@ -16,15 +16,15 @@ public class Notificacion
     /// </summary>
     public int Id { get; set; }
 
-    /// <summary>
-    ///    ID del usuario asociado a la notificación
-    /// </summary>
-    public int UsuarioId { get; set; }
-
-    /// <summary>
-    ///     Usuario asociado a la notificación
-    /// </summary>
-    public Usuario Usuario { get; set; } = null;
+    /*  /// <summary>
+     ///    ID del usuario asociado a la notificación
+     /// </summary>
+     public int UsuarioId { get; set; }
+  */
+    // /// <summary>
+    // ///     Usuario asociado a la notificación
+    // /// </summary>
+    // public Usuario Usuario { get; set; } = null;
 
     /// <summary>
     ///   Mensaje de la notificación
@@ -34,12 +34,12 @@ public class Notificacion
     /// <summary>
     ///   Fecha de creación de la notificación
     /// </summary>
-    public DateTime Fecha { get; set; } = DateTime.UtcNow;
+    public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
 
     /// <summary>
     ///   Indica si la notificación ha sido leída
     /// </summary>/
-    public bool Leida { get; set; } = false;
+    public bool Leida { get; set; } //= false;
 
     /// <summary>
     /// ///  Tipo de notificación
@@ -57,10 +57,14 @@ public class Notificacion
     /// </summary>
     public int UsuarioDestinoId { get; set; }
 
+    public Usuario UsuarioDestino { get; set; }
+
     /// <summary>
     /// ID del usuario origen de la notificación
     /// </summary>
     public int UsuarioOrigenId { get; set; }
+
+    public Usuario UsuarioOrigen { get; set; }
 
     /// <summary>
     /// ID del post asociado a la notificación

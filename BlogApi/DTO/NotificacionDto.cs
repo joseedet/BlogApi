@@ -49,7 +49,7 @@ public class NotificacionDto
     /// <summary>
     /// Fecha de creación de la notificación
     /// </summary>
-    public DateTime Fecha { get; set; }
+    public DateTime FechaCreacion { get; set; }
 
     /// <summary>
     /// Indica si la notificación ha sido leída

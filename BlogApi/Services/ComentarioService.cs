@@ -134,11 +134,12 @@ public class ComentarioService : IComentarioService
             $"Tu post ha recibido un nuevo comentario de {autorComentario}"
         );*/
         Notificacion notificacion = NotificacionFactory.NuevoComentario(
-            postAutor.UsuarioId,
-            comentario.PostId,
-            comentario.Contenido,
-            comentario.Id,
-            autorComentario
+            usuarioDestinoId: postAutor.UsuarioId,
+            usuarioOrigenId: comentario.UsuarioId.Value,
+            postId: comentario.PostId,
+            comentarioId: comentario.Id,
+            contenido: comentario.Contenido
+        //autorComentario: autorComentario
         );
         await _notificacionesService.CrearAsync(notificacion);
 

@@ -84,24 +84,23 @@ public static class Mapper
     ///</summary>
     /// <param name="tag"></param>
     /// <returns>TagDto</returns>
-    /// </summary>
     public static TagDto ToDto(this Tag tag) => new() { Id = tag.Id, Nombre = tag.Nombre };
 
     /// <summary>
     ///  Convierte una entidad Notificación a su DTO correspondiente.
     /// </summary>
     /// <param name="n"></param>
-    /// <returns></returns>
+    /// <returns>NotificacionDto</returns>
     public static NotificacionDto ToDto(this Notificacion n)
     {
         var dto = new NotificacionDto
         {
             Id = n.Id,
-            UsuarioDestinoId = n.UsuarioId,
-            UsuarioOrigenId = 0, // si luego quieres añadirlo, aquí se ajusta
+            UsuarioDestinoId = n.UsuarioDestinoId,
+            UsuarioOrigenId = n.UsuarioOrigenId,
             Tipo = n.Tipo,
             Mensaje = n.Mensaje,
-            Fecha = n.Fecha,
+            FechaCreacion = n.FechaCreacion,
             Leida = n.Leida,
             Payload = n.Payload,
         };
