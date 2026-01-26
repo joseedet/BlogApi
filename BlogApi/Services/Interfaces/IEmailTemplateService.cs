@@ -24,4 +24,12 @@ public interface IEmailTemplateService
     /// <param name="valores"></param>
     /// <returns>return</returns>
     string ReemplazarVariables(string plantilla, Dictionary<string, string> valores);
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="templateName"></param>
+    /// <param name="variables"></param>
+    /// <returns></returns>
+    Task<string> RenderTemplateAsync(string templateName, Dictionary<string, string> variables);
 }

@@ -58,5 +58,10 @@ public interface INotificacionesService
     /// <returns>Verdadero si ha sido eliminada en caso contrario falso.</returns>
     public Task<bool> EliminarAsync(int id, int usuarioId);
 
+    /// <summary>
+    /// Obtener por Id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Notificación </returns>
     Task<Notificacion?> GetByIdAsync(int id);
 }

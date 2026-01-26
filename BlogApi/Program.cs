@@ -4,6 +4,7 @@ using BlogApi.Authorization;
 using BlogApi.Data;
 using BlogApi.Hubs;
 using BlogApi.Middleware;
+using BlogApi.Models;
 using BlogApi.Repositories;
 using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
@@ -21,6 +22,7 @@ builder.WebHost.ConfigureKestrel(options =>
     options.Limits.MaxRequestBodySize = 10 * 1024 * 1024; // 10 MB
 });
 
+
 builder.Services.AddControllers();
 
 builder.Services.AddSwaggerGen();
@@ -29,6 +31,7 @@ builder.Services.AddSignalR();
 builder.Services.AddDbContext<BlogDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
 // Repositorios
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

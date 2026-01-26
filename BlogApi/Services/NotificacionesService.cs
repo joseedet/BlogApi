@@ -7,6 +7,7 @@ using BlogApi.Services.Interfaces;
 using BlogApi.Utils;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace BlogApi.Services;
 
@@ -19,6 +20,8 @@ public class NotificacionesService : INotificacionesService
     private readonly IHubContext<NotificacionesHub> _hub;
     private readonly IEmailService _email;
     private readonly ILogger<NotificacionesService> _logger;
+    private readonly IEmailTemplateService _emailTemplateService;
+    private readonly IOptions<AppSettings> _settings;
 
     /// <summary>
     /// Constructor NotificacionesService
@@ -26,17 +29,24 @@ public class NotificacionesService : INotificacionesService
     /// <param name="db"></param>
     /// <param name="hub"></param>
     /// <param name="email"></param>
+    /// <param name="emailTemplateService"></param>
+    /// <param name="logger"></param>
+    /// <param name="settings"></param>
     public NotificacionesService(
         BlogDbContext db,
         IHubContext<NotificacionesHub> hub,
         IEmailService email,
-        ILogger<NotificacionesService> logger
+        ILogger<NotificacionesService> logger,
+        IEmailTemplateService emailTemplateService,
+        IOptions<AppSettings> settings
     )
     {
         _db = db;
         _hub = hub;
         _email = email;
         _logger = logger;
+        _emailTemplateService = emailTemplateService;
+        _settings = settings;
     }
 
     // ------------------------------------------------------------
@@ -52,23 +62,62 @@ public class NotificacionesService : INotificacionesService
     {
         _db.Notificaciones.Add(notificacion);
         await _db.SaveChangesAsync();
+
         try
         {
-            // SignalR
+            // 1. SignalR
             await _hub
                 .Clients.User(notificacion.UsuarioDestinoId.ToString())
                 .SendAsync("NuevaNotificacion", notificacion.ToDto());
+
             _logger.LogInformation(
                 "Notificación enviada por SignalR al usuario {UserId}",
                 notificacion.UsuarioDestinoId
             );
-            // Email
+
+            // 2. Email (solo si aplica)
             await EnviarEmailNotificacion(notificacion);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error enviando notificación por SignalR");
+            _logger.LogError(ex, "Error enviando notificación");
         }
+    }
+
+    private async Task EnviarEmailNotificacion(Notificacion notificacion)
+    {
+        // 1. Obtener datos necesarios
+        var usuario = await _db.Usuarios.FindAsync(notificacion.UsuarioDestinoId);
+        var post = await _db.Posts.FindAsync(notificacion.PostId);
+
+        if (usuario == null || post == null)
+            return;
+
+        // 2. Construir modelo del correo
+        var model = new CommentNotificationEmailModel
+        {
+            UserName = usuario.Nombre,
+            PostTitle = post.Titulo,
+            Email = usuario.Email,
+        };
+
+        // 3. Variables para la plantilla
+        var variables = new Dictionary<string, string>
+        {
+            { "USER_NAME", model.UserName },
+            { "POST_TITLE", model.PostTitle },
+            { "APP_NAME", _settings.Value.AppName },
+            { "SUBJECT", "Nuevo comentario en tu post" },
+        };
+
+        // 4. Renderizar plantilla completa
+        var html = await _emailTemplateService.RenderTemplateAsync(
+            "Notifications/comment-notification.html",
+            variables
+        );
+
+        // 5. Enviar correo
+        await _email.EnviarAsync(model.Email, "Nuevo comentario en tu post", html);
     }
 
     // ------------------------------------------------------------
@@ -319,24 +368,24 @@ public class NotificacionesService : INotificacionesService
     // ------------------------------------------------------------
     // Enviar email (método privado reutilizable)
     // ------------------------------------------------------------
-    private async Task EnviarEmailNotificacion(Notificacion notificacion)
-    {
-        var emailDestino = await _db
-            .Usuarios.Where(u => u.Id == notificacion.UsuarioDestinoId)
-            .Select(u => u.Email)
-            .FirstOrDefaultAsync();
-
-        if (string.IsNullOrWhiteSpace(emailDestino))
-            return;
-
-        var asunto = $"Nueva notificación: {notificacion.Tipo}";
-        var cuerpo =
-            $@"
-            <h2>Tienes una nueva notificación</h2>
-            <p>{notificacion.Mensaje}</p>
-            <p><small>Fecha: {notificacion.FechaCreacion}</small></p>
-        ";
-
-        await _email.EnviarAsync(emailDestino, asunto, cuerpo);
-    }
+    /* private async Task EnviarEmailNotificacion(Notificacion notificacion)
+     {
+         var emailDestino = await _db
+             .Usuarios.Where(u => u.Id == notificacion.UsuarioDestinoId)
+             .Select(u => u.Email)
+             .FirstOrDefaultAsync();
+ 
+         if (string.IsNullOrWhiteSpace(emailDestino))
+             return;
+ 
+         var asunto = $"Nueva notificación: {notificacion.Tipo}";
+         var cuerpo =
+             $@"
+             <h2>Tienes una nueva notificación</h2>
+             <p>{notificacion.Mensaje}</p>
+             <p><small>Fecha: {notificacion.FechaCreacion}</small></p>
+         ";
+ 
+         await _email.EnviarAsync(emailDestino, asunto, cuerpo);
+     }*/
 }
