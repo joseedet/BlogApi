@@ -69,6 +69,15 @@ public class EmailService : IEmailService
         }
     }
 
+    /// <summary>
+    /// Envia el correo con la plantilla seleccionada
+    /// /// </summary>
+    /// <param name="destinatario"></param>
+    /// <param name="asunto"></param>
+    /// <param name="nombrePlantilla"></param>
+    /// <param name="variables"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task EnviarConPlantillaAsync(
         string destinatario,
         string asunto,
