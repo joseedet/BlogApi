@@ -81,6 +81,11 @@ public class BlogDbContext : DbContext
     public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     /// <summary>
+    /// Ajustes de notificación
+    /// </summary>
+    public DbSet<NotificationSettings> NotificationSettings { get; set; }
+
+    /// <summary>
     ///  Configuración de las relaciones entre entidades
     /// </summary>
     /// <param name="modelBuilder"></param>

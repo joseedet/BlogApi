@@ -22,6 +22,7 @@ public class NotificacionesService : INotificacionesService
     private readonly ILogger<NotificacionesService> _logger;
     private readonly IEmailTemplateService _emailTemplateService;
     private readonly IOptions<AppSettings> _settings;
+    private readonly INotificationSettingsService _notificationSettings;
 
     /// <summary>
     /// Constructor NotificacionesService
@@ -32,13 +33,15 @@ public class NotificacionesService : INotificacionesService
     /// <param name="emailTemplateService"></param>
     /// <param name="logger"></param>
     /// <param name="settings"></param>
+    /// <param name="notificationSettings"></param>
     public NotificacionesService(
         BlogDbContext db,
         IHubContext<NotificacionesHub> hub,
         IEmailService email,
         ILogger<NotificacionesService> logger,
         IEmailTemplateService emailTemplateService,
-        IOptions<AppSettings> settings
+        IOptions<AppSettings> settings,
+        INotificationSettingsService notificationSettings
     )
     {
         _db = db;
@@ -47,6 +50,7 @@ public class NotificacionesService : INotificacionesService
         _logger = logger;
         _emailTemplateService = emailTemplateService;
         _settings = settings;
+        _notificationSettings = notificationSettings;
     }
 
     // ------------------------------------------------------------
@@ -86,14 +90,22 @@ public class NotificacionesService : INotificacionesService
 
     private async Task EnviarEmailNotificacion(Notificacion notificacion)
     {
-        // 1. Obtener datos necesarios
+        // 1. Obtener configuración dinámica 
+        var config = await _notificationSettings.GetActiveAsync(); 
+        // 2. Verificar si se debe enviar correo por comentario
+        if (!config.SendEmailOnComment) 
+            {
+            _logger.LogInformation("El envío de email por comentario está desactivado.");
+            return;
+            }
+        // 3. Obtener datos necesarios
         var usuario = await _db.Usuarios.FindAsync(notificacion.UsuarioDestinoId);
         var post = await _db.Posts.FindAsync(notificacion.PostId);
 
         if (usuario == null || post == null)
             return;
 
-        // 2. Construir modelo del correo
+        // 4. Construir modelo del correo
         var model = new CommentNotificationEmailModel
         {
             UserName = usuario.Nombre,
@@ -101,7 +113,7 @@ public class NotificacionesService : INotificacionesService
             Email = usuario.Email,
         };
 
-        // 3. Variables para la plantilla
+        // 5. Variables para la plantilla
         var variables = new Dictionary<string, string>
         {
             { "USER_NAME", model.UserName },
@@ -110,13 +122,13 @@ public class NotificacionesService : INotificacionesService
             { "SUBJECT", "Nuevo comentario en tu post" },
         };
 
-        // 4. Renderizar plantilla completa
+        // 6. Renderizar plantilla completa
         var html = await _emailTemplateService.RenderTemplateAsync(
             "Notifications/comment-notification.html",
             variables
         );
 
-        // 5. Enviar correo
+        // 7. Enviar correo
         await _email.EnviarAsync(model.Email, "Nuevo comentario en tu post", html);
     }
 
