@@ -129,4 +129,31 @@ public static class Mapper
 
         return dto;
     }
+
+    /// <summary>
+    /// Entidad NotificationSettings a NotificationSettingsDto
+    /// </summary>
+    /// <param name="settings"></param>
+    /// <returns>NotificationSettingsDto</returns>
+    public static NotificationSettingsDto ToDto(NotificationSettings settings)
+    {
+        return new NotificationSettingsDto
+        {
+            SendEmailOnComment = settings.SendEmailOnComment,
+            SendEmailOnAdminMessage = settings.SendEmailOnAdminMessage,
+            SendEmailOnSystemAlert = settings.SendEmailOnSystemAlert,
+        };
+    }
+
+    /// <summary>
+    /// Actualización de NotificationSettingsDto a NotificationSettings
+    /// </summary>
+    /// <param name="entity"></param>
+    /// <param name="dto"></param>
+    public static void UpdateFromDto(NotificationSettings entity, NotificationSettingsDto dto)
+    {
+        entity.SendEmailOnComment = dto.SendEmailOnComment;
+        entity.SendEmailOnAdminMessage = dto.SendEmailOnAdminMessage;
+        entity.SendEmailOnSystemAlert = dto.SendEmailOnSystemAlert;
+    }
 }

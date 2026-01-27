@@ -147,6 +147,20 @@ public class BlogDbContext : DbContext
             .WithMany(u => u.RefreshTokens)
             .HasForeignKey(rt => rt.UsuarioId);
 
+        modelBuilder
+            .Entity<Notificacion>()
+            .HasOne(n => n.UsuarioOrigen)
+            .WithMany()
+            .HasForeignKey(n => n.UsuarioOrigenId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder
+            .Entity<Notificacion>()
+            .HasOne(n => n.UsuarioDestino)
+            .WithMany()
+            .HasForeignKey(n => n.UsuarioDestinoId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         base.OnModelCreating(modelBuilder);
     }
 }
