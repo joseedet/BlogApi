@@ -86,6 +86,11 @@ public class BlogDbContext : DbContext
     public DbSet<NotificationSettings> NotificationSettings { get; set; }
 
     /// <summary>
+    /// Preferencias del usuarios sobre notificaciones
+    /// </summary>
+    public DbSet<UserNotificationPreferences> UserNotificationPreferences { get; set; }
+
+    /// <summary>
     ///  Configuración de las relaciones entre entidades
     /// </summary>
     /// <param name="modelBuilder"></param>
