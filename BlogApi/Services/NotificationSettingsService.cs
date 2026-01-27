@@ -1,10 +1,12 @@
 using System;
 using BlogApi.Data;
+using BlogApi.DTO;
 using BlogApi.Models;
 using BlogApi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Services;
+
 /// <summary>
 /// Clase que implementa la interfaz de INotificationSettingsService
 /// </summary>
@@ -41,11 +43,17 @@ public class NotificationSettingsService : INotificationSettingsService
     /// <summary>
     /// Actualiza el ajuste de notificación
     /// </summary>
-    /// <param name="settings"></param>
+    /// <param name="dto"></param>
     /// <returns></returns>
-    public async Task UpdateAsync(NotificationSettings settings)
+    public async Task UpdateAsync(NotificationSettingsDto dto)
     {
-        _db.NotificationSettings.Update(settings);
+        var settings = await _db.NotificationSettings.FirstOrDefaultAsync(s => s.Activo);
+        if (settings == null)
+            throw new Exception("No existe configuración activa.");
+        settings.SendEmailOnComment = dto.SendEmailOnComment;
+        settings.SendEmailOnAdminMessage = dto.SendEmailOnAdminMessage;
+        settings.SendEmailOnSystemAlert = dto.SendEmailOnSystemAlert;
+        //_db.NotificationSettings.Update(settings);
         await _db.SaveChangesAsync();
     }
 }

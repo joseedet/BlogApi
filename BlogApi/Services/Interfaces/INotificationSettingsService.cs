@@ -1,5 +1,6 @@
 using System;
 using BlogApi.Data;
+using BlogApi.DTO;
 using BlogApi.Models;
 
 namespace BlogApi.Services.Interfaces;
@@ -20,5 +21,5 @@ public interface INotificationSettingsService
     /// </summary>
     /// <param name="settings"></param>
     /// <returns></returns>
-    Task UpdateAsync(NotificationSettings settings);
+    Task UpdateAsync(NotificationSettingsDto settings);
 }
