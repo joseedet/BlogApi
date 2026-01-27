@@ -24,6 +24,20 @@ builder.WebHost.ConfigureKestrel(options =>
 
 
 builder.Services.AddControllers();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "Default",
+        policy =>
+        {
+            policy
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
+                .SetIsOriginAllowed(_ => true); // Permite cualquier origen
+        }
+    );
+});
 
 builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
@@ -32,6 +46,9 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+/*builder.Services.AddSingleton(resolver =>
+    resolver.GetRequiredService<IOptions<AppSettings>>().Value
+);*/
 
 // Repositorios
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -138,6 +155,7 @@ if (app.Environment.IsDevelopment())
         option.RoutePrefix = "docs";
     });
 }
+app.UseCors("Default");
 
 app.UseAuthentication();
 

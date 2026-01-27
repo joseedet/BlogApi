@@ -21,8 +21,9 @@ public class NotificacionesService : INotificacionesService
     private readonly IEmailService _email;
     private readonly ILogger<NotificacionesService> _logger;
     private readonly IEmailTemplateService _emailTemplateService;
-    private readonly IOptions<AppSettings> _settings;
-    private readonly INotificationSettingsService _notificationSettings;
+    private readonly AppSettings _settings;
+    private readonly INotificationSettingsService _notificationSettingsService;
+    private readonly IUserNotificationPreferencesService _userNotificationPreferencesService;
 
     /// <summary>
     /// Constructor NotificacionesService
@@ -33,7 +34,8 @@ public class NotificacionesService : INotificacionesService
     /// <param name="emailTemplateService"></param>
     /// <param name="logger"></param>
     /// <param name="settings"></param>
-    /// <param name="notificationSettings"></param>
+    /// <param name="notificationSettingsService"></param>
+    /// <param name="userNotificationPreferencesService"></param>
     public NotificacionesService(
         BlogDbContext db,
         IHubContext<NotificacionesHub> hub,
@@ -41,7 +43,8 @@ public class NotificacionesService : INotificacionesService
         ILogger<NotificacionesService> logger,
         IEmailTemplateService emailTemplateService,
         IOptions<AppSettings> settings,
-        INotificationSettingsService notificationSettings
+        INotificationSettingsService notificationSettingsService,
+        IUserNotificationPreferencesService userNotificationPreferencesService
     )
     {
         _db = db;
@@ -49,8 +52,9 @@ public class NotificacionesService : INotificacionesService
         _email = email;
         _logger = logger;
         _emailTemplateService = emailTemplateService;
-        _settings = settings;
-        _notificationSettings = notificationSettings;
+        _settings = settings.Value;
+        _notificationSettingsService = notificationSettingsService;
+        _userNotificationPreferencesService = userNotificationPreferencesService;
     }
 
     // ------------------------------------------------------------
@@ -78,6 +82,11 @@ public class NotificacionesService : INotificacionesService
                 "Notificación enviada por SignalR al usuario {UserId}",
                 notificacion.UsuarioDestinoId
             );
+            var global = await _notificationSettingsService.GetActiveAsync();
+
+            // 1. Configuración global
+            if (!global.SendEmailOnComment)
+                return;
 
             // 2. Email (solo si aplica)
             await EnviarEmailNotificacion(notificacion);
@@ -88,16 +97,17 @@ public class NotificacionesService : INotificacionesService
         }
     }
 
-    private async Task EnviarEmailNotificacion(Notificacion notificacion)
+    /*private async Task EnviarEmailNotificacion(Notificacion notificacion)
     {
-        // 1. Obtener configuración dinámica 
-        var config = await _notificationSettings.GetActiveAsync(); 
+        // 1. Obtener configuración dinámica
+        var config = await _notificationSettingsService.GetActiveAsync();
+
         // 2. Verificar si se debe enviar correo por comentario
-        if (!config.SendEmailOnComment) 
-            {
+        if (!config.SendEmailOnComment)
+        {
             _logger.LogInformation("El envío de email por comentario está desactivado.");
             return;
-            }
+        }
         // 3. Obtener datos necesarios
         var usuario = await _db.Usuarios.FindAsync(notificacion.UsuarioDestinoId);
         var post = await _db.Posts.FindAsync(notificacion.PostId);
@@ -130,6 +140,91 @@ public class NotificacionesService : INotificacionesService
 
         // 7. Enviar correo
         await _email.EnviarAsync(model.Email, "Nuevo comentario en tu post", html);
+    }*/
+    private async Task EnviarEmailNotificacion(Notificacion notificacion)
+    {
+        var global = await _notificationSettingsService.GetActiveAsync();
+        var prefs = await _userNotificationPreferencesService.GetByUserIdAsync(
+            notificacion.UsuarioDestinoId
+        );
+
+        if (!DebeEnviarEmail(notificacion.Tipo, global, prefs))
+        {
+            _logger.LogInformation(
+                "Email no enviado por configuración global o preferencias del usuario."
+            );
+            return;
+        }
+
+        var usuario = await _db.Usuarios.FindAsync(notificacion.UsuarioDestinoId);
+        if (usuario == null)
+            return;
+
+        var variables = new Dictionary<string, string>
+        {
+            { "USER_NAME", usuario.Nombre },
+            { "MESSAGE", notificacion.Mensaje },
+            { "APP_NAME", _settings.AppName },
+            { "SUBJECT", "Nueva notificación" },
+        };
+
+        var html = await _emailTemplateService.RenderTemplateAsync(
+            "Notifications/generic-notification.html",
+            variables
+        );
+
+        await _email.EnviarAsync(usuario.Email, "Nueva notificación", html);
+    }
+
+    private bool DebeEnviarEmail(
+        TipoNotificacion tipo,
+        NotificationSettings global,
+        UserNotificationPreferences prefs
+    )
+    {
+        // 1. Preferencias globales del administrador
+        switch (tipo)
+        {
+            case TipoNotificacion.RespuestaComentario:
+            case TipoNotificacion.ComentarioEnPost:
+            case TipoNotificacion.RespuestaAComentario:
+            case TipoNotificacion.NuevoComentario:
+                if (!global.SendEmailOnComment)
+                    return false;
+                break;
+
+            case TipoNotificacion.MensajePrivado:
+                if (!global.SendEmailOnAdminMessage)
+                    return false;
+                break;
+
+            case TipoNotificacion.Sistema:
+                if (!global.SendEmailOnSystemAlert)
+                    return false;
+                break;
+        }
+
+        // 2. Preferencias del usuario
+        if (!prefs.ReceiveEmailNotifications)
+            return false;
+
+        switch (tipo)
+        {
+            case TipoNotificacion.RespuestaComentario:
+            case TipoNotificacion.ComentarioEnPost:
+            case TipoNotificacion.RespuestaAComentario:
+            case TipoNotificacion.NuevoComentario:
+                return prefs.NotifyOnComment;
+
+            case TipoNotificacion.MensajePrivado:
+                return prefs.NotifyOnAdminMessage;
+
+            case TipoNotificacion.Sistema:
+                return prefs.NotifyOnSystemAlert;
+
+            default:
+                return true; // Tipos no configurables aún
+        }
     }
 
     // ------------------------------------------------------------
@@ -360,44 +455,4 @@ public class NotificacionesService : INotificacionesService
     }
 
     // // ------------------------------------------------------------
-    // // Conversión a DTO
-    // // ------------------------------------------------------------
-    // private static NotificacionDto ToDto(Notificacion n) =>
-    //     new()
-    //     {
-    //         Id = n.Id,
-    //         UsuarioDestinoId = n.UsuarioDestinoId,
-    //         UsuarioOrigenId = n.UsuarioOrigenId,
-    //         Tipo = n.Tipo,
-    //         PostId = n.PostId,
-    //         ComentarioId = n.ComentarioId,
-    //         Mensaje = n.Mensaje,
-    //         FechaCreacion = n.FechaCreacion,
-    //         Leida = n.Leida,
-    //         Payload = n.Payload,
-    //     };
-
-    // ------------------------------------------------------------
-    // Enviar email (método privado reutilizable)
-    // ------------------------------------------------------------
-    /* private async Task EnviarEmailNotificacion(Notificacion notificacion)
-     {
-         var emailDestino = await _db
-             .Usuarios.Where(u => u.Id == notificacion.UsuarioDestinoId)
-             .Select(u => u.Email)
-             .FirstOrDefaultAsync();
- 
-         if (string.IsNullOrWhiteSpace(emailDestino))
-             return;
- 
-         var asunto = $"Nueva notificación: {notificacion.Tipo}";
-         var cuerpo =
-             $@"
-             <h2>Tienes una nueva notificación</h2>
-             <p>{notificacion.Mensaje}</p>
-             <p><small>Fecha: {notificacion.FechaCreacion}</small></p>
-         ";
- 
-         await _email.EnviarAsync(emailDestino, asunto, cuerpo);
-     }*/
 }
