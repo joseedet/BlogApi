@@ -2,6 +2,7 @@ using BlogApi.Data;
 using BlogApi.DTO;
 using BlogApi.Models;
 using BlogApi.Repositories.Interfaces;
+using BlogApi.Utils.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Repositories;
@@ -256,4 +257,22 @@ public class PostRepository : GenericRepository<Post>, IPostRepository
             .Where(p => p.Usuario.Nombre.ToLower() == nombre)
             .ToListAsync();
     }
+    /// <summary>
+    /// Contamos el número total de post publicados
+    /// </summary>
+    /// <param name="count"></param>
+    /// <returns>List&lt;Post&gt;</returns>
+    public Task<List<Post>> GetMostViewedAsync(int count) =>
+        _context
+            .Posts.Where(p => p.Estado == PostEstado.Borrador)
+            .OrderByDescending(p => p.ViewsCount)
+            .Take(count)
+            .ToListAsync();
+
+    /// <summary>
+    /// Optine un post por Id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Post</returns>
+    public Task<Post?> GetByIdAsync(int id) => _context.Posts.FindAsync(id).AsTask();
 }

@@ -156,4 +156,12 @@ public static class Mapper
         entity.SendEmailOnAdminMessage = dto.SendEmailOnAdminMessage;
         entity.SendEmailOnSystemAlert = dto.SendEmailOnSystemAlert;
     }
+    /// <summary>
+    /// Convierte una lista de entidades Post a una lista de PostDto.
+    /// </summary>
+    /// <returns>List&lt;PostDto&gt;</returns>
+    public static List<PostDto> ToDto(this List<Post> posts)
+    {
+        return posts.Select(p => p.ToDto()).ToList();
+    }
 }

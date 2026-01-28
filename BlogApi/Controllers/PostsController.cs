@@ -9,14 +9,22 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers;
 
+/// <summary>
+/// PostController
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class PostsController : ControllerBase
 {
     private readonly IPostService _service;
-    private readonly INotificacionService _notificaciones;
+    private readonly INotificacionesService _notificaciones;
 
-    public PostsController(IPostService service, INotificacionService notificaciones)
+    /// <summary>
+    /// Constructor PostController
+    /// </summary>
+    /// <param name="service"></param>
+    /// <param name="notificaciones"></param>
+    public PostsController(IPostService service, INotificacionesService notificaciones)
     {
         _service = service;
         _notificaciones = notificaciones;
@@ -36,9 +44,10 @@ public class PostsController : ControllerBase
     // ------------------------------------------------------------
     // GET BY ID
     // ------------------------------------------------------------
-    [HttpGet("{id}")]
+    // SOLO ADMIN/EDITOR/AUTOR
+    [HttpGet("admin/{id}")]
     [Authorize(Roles = "Administrador,Editor,Autor")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetByIdAdmin(int id)
     {
         var post = await _service.GetByIdAsync(id);
         if (post == null)
@@ -265,5 +274,25 @@ public class PostsController : ControllerBase
                 NextCursor = result.NextCursor,
             }
         );
+    }
+
+    // PÚBLICO
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<PostDto>> GetById(int id)
+    {
+        var post = await _service.GetByIdAsync(id);
+        if (post == null)
+            return NotFound();
+
+        await _service.IncrementViewCountAsync(id);
+
+        return Ok(post.ToDto());
+    }
+
+    [HttpGet("most-viewed")]
+    public async Task<ActionResult<List<PostDto>>> GetMostViewed([FromQuery] int count = 5)
+    {
+        var posts = await _service.GetMostViewedAsync(count);
+        return Ok(posts);
     }
 }

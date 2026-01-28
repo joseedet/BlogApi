@@ -118,4 +118,17 @@ public interface IPostRepository : IGenericRepository<Post>
         int usuarioId,
         bool puedeEditarTodo
     );*/
+
+    /// <summary>
+    /// Obtener por Id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Post</returns>
+    //Task<Post?> GetByIdAsync(int id);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <returns></returns>
+    //Task SaveChangesAsync();
+    Task<List<Post>> GetMostViewedAsync(int count);
 }

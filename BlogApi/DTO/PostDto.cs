@@ -59,4 +59,9 @@ public class PostDto
     /// Etiquetas del post
     /// </summary>
     public List<TagDto> Tags { get; set; } = new();
+
+    // <summary>
+    /// Contador de visitas
+    /// </summary>
+    public int ViewsCount { get; set; }
 }

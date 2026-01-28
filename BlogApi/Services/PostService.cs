@@ -1,4 +1,5 @@
 using BlogApi.DTO;
+using BlogApi.Mapper;
 using BlogApi.Models;
 using BlogApi.Repositories;
 using BlogApi.Repositories.Interfaces;
@@ -36,7 +37,7 @@ public class PostService : IPostService
     /// <summary>
     /// Servicio de notificaciones
     /// </summary>
-    private readonly INotificacionService _notificationService;
+    private readonly INotificacionesService _notificationService;
 
     /// <summary>
     /// Repositorio de categorías
@@ -54,7 +55,7 @@ public class PostService : IPostService
         ITagRepository tagRepo,
         ICategoriaRepository categoriaRepository,
         ISanitizerService sanitizerService,
-        INotificacionService notificationService
+        INotificacionesService notificationService
     )
     {
         _repo = repo;
@@ -67,7 +68,7 @@ public class PostService : IPostService
     /// <summary>
     /// Obtiene todos los posts
     /// </summary>
-    /// <returns>IEnumerable<Post></returns>
+    /// <returns>IEnumerable&lt;Post&gt;</returns>
     public async Task<IEnumerable<Post>> GetAllAsync()
     {
         return await _repo
@@ -231,7 +232,7 @@ public class PostService : IPostService
     /// </summary>
     /// <param name="pagina"></param>
     /// <param name="tamano"></param>
-    /// <returns>PaginationDto<Post></returns>
+    /// <returns>PaginationDto&lt;Post&gt;</returns>
     public async Task<PaginationDto<Post>> GetPagedAsync(int pagina, int tamano)
     {
         var query = _repo
@@ -273,7 +274,7 @@ public class PostService : IPostService
     /// Busca posts por texto
     /// </summary>
     /// <param name="texto"></param>
-    /// <returns>IEnumerable<Post></returns>
+    /// <returns>IEnumerable&lt;Post&gt;</returns>
     public async Task<IEnumerable<Post>> SearchAsync(string texto)
     {
         texto = texto.ToLower().Trim();
@@ -299,7 +300,7 @@ public class PostService : IPostService
     /// <param name="texto"></param>
     /// <param name="pagina"></param>
     /// <param name="tamano"></param>
-    /// <returns>PaginationDto<Post></returns>
+    /// <returns>PaginationDto&lt;Post&gt;</returns>
     public async Task<PaginationDto<Post>> SearchPagedAsync(string texto, int pagina, int tamano)
     {
         texto = texto.ToLower().Trim();
@@ -334,7 +335,7 @@ public class PostService : IPostService
     /// Obtiene los posts por categoría
     /// </summary>
     /// <param name="categoriaId"></param>
-    /// <returns>IEnumerable<Post></returns>
+    /// <returns>IEnumerable&lt;Post&gt;</returns>
     public async Task<IEnumerable<Post>> GetByCategoriaAsync(int categoriaId)
     {
         return await _repo
@@ -350,7 +351,7 @@ public class PostService : IPostService
     /// Obtiene los posts por categoría mediante su slug
     /// </summary>
     /// <param name="slug"></param>
-    /// <returns>IEnumerable<Post></returns>
+    /// <returns>IEnumerable&lt;Post&gt;</returns>
     public async Task<IEnumerable<Post>> GetByCategoriaSlugAsync(string slug)
     {
         return await _repo
@@ -366,7 +367,7 @@ public class PostService : IPostService
     /// Obtiene los posts por tag
     /// </summary>
     /// <param name="tagId"></param>
-    /// <returns>IEnumerable<Post></returns>
+    /// <returns>IEnumerable&lt;Post&gt;</returns>
     public async Task<IEnumerable<Post>> GetByTagAsync(int tagId)
     {
         return await _repo
@@ -382,7 +383,7 @@ public class PostService : IPostService
     /// Obtiene los posts por nombre de tag
     /// </summary>
     /// <param name="nombre"></param>
-    /// <returns>IEnumerable<Post></returns>
+    /// <returns>IEnumerable&lt;Post&gt;</returns>
     public async Task<IEnumerable<Post>> GetByTagNombreAsync(string nombre)
     {
         nombre = nombre.ToLower().Trim();
@@ -560,5 +561,30 @@ public class PostService : IPostService
         // Validación extra opcional: detectar XSS
         if (_sanitizerService.ContainsDangerousPattern(post.Contenido))
             throw new ArgumentException("El contenido contiene patrones peligrosos (XSS).");
+    }
+
+    /// <summary>
+    /// Incrementador
+    /// </summary>
+    /// <param name="postId"></param>
+    /// <returns></returns>
+    public async Task IncrementViewCountAsync(int postId)
+    {
+        var post = await _repo.GetByIdAsync(postId);
+        if (post == null)
+            return;
+        post.ViewsCount++;
+        await _repo.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Los más vistos
+    /// </summary>
+    /// <param name="count"></param>
+    /// <returns>List&lt;PostDto&gt;</returns>
+    public async Task<List<PostDto>> GetMostViewedAsync(int count)
+    {
+        var posts = await _repo.GetMostViewedAsync(count);
+        return posts.ToDto();
     }
 }
