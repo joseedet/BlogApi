@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 using BlogApi.DTO;
 using BlogApi.Models;
 
@@ -156,6 +152,7 @@ public static class Mapper
         entity.SendEmailOnAdminMessage = dto.SendEmailOnAdminMessage;
         entity.SendEmailOnSystemAlert = dto.SendEmailOnSystemAlert;
     }
+
     /// <summary>
     /// Convierte una lista de entidades Post a una lista de PostDto.
     /// </summary>

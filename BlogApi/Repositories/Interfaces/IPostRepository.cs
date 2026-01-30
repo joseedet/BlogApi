@@ -154,4 +154,13 @@ public interface IPostRepository : IGenericRepository<Post>
     /// <param name="count"></param>
     /// <returns>List&lt;Post&gt;</returns>
     Task<List<Post>> GetRelatedByCategoryAsync(Post post, int count);
+
+    /// <summary>
+    /// Verifica que el slug se único
+    /// </summary>
+    /// <param name="slug"></param>
+    /// <returns>true si es único, en caso contrario false</returns>
+    Task<bool> SlugExistsAsync(string slug);
+    
+    
 }

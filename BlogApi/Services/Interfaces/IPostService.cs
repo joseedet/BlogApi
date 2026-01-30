@@ -167,4 +167,13 @@ public interface IPostService
     /// <param name="count"></param>
     /// <returns>List&lt;PostDto&gt;</returns>
     Task<List<PostDto>> GetRelatedPostsAsync(int postId, int count);
+
+    // <summary>
+    /// Verifica que el slug se único
+    /// </summary>
+    /// <param name="slug"></param>
+    /// <returns>true si es único, en caso contrario false</returns>
+    //Task<bool> SlugExistsAsync(string slug);
+
+
 }

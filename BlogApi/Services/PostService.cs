@@ -114,18 +114,18 @@ public class PostService : IPostService
         ValidarEntrada(post, tagIds);
         await ValidarCategoriaAsync(post.CategoriaId);
         await ValidarTagsAsync(tagIds);
-        // Generar slug base
-        var baseSlug = SlugHelper.GenerateSlug(post.Titulo);
+        // Generar slug
+        var slug = await GenerateUniqueSlugAsync(post.Titulo);
 
         // Asegurar que sea único
-        var slug = baseSlug;
-        int contador = 1;
-        while (await _repo.Query().AnyAsync(p => p.Slug == slug))
-        {
-            slug = $"{baseSlug}-{contador}";
-            contador++;
-        }
-        post.Slug = slug;
+        //var slug = baseSlug;
+        //int contador = 1;
+        /*while (await _repo.Query().AnyAsync(p => p.Slug == slug))
+         {
+             slug = $"{baseSlug}-{contador}";
+             contador++;
+         }*/
+        post.Slug = slug.ToString();
 
         // Cargar tags desde la BD
         var tags = await _tagRepo.Query().Where(t => tagIds.Contains(t.Id)).ToListAsync();
@@ -599,6 +599,7 @@ public class PostService : IPostService
         return posts.ToDto();
         ;
     }
+
     /// <summary>
     /// Obtiene los pots relacionados
     /// </summary>
@@ -621,5 +622,20 @@ public class PostService : IPostService
         var relatedByCategory = await _repo.GetRelatedByCategoryAsync(post, remaining);
 
         return relatedByTags.Concat(relatedByCategory).ToList().ToDto();
+    }
+
+    private async Task<string> GenerateUniqueSlugAsync(string title)
+    {
+        var baseSlug = SlugHelper.GenerateSlug(title);
+        var slug = baseSlug;
+        int counter = 1;
+
+        while (await _repo.SlugExistsAsync(slug))
+        {
+            slug = $"{baseSlug}-{counter}";
+            counter++;
+        }
+
+        return slug;
     }
 }

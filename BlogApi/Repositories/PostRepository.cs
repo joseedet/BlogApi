@@ -301,7 +301,6 @@ public class PostRepository : GenericRepository<Post>, IPostRepository
     /// <param name="post"></param>
     /// <param name="count"></param>
     /// <returns>List&lt;Post&lt;</returns>
-
     public Task<List<Post>> GetRelatedByTagsAsync(Post post, int count)
     {
         var tagIds = post.Tags.Select(t => t.Id).ToList();
@@ -330,5 +329,13 @@ public class PostRepository : GenericRepository<Post>, IPostRepository
             .Take(count)
             .ToListAsync();
 
-    
+    // <summary>
+    /// Verifica que el slug se único
+    /// </summary>
+    /// <param name="slug"></param>
+    /// <returns>true si es único, en caso contrario false</returns>
+    public Task<bool> SlugExistsAsync(string slug)
+    {
+        return _context.Posts.AnyAsync(p => p.Slug == slug);
+    }
 }
