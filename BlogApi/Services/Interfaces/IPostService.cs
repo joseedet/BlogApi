@@ -152,4 +152,19 @@ public interface IPostService
     /// <param name="count"></param>
     /// <returns>List&lt;tPostDto&gt;</returns>
     Task<List<PostDto>> GetMostViewedAsync(int count);
+
+    /// <summary>
+    /// Cuenta el numero de comentarios de un post
+    /// </summary>
+    /// <param name="count"></param>
+    /// <returns>List&lt;Post&gt;</returns>
+    Task<List<PostDto>> GetMostCommentedAsync(int count);
+
+    /// <summary>
+    /// Obtiene los pots relacionados
+    /// </summary>
+    /// <param name="postId"></param>
+    /// <param name="count"></param>
+    /// <returns>List&lt;PostDto&gt;</returns>
+    Task<List<PostDto>> GetRelatedPostsAsync(int postId, int count);
 }

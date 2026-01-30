@@ -51,7 +51,7 @@ public static class Mapper
             Id = comentario.Id,
             Contenido = comentario.Contenido,
             FechaCreacion = comentario.FechaCreacion,
-            Estado = comentario.Estado,
+            Estado = comentario.Estado.ToString(),
             Usuario = comentario.Usuario?.ToDto(),
             Respuestas = comentario.Respuestas.Select(r => r.ToDto()).ToList(),
         };

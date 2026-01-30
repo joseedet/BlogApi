@@ -295,4 +295,16 @@ public class PostsController : ControllerBase
         var posts = await _service.GetMostViewedAsync(count);
         return Ok(posts);
     }
+    [HttpGet("most-commented")]
+    public async Task<ActionResult<List<PostDto>>> GetMostCommented([FromQuery] int count = 5)
+    {
+        var posts = await _service.GetMostCommentedAsync(count);
+        return Ok(posts);
+    }
+    [HttpGet("{id:int}/related")]
+    public async Task<ActionResult<List<PostDto>>> GetRelated(int id, [FromQuery] int count = 4)
+    {
+        var posts = await _service.GetRelatedPostsAsync(id, count);
+        return Ok(posts);
+    }
 }

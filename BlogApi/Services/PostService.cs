@@ -587,4 +587,39 @@ public class PostService : IPostService
         var posts = await _repo.GetMostViewedAsync(count);
         return posts.ToDto();
     }
+
+    /// <summary>
+    /// Los comentarios más vistos de un post
+    /// /// </summary>
+    /// <param name="count"></param>
+    /// <returns>List&lt;PostDto&gt;</returns>
+    public async Task<List<PostDto>> GetMostCommentedAsync(int count)
+    {
+        var posts = await _repo.GetMostCommentedAsync(count);
+        return posts.ToDto();
+        ;
+    }
+    /// <summary>
+    /// Obtiene los pots relacionados
+    /// </summary>
+    /// <param name="postId"></param>
+    /// <param name="count"></param>
+    /// <returns>List&lt;PostDto&gt;</returns>
+    public async Task<List<PostDto>> GetRelatedPostsAsync(int postId, int count)
+    {
+        var post = await _repo.GetWithTagsAndCategoryAsync(postId);
+        if (post == null)
+            return new List<PostDto>();
+
+        var relatedByTags = await _repo.GetRelatedByTagsAsync(post, count);
+
+        if (relatedByTags.Count >= count)
+            return relatedByTags.ToDto();
+
+        var remaining = count - relatedByTags.Count;
+
+        var relatedByCategory = await _repo.GetRelatedByCategoryAsync(post, remaining);
+
+        return relatedByTags.Concat(relatedByCategory).ToList().ToDto();
+    }
 }

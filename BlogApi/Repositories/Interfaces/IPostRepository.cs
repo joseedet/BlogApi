@@ -118,17 +118,40 @@ public interface IPostRepository : IGenericRepository<Post>
         int usuarioId,
         bool puedeEditarTodo
     );*/
+    /// <summary>
+    /// Obtiene un lista de los post más vistos.
+    /// </summary>
+    /// <param name="count"></param>
+    /// <returns>List&lt;Post&gt;</returns>
+    Task<List<Post>> GetMostViewedAsync(int count);
 
     /// <summary>
-    /// Obtener por Id
+    /// Obtiene una lista de los comentarios más vistos.
+    /// </summary>
+    /// <param name="count"></param>
+    /// <returns>List&lt;Post&gt;</returns>
+    Task<List<Post>> GetMostCommentedAsync(int count);
+
+    /// <summary>
+    /// Obtiene post con tags y categoria
     /// </summary>
     /// <param name="id"></param>
-    /// <returns>Post</returns>
-    //Task<Post?> GetByIdAsync(int id);
+    /// <returns>Post?</returns>
+    Task<Post?> GetWithTagsAndCategoryAsync(int id);
+
     /// <summary>
-    /// 
+    /// Obtiene posts relacionados con tags
     /// </summary>
-    /// <returns></returns>
-    //Task SaveChangesAsync();
-    Task<List<Post>> GetMostViewedAsync(int count);
+    /// <param name="post"></param>
+    /// <param name="count"></param>
+    /// <returns>List&lt;Post&lt;</returns>
+    Task<List<Post>> GetRelatedByTagsAsync(Post post, int count);
+
+    /// <summary>
+    /// Obtiene posts relacionados con categoria
+    /// </summary>
+    /// <param name="post"></param>
+    /// <param name="count"></param>
+    /// <returns>List&lt;Post&gt;</returns>
+    Task<List<Post>> GetRelatedByCategoryAsync(Post post, int count);
 }

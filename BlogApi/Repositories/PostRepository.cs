@@ -257,6 +257,7 @@ public class PostRepository : GenericRepository<Post>, IPostRepository
             .Where(p => p.Usuario.Nombre.ToLower() == nombre)
             .ToListAsync();
     }
+
     /// <summary>
     /// Contamos el número total de post publicados
     /// </summary>
@@ -264,15 +265,70 @@ public class PostRepository : GenericRepository<Post>, IPostRepository
     /// <returns>List&lt;Post&gt;</returns>
     public Task<List<Post>> GetMostViewedAsync(int count) =>
         _context
-            .Posts.Where(p => p.Estado == PostEstado.Borrador)
+            .Posts.Where(p => p.Estado == PostEstado.Publicado)
             .OrderByDescending(p => p.ViewsCount)
             .Take(count)
             .ToListAsync();
 
     /// <summary>
-    /// Optine un post por Id
+    /// Cuenta el numero de comentarios de un post
+    /// </summary>
+    /// <param name="count"></param>
+    /// <returns>List&lt;Post&gt;</returns>
+    public Task<List<Post>> GetMostCommentedAsync(int count)
+    {
+        return _context
+            .Posts.Where(p => p.Estado == PostEstado.Publicado)
+            .OrderByDescending(p => p.Comentarios.Count(c => c.Estado == ComentarioEstado.Aprobado))
+            .Take(count)
+            .ToListAsync();
+    }
+
+    /// <summary>
+    /// Obtiene post con tags y categoria
     /// </summary>
     /// <param name="id"></param>
-    /// <returns>Post</returns>
-    public Task<Post?> GetByIdAsync(int id) => _context.Posts.FindAsync(id).AsTask();
+    /// <returns>Post?</returns>
+    public Task<Post?> GetWithTagsAndCategoryAsync(int id) =>
+        _context
+            .Posts.Include(p => p.Tags)
+            .Include(p => p.Categoria)
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+    /// <summary>
+    /// Obtiene posts relacionados con tags
+    /// </summary>
+    /// <param name="post"></param>
+    /// <param name="count"></param>
+    /// <returns>List&lt;Post&lt;</returns>
+
+    public Task<List<Post>> GetRelatedByTagsAsync(Post post, int count)
+    {
+        var tagIds = post.Tags.Select(t => t.Id).ToList();
+
+        return _context
+            .Posts.Where(p => p.Id != post.Id)
+            .Where(p => p.Estado == PostEstado.Publicado)
+            .Where(p => p.Tags.Any(t => tagIds.Contains(t.Id)))
+            .OrderByDescending(p => p.FechaCreacion)
+            .Take(count)
+            .ToListAsync();
+    }
+
+    /// <summary>
+    /// Obtiene posts relacionados con categoria
+    /// </summary>
+    /// <param name="post"></param>
+    /// <param name="count"></param>
+    /// <returns>List&lt;Post&gt;</returns>
+    public Task<List<Post>> GetRelatedByCategoryAsync(Post post, int count) =>
+        _context
+            .Posts.Where(p => p.Id != post.Id)
+            .Where(p => p.Estado == PostEstado.Publicado)
+            .Where(p => p.CategoriaId == post.CategoriaId)
+            .OrderByDescending(p => p.FechaCreacion)
+            .Take(count)
+            .ToListAsync();
+
+    
 }
