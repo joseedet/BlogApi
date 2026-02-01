@@ -7,6 +7,9 @@ using BlogApi.Models;
 
 namespace BlogApi.Services.Interfaces;
 
+/// <summary>
+/// Interfaz de PostServicc
+/// </summary>
 public interface IPostService
 {
     /// <summary>
@@ -146,6 +149,7 @@ public interface IPostService
     /// <param name="postId"></param>
     /// <returns></returns>
     Task IncrementViewCountAsync(int postId);
+
     /// <summary>
     /// Cuenta todos los post publicados
     /// </summary>
@@ -175,5 +179,18 @@ public interface IPostService
     /// <returns>true si es único, en caso contrario false</returns>
     //Task<bool> SlugExistsAsync(string slug);
 
+    /// <summary>
+    ///  Obtiene los posts publicados entre dos fechas
+    ///  </summary>
+    /// <param name="desde"></param>
+    /// <param name="hasta"></param>
+    /// <returns>IEnumerable&lt;Post&gt;></returns>
+    Task<IEnumerable<Post>> GetByFechaRangoAsync(DateTime? desde, DateTime? hasta);
 
+    /// <summary>
+    /// Búsqueda avanzada de post
+    /// </summary>
+    /// <param name="p"></param>
+    /// <returns>IEnumerable&lt;Post&gt;</returns>
+    Task<IEnumerable<Post>> SearchAdvancedAsync(PostSearchParams p);
 }

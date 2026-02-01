@@ -41,6 +41,11 @@ public class PostsController : ControllerBase
         return Ok(posts.Select(p => p.ToDto()));
     }
 
+    /// <summary>
+    /// Obtener por Id solo panel administración
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     // ------------------------------------------------------------
     // GET BY ID
     // ------------------------------------------------------------
@@ -56,6 +61,11 @@ public class PostsController : ControllerBase
         return Ok(post.ToDto());
     }
 
+    /// <summary>
+    /// Crea un nuevo post
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
     // ------------------------------------------------------------
     // CREATE
     // ------------------------------------------------------------
@@ -102,6 +112,12 @@ public class PostsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Actualizar post
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
     // ------------------------------------------------------------
     // UPDATE
     // ------------------------------------------------------------
@@ -147,6 +163,11 @@ public class PostsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Eliminar post
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     // ------------------------------------------------------------
     // DELETE
     // ------------------------------------------------------------
@@ -163,6 +184,12 @@ public class PostsController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Paginación
+    /// </summary>
+    /// <param name="pagina"></param>
+    /// <param name="tamano"></param>
+    /// <returns></returns>
     // ------------------------------------------------------------
     // PAGED
     // ------------------------------------------------------------
@@ -182,6 +209,11 @@ public class PostsController : ControllerBase
         );
     }
 
+    /// <summary>
+    /// Obtener post por slug
+    /// </summary>
+    /// <param name="slug"></param>
+    /// <returns></returns>
     // ------------------------------------------------------------
     // GET BY SLUG
     // ------------------------------------------------------------
@@ -195,6 +227,11 @@ public class PostsController : ControllerBase
         return Ok(post.ToDto());
     }
 
+    /// <summary>
+    /// Búsqueda
+    /// </summary>
+    /// <param name="q"></param>
+    /// <returns></returns>
     // ------------------------------------------------------------
     // SEARCH
     // ------------------------------------------------------------
@@ -208,6 +245,11 @@ public class PostsController : ControllerBase
         return Ok(posts.Select(p => p.ToDto()));
     }
 
+    /// <summary>
+    /// Obtención de post por categoría
+    /// </summary>
+    /// <param name="categoriaId"></param>
+    /// <returns></returns>
     // ------------------------------------------------------------
     // BY CATEGORY
     // ------------------------------------------------------------
@@ -225,6 +267,11 @@ public class PostsController : ControllerBase
         return Ok(posts.Select(p => p.ToDto()));
     }
 
+    /// <summary>
+    /// Obtención de post por tag
+    /// </summary>
+    /// <param name="tagId"></param>
+    /// <returns></returns>
     // ------------------------------------------------------------
     // BY TAG
     // ------------------------------------------------------------
@@ -235,6 +282,11 @@ public class PostsController : ControllerBase
         return Ok(posts.Select(p => p.ToDto()));
     }
 
+    /// <summary>
+    /// Obtiene tag por nombre
+    /// </summary>
+    /// <param name="nombre"></param>
+    /// <returns></returns>
     [HttpGet("tag/nombre/{nombre}")]
     public async Task<IActionResult> GetByTagNombre(string nombre)
     {
@@ -242,6 +294,11 @@ public class PostsController : ControllerBase
         return Ok(posts.Select(p => p.ToDto()));
     }
 
+    /// <summary>
+    /// /// Obtiene post por autor
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <returns></returns>
     // ------------------------------------------------------------
     // BY AUTHOR
     // ------------------------------------------------------------
@@ -252,6 +309,11 @@ public class PostsController : ControllerBase
         return Ok(posts.Select(p => p.ToDto()));
     }
 
+    /// <summary>
+    /// Obtencion por nombre del autor
+    /// </summary>
+    /// <param name="nombre"></param>
+    /// <returns></returns>
     [HttpGet("autor/nombre/{nombre}")]
     public async Task<IActionResult> GetByAutorNombre(string nombre)
     {
@@ -259,6 +321,12 @@ public class PostsController : ControllerBase
         return Ok(posts.Select(p => p.ToDto()));
     }
 
+    /// <summary>
+    /// Paginación por cursor
+    /// </summary>
+    /// <param name="after"></param>
+    /// <param name="limit"></param>
+    /// <returns></returns>
     // ------------------------------------------------------------
     // CURSOR PAGINATION
     // ------------------------------------------------------------
@@ -276,6 +344,11 @@ public class PostsController : ControllerBase
         );
     }
 
+    /// <summary>
+    /// Obtención de post por id parte pública
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     // PÚBLICO
     [HttpGet("{id:int}")]
     public async Task<ActionResult<PostDto>> GetById(int id)
@@ -289,22 +362,51 @@ public class PostsController : ControllerBase
         return Ok(post.ToDto());
     }
 
+    /// <summary>
+    /// Obtiene los mas vistos
+    /// </summary>
+    /// <param name="count"></param>
+    /// <returns></returns>
     [HttpGet("most-viewed")]
     public async Task<ActionResult<List<PostDto>>> GetMostViewed([FromQuery] int count = 5)
     {
         var posts = await _service.GetMostViewedAsync(count);
         return Ok(posts);
     }
+
+    /// <summary>
+    /// Obtiene los más comentados
+    /// </summary>
+    /// <param name="count"></param>
+    /// <returns></returns>
     [HttpGet("most-commented")]
     public async Task<ActionResult<List<PostDto>>> GetMostCommented([FromQuery] int count = 5)
     {
         var posts = await _service.GetMostCommentedAsync(count);
         return Ok(posts);
     }
+
+    /// <summary>
+    /// Obtiene los relacionados
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="count"></param>
+    /// <returns></returns>
     [HttpGet("{id:int}/related")]
     public async Task<ActionResult<List<PostDto>>> GetRelated(int id, [FromQuery] int count = 4)
     {
         var posts = await _service.GetRelatedPostsAsync(id, count);
         return Ok(posts);
+    }
+    /// <summary>
+    /// Búsqueda avanzada
+    /// </summary>
+    /// <param name="p"></param>
+    /// <returns></returns>
+    [HttpGet("search-advanced")]
+    public async Task<IActionResult> SearchAdvanced([FromQuery] PostSearchParams p)
+    {
+        var posts = await _service.SearchAdvancedAsync(p);
+        return Ok(posts.Select(x => x.ToDto()));
     }
 }

@@ -161,6 +161,9 @@ public interface IPostRepository : IGenericRepository<Post>
     /// <param name="slug"></param>
     /// <returns>true si es único, en caso contrario false</returns>
     Task<bool> SlugExistsAsync(string slug);
-    
-    
+
+   
+
+
+
 }

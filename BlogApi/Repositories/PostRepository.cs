@@ -114,13 +114,13 @@ public class PostRepository : GenericRepository<Post>, IPostRepository
     // ------------------------------------------------------------
     public async Task<IEnumerable<Post>> SearchAsync(string texto)
     {
+        if (string.IsNullOrWhiteSpace(texto))
+            return Enumerable.Empty<Post>();
         texto = texto.ToLower();
-
         return await _dbSet
-            .Include(p => p.Categoria)
-            .Include(p => p.Usuario)
-            .Include(p => p.Tags)
+            .Where(p => p.Estado == PostEstado.Publicado)
             .Where(p => p.Titulo.ToLower().Contains(texto) || p.Contenido.ToLower().Contains(texto))
+            .OrderByDescending(p => p.FechaCreacion)
             .ToListAsync();
     }
 

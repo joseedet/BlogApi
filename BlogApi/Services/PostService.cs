@@ -5,6 +5,7 @@ using BlogApi.Repositories;
 using BlogApi.Repositories.Interfaces;
 using BlogApi.Services.Interfaces;
 using BlogApi.Utils;
+using BlogApi.Utils.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Services;
@@ -291,6 +292,7 @@ public class PostService : IPostService
                 || p.Usuario.Nombre.ToLower().Contains(texto)
                 || p.Tags.Any(t => t.Nombre.ToLower().Contains(texto))
             )
+            .OrderByDescending(p => p.FechaCreacion)
             .ToListAsync();
     }
 
@@ -401,7 +403,7 @@ public class PostService : IPostService
     /// Obtiene los posts por autor
     /// </summary>
     /// <param name="usuarioId"></param>
-    /// <returns>IEnumerable<Post></returns>
+    /// <returns>IEnumerable&lt;Post&gt;</returns>
     public async Task<IEnumerable<Post>> GetByAutorAsync(int usuarioId)
     {
         return await _repo
@@ -417,7 +419,7 @@ public class PostService : IPostService
     /// Obtiene los posts por nombre de autor
     /// </summary>
     /// <param name="nombre"></param>
-    /// <returns>IEnumerable<Post></returns>
+    /// <returns>IEnumerable&lt;Post&lt;</returns>
     public async Task<IEnumerable<Post>> GetByAutorNombreAsync(string nombre)
     {
         nombre = nombre.ToLower().Trim();
@@ -590,7 +592,7 @@ public class PostService : IPostService
 
     /// <summary>
     /// Los comentarios más vistos de un post
-    /// /// </summary>
+    /// </summary>
     /// <param name="count"></param>
     /// <returns>List&lt;PostDto&gt;</returns>
     public async Task<List<PostDto>> GetMostCommentedAsync(int count)
@@ -637,5 +639,95 @@ public class PostService : IPostService
         }
 
         return slug;
+    }
+
+    /// <summary>
+    /// Obtiene los posts publicados entre dos fechas
+    /// </summary>
+    /// <param name="desde"></param>
+    /// <param name="hasta"></param>
+    /// <returns>IEnumerable &lt;Post&gt;</returns>
+    public async Task<IEnumerable<Post>> GetByFechaRangoAsync(DateTime? desde, DateTime? hasta)
+    {
+        var query = _repo.Query();
+
+        if (desde.HasValue)
+            query = query.Where(p => p.FechaCreacion >= desde.Value.Date);
+
+        if (hasta.HasValue)
+            query = query.Where(p => p.FechaCreacion < hasta.Value.Date.AddDays(1));
+
+        return await query
+            .Include(p => p.Categoria)
+            .Include(p => p.Usuario)
+            .Include(p => p.Tags)
+            .ToListAsync();
+    }
+
+    /// <summary>
+    /// Búsqueda avanzada de post
+    /// </summary>
+    /// <param name="p"></param>
+    /// <returns>IEnumerable&lt;Post&gt;</returns>
+    public async Task<IEnumerable<Post>> SearchAdvancedAsync(PostSearchParams p)
+    {
+        var query = _repo
+            .Query()
+            .Include(p => p.Categoria)
+            .Include(p => p.Usuario)
+            .Include(p => p.Tags)
+            .AsQueryable();
+
+        // Filtro por estado
+        if (p.Estado.HasValue)
+            query = query.Where(x => x.Estado == p.Estado.Value);
+        else
+            query = query.Where(x => x.Estado == PostEstado.Publicado);
+
+        // Filtro por texto
+        if (!string.IsNullOrWhiteSpace(p.Texto))
+        {
+            var texto = p.Texto.ToLower().Trim();
+
+            query = query.Where(x =>
+                x.Titulo.ToLower().Contains(texto)
+                || x.Contenido.ToLower().Contains(texto)
+                || x.Categoria.Nombre.ToLower().Contains(texto)
+                || x.Usuario.Nombre.ToLower().Contains(texto)
+                || x.Tags.Any(t => t.Nombre.ToLower().Contains(texto))
+            );
+        }
+
+        // Filtro por categoría (id)
+        if (p.CategoriaId.HasValue)
+            query = query.Where(x => x.CategoriaId == p.CategoriaId.Value);
+
+        // Filtro por categoría (slug)
+        if (!string.IsNullOrWhiteSpace(p.CategoriaSlug))
+            query = query.Where(x => x.Categoria.Slug == p.CategoriaSlug);
+
+        // Filtro por autor (id)
+        if (p.AutorId.HasValue)
+            query = query.Where(x => x.UsuarioId == p.AutorId.Value);
+
+        // Filtro por autor (nombre)
+        if (!string.IsNullOrWhiteSpace(p.AutorNombre))
+        {
+            var nombre = p.AutorNombre.ToLower().Trim();
+            query = query.Where(x => x.Usuario.Nombre.ToLower().Contains(nombre));
+        }
+
+        // Filtro por fecha desde
+        if (p.Desde.HasValue)
+            query = query.Where(x => x.FechaCreacion >= p.Desde.Value.Date);
+
+        // Filtro por fecha hasta
+        if (p.Hasta.HasValue)
+            query = query.Where(x => x.FechaCreacion < p.Hasta.Value.Date.AddDays(1));
+
+        // Orden por fecha
+        query = query.OrderByDescending(x => x.FechaCreacion);
+
+        return await query.ToListAsync();
     }
 }
