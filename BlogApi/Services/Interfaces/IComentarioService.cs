@@ -58,5 +58,13 @@ public interface IComentarioService
     /// </summary>
     Task<bool> EliminarComentarioAsync(int comentarioId, int usuarioId, bool puedeBorrarTodo);
 
+    /// <summary>
+    /// Obtiene comentarios pendientes paginados
+    /// </summary>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <returns>PaginadoResultado&lt;Comentario&gt;</returns>
     Task<PaginacionResultado<Comentario>> GetPendientesPaginadoAsync(int page, int pageSize);
+
+   
 }

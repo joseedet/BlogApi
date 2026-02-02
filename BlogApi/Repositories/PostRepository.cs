@@ -338,4 +338,21 @@ public class PostRepository : GenericRepository<Post>, IPostRepository
     {
         return _context.Posts.AnyAsync(p => p.Slug == slug);
     }
+
+    /// <summary>
+    /// Cuenta el numero de post por categoría
+    /// </summary>
+    /// <returns>Entero</returns>
+    public Task<int> CountAsync()
+    {
+        return _context.Posts.CountAsync();
+    }
+    public Task<List<Post>> GetRecentPostsAsync(int limit)
+    {
+        return _context
+            .Posts.Where(p => p.Estado == PostEstado.Publicado)
+            .OrderByDescending(p => p.FechaCreacion)
+            .Take(limit)
+            .ToListAsync();
+    }
 }

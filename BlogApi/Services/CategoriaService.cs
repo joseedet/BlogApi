@@ -1,10 +1,13 @@
 using BlogApi.Models;
-using BlogApi.Repositories;
 using BlogApi.Repositories.Interfaces;
 using BlogApi.Services.Interfaces;
+using BlogApi.Utils;
 
 namespace BlogApi.Services;
 
+/// <summary>
+/// Servicio de Categoría.
+/// </summary>
 public class CategoriaService : ICategoriaService
 {
     private readonly ICategoriaRepository _repo;
@@ -22,15 +25,13 @@ public class CategoriaService : ICategoriaService
     /// <summary>
     /// Obtiene todas las categorías
     /// </summary>
-    /// <returns>Lista de categorías</returns>
-    /// </summary>
+    /// <returns>IEnumerable&lt;Categoria&gt;</returns>
     public async Task<IEnumerable<Categoria>> GetAllAsync() => await _repo.GetAllAsync();
 
     /// <summary>
     /// Obtiene una categoría por su ID </summary>
     /// <param name="id"></param>
     /// <returns>Categoría o null si no existe</returns>
-    /// </summary>
     public async Task<Categoria?> GetByIdAsync(int id) => await _repo.GetByIdAsync(id);
 
     /// <summary>
@@ -38,9 +39,10 @@ public class CategoriaService : ICategoriaService
     /// </summary>
     /// <param name="categoria"></param>
     /// <returns>Categoría creada</returns>
-    /// </summary>
     public async Task<Categoria> CreateAsync(Categoria categoria)
     {
+        categoria.Slug = await GenerateUniqueSlugAsync(categoria.Nombre);
+
         await _repo.AddAsync(categoria);
         await _repo.SaveChangesAsync();
         return categoria;
@@ -52,7 +54,6 @@ public class CategoriaService : ICategoriaService
     /// <param name="id"></param>
     /// <param name="categoria"></param>
     /// <returns>True si se actualizó correctamente, false en caso contrario</returns>
-    /// </summary>
     public async Task<bool> UpdateAsync(int id, Categoria categoria)
     {
         var existing = await _repo.GetByIdAsync(id);
@@ -68,8 +69,7 @@ public class CategoriaService : ICategoriaService
     /// Elimina una categoría por su ID
     /// </summary>
     /// <param name="id"></param>
-    /// <returns>True si se eliminó correctamente, false en caso contrario</returns>
-    /// </summary>
+    /// <returns>Devuelve verdadero si se eliminó correctamente, falso en caso contrario</returns>
     public async Task<bool> DeleteAsync(int id)
     {
         var categoria = await _repo.GetByIdAsync(id);
@@ -78,5 +78,30 @@ public class CategoriaService : ICategoriaService
         _repo.Remove(categoria);
         await _repo.SaveChangesAsync();
         return true;
+    }
+
+    private async Task<string> GenerateUniqueSlugAsync(string nombre)
+    {
+        var baseSlug = SlugHelper.GenerateSlug(nombre);
+        var slug = baseSlug;
+        int counter = 1;
+
+        while (await _repo.SlugExistsAsync(slug))
+        {
+            slug = $"{baseSlug}-{counter}";
+            counter++;
+        }
+
+        return slug;
+    }
+
+    /// <summary>
+    /// Contador de post por categoría
+    /// </summary>
+    /// <param name="categoriaId"></param>
+    /// <returns>int</returns>
+    public async Task<int> GetPostCountAsync(int categoriaId)
+    {
+        return await _repo.CountPostsAsync(categoriaId);
     }
 }

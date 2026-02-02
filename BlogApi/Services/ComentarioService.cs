@@ -5,6 +5,7 @@ using BlogApi.Hubs;
 using BlogApi.Models;
 using BlogApi.Repositories.Interfaces;
 using BlogApi.Services.Interfaces;
+using BlogApi.Utils.Enums;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
@@ -102,7 +103,7 @@ public class ComentarioService : IComentarioService
     public async Task<Comentario> CrearComentarioAsync(Comentario comentario)
     {
         comentario.FechaCreacion = DateTime.UtcNow;
-        comentario.Estado = "Pendiente";
+        comentario.Estado = ComentarioEstado.Pendiente;
 
         await _repo.AddAsync(comentario);
         await _repo.SaveChangesAsync();
@@ -185,7 +186,10 @@ public class ComentarioService : IComentarioService
         var comentario = await _repo.GetByIdAsync(id);
         if (comentario == null)
             return false;
-        comentario.Estado = estado;
+        // Convertir string → enum
+        if (!Enum.TryParse<ComentarioEstado>(estado, true, out var nuevoEstado))
+            return false;
+        comentario.Estado = nuevoEstado;
         _repo.Update(comentario);
         await _repo.SaveChangesAsync();
         return true;
@@ -237,7 +241,7 @@ public class ComentarioService : IComentarioService
     {
         return await _repo
             .Query()
-            .Where(c => c.Estado == estado)
+            .Where(c => c.Estado == ComentarioEstado.Pendiente)
             .Include(c => c.Usuario)
             .Include(c => c.Respuestas)
             .ToListAsync();
@@ -255,6 +259,12 @@ public class ComentarioService : IComentarioService
         return await _repo.Query().FirstOrDefaultAsync(c => c.Id == id);
     }
 
+    /// <summary>
+    /// Pagina de pendientes
+    /// </summary>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <returns>PaginacionResultado&lt;Comentario&gt;</returns>
     public async Task<PaginacionResultado<Comentario>> GetPendientesPaginadoAsync(
         int page,
         int pageSize
@@ -262,7 +272,7 @@ public class ComentarioService : IComentarioService
     {
         var query = _repo
             .Query()
-            .Where(c => c.Estado == "Pendiente")
+            .Where(c => c.Estado == ComentarioEstado.Pendiente)
             .OrderByDescending(c => c.FechaCreacion);
 
         var total = await query.CountAsync();

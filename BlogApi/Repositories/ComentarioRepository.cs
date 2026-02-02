@@ -63,4 +63,26 @@ public class ComentarioRepository : GenericRepository<Comentario>, IComentarioRe
     {
         return _context.Comentarios.AsQueryable();
     }
+
+    /// <summary>
+    /// Cuenta
+    /// </summary>
+    /// <returns></returns>
+    public Task<int> CountAsync()
+    {
+        return _context.Comentarios.CountAsync();
+    }
+
+    /// <summary>
+    /// Comentarios recientes
+    /// </summary>
+    /// <param name="limit"></param>
+    /// <returns>List&lt;Comentario&gt;</returns>
+    public Task<List<Comentario>> GetRecentComentariosAsync(int limit)
+    {
+        return _context
+            .Comentarios.OrderByDescending(c => c.FechaCreacion)
+            .Take(limit)
+            .ToListAsync();
+    }
 }

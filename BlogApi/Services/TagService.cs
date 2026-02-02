@@ -1,6 +1,7 @@
 using BlogApi.Models;
 using BlogApi.Repositories;
 using BlogApi.Services.Interfaces;
+using BlogApi.Utils;
 
 namespace BlogApi.Services;
 
@@ -43,10 +44,12 @@ public class TagService : ITagService
     /// Crea un nuevo tag
     /// </summary>
     /// <param name="tag"></param>
-    /// <returns>Tag creado</returns>
+    /// <returns>Tag</returns>
     /// </summary>
     public async Task<Tag> CreateAsync(Tag tag)
     {
+        tag.Slug = await GenerateUniqueSlugAsync(tag.Nombre);
+
         await _repo.AddAsync(tag);
         await _repo.SaveChangesAsync();
         return tag;
@@ -84,5 +87,20 @@ public class TagService : ITagService
         _repo.Remove(existing);
         await _repo.SaveChangesAsync();
         return true;
+    }
+
+    private async Task<string> GenerateUniqueSlugAsync(string nombre)
+    {
+        var baseSlug = SlugHelper.GenerateSlug(nombre);
+        var slug = baseSlug;
+        int counter = 1;
+
+        while (await _repo.SlugExistsAsync(slug))
+        {
+            slug = $"{baseSlug}-{counter}";
+            counter++;
+        }
+
+        return slug;
     }
 }
