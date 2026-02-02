@@ -80,6 +80,8 @@ builder.Services.AddScoped<IEmailSettingsService, EmailSettingsService>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IStatsService, EstadisticasService>();
 builder.Services.AddScoped<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
+builder.Services.AddScoped<IAuthorizationServiceBlog, AuthorizationService>();
+
 
 
 // Configuración de autenticación JWT

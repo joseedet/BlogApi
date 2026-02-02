@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
 namespace BlogApi.Controllers;
-
+/// <summary>
+/// Like
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 [Authorize] // Requiere JWT

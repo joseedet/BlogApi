@@ -44,7 +44,7 @@ public class Usuario
     /// <summary>
     /// Url de la imagen
     /// </summary>
-    [Required]
+    
     public string AvatarUrl { get; set; } = string.Empty;
 
     // Recuperación de contraseña

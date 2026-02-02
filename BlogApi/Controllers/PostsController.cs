@@ -259,6 +259,11 @@ public class PostsController : ControllerBase
         var posts = await _service.GetByCategoriaAsync(categoriaId);
         return Ok(posts.Select(p => p.ToDto()));
     }
+    /// <summary>
+    /// Categoia slug
+    /// </summary>
+    /// <param name="slug"></param>
+    /// <returns></returns>
 
     [HttpGet("categoria/slug/{slug}")]
     public async Task<IActionResult> GetByCategoriaSlug(string slug)

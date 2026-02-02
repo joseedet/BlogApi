@@ -226,4 +226,40 @@ public class UsuarioService : IUsuarioService
 
         return true;
     }
+
+    /// <summary>
+    /// Subimos avatar
+    /// </summary>
+    /// <param name="userId"></param>
+    /// /// <param name="avatar"></param>
+    /// <returns>string</returns>
+    /// <exception cref="Exception"></exception>
+    public async Task<string> SubirAvatarAsync(int userId, IFormFile avatar)
+    {
+        var usuario = await _repo.GetByIdAsync(userId);
+        if (usuario == null)
+            return null;
+
+        // Validaciones de seguridad
+        var permitidos = new[] { "image/jpeg", "image/png", "image/webp" };
+        if (!permitidos.Contains(avatar.ContentType))
+            throw new Exception("Formato de imagen no permitido.");
+
+        if (avatar.Length > 2 * 1024 * 1024)
+            throw new Exception("El avatar no puede superar los 2MB.");
+
+        // Guardar archivo
+        var fileName = $"{Guid.NewGuid()}{Path.GetExtension(avatar.FileName)}";
+        var path = Path.Combine("wwwroot/avatars", fileName);
+
+        using (var stream = new FileStream(path, FileMode.Create))
+            await avatar.CopyToAsync(stream);
+
+        usuario.AvatarUrl = $"/avatars/{fileName}";
+
+        _repo.Update(usuario);
+        await _repo.SaveChangesAsync();
+
+        return usuario.AvatarUrl;
+    }
 }

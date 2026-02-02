@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using BlogApi.DTO;
 using BlogApi.Mapper;
 using BlogApi.Models;
@@ -47,4 +48,45 @@ public class UsuariosController : ControllerBase
      } */
 
     // El login lo haremos cuando implementemos JWT
+
+    /// <summary>
+    /// Actualiza el perfil
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPut("perfil")]
+    public async Task<IActionResult> ActualizarPerfil([FromBody] ActualizarPerfilDto dto)
+    {
+        var ok = await _service.ActualizarPerfilAsync(GetUserId(), dto);
+        return ok ? Ok("Perfil actualizado") : BadRequest("No se pudo actualizar el perfil");
+    }
+
+    /// <summary>
+    /// Cambia el password
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPut("cambiar-password")]
+    public async Task<IActionResult> CambiarPassword([FromBody] CambiarPasswordDto dto)
+    {
+        var ok = await _service.CambiarPasswordAsync(GetUserId(), dto);
+        return ok ? Ok("Contraseña actualizada") : BadRequest("Contraseña actual incorrecta");
+    }
+
+    /// <summary>
+    /// Sube el avatar
+    /// </summary>
+    /// <param name="avatar"></param>
+    /// <returns></returns>
+    [HttpPost("avatar")]
+    public async Task<IActionResult> SubirAvatar([FromForm] IFormFile avatar)
+    {
+        var url = await _service.SubirAvatarAsync(GetUserId(), avatar);
+        return Ok(new { AvatarUrl = url });
+    }
+
+    private int GetUserId()
+    {
+        return int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+    }
 }

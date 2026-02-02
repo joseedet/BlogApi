@@ -42,4 +42,29 @@ public interface IUsuarioService
     /// <param name="dto"></param>
     /// <returns>Resultado del intento de login</returns>
     Task<LoginResult> LoginAsync(LoginDto dto);
+
+    /// <summary>
+    /// Actualiza el perfil
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="dto"></param>
+    /// <returns>string</returns>
+    Task<bool> ActualizarPerfilAsync(int userId, ActualizarPerfilDto dto);
+
+    /// <summary>
+    /// Cambiar contraseña
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="dto"></param>
+    /// <returns>Devuelve verdadero si se ha podido cambiar en caso contrario falso</returns>
+    Task<bool> CambiarPasswordAsync(int userId, CambiarPasswordDto dto);
+
+    /// <summary>
+    /// Subimos avatar
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="avatar"></param>
+    /// <returns>string</returns>
+    /// <exception cref="Exception"></exception>
+    Task<string> SubirAvatarAsync(int userId, IFormFile avatar);
 }
