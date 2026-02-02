@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,6 +22,11 @@ public class Usuario
     public string Nombre { get; set; } = string.Empty;
 
     /// <summary>
+    /// Apellidos del usuario.
+    /// </summary>
+    public string Apellidos { get; set; } = string.Empty;
+
+    /// <summary>
     /// Correo electrónico del usuario.
     /// </summary>
     public string Email { get; set; } = string.Empty;
@@ -34,6 +40,12 @@ public class Usuario
     /// Fecha de registro del usuario.
     /// </summary>
     public DateTime FechaRegistro { get; set; }
+
+    /// <summary>
+    /// Url de la imagen
+    /// </summary>
+    [Required]
+    public string AvatarUrl { get; set; } = string.Empty;
 
     // Recuperación de contraseña
     /// <summary>

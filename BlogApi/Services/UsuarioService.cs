@@ -4,6 +4,7 @@ using BlogApi.DTO;
 using BlogApi.Models;
 using BlogApi.Repositories;
 using BlogApi.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Services;
@@ -18,6 +19,8 @@ public class UsuarioService : IUsuarioService
     /// </summary>
     private readonly IUsuarioRepository _repo;
 
+    private readonly IPasswordHasher<Usuario> _passwordHasher;
+
     /// <summary>
     /// Repositorio de usuarios
     /// </summary>
@@ -28,10 +31,16 @@ public class UsuarioService : IUsuarioService
     /// </summary>
     /// <param name="repo"></param>
     /// <param name="context"></param>
-    public UsuarioService(IUsuarioRepository repo, BlogDbContext context)
+    /// <param name="passwordHasher"></param>
+    public UsuarioService(
+        IUsuarioRepository repo,
+        BlogDbContext context,
+        IPasswordHasher<Usuario> passwordHasher
+    )
     {
         _repo = repo;
         _context = context;
+        _passwordHasher = passwordHasher;
     }
 
     /// <summary>
@@ -159,5 +168,62 @@ public class UsuarioService : IUsuarioService
         await _context.SaveChangesAsync();
 
         return LoginResult.Ok(usuario);
+    }
+
+    /// <summary>
+    /// Actualizar el perfil
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="dto"></param>
+    /// <returns>Devuelve verdadero si se ha podido o falso en caso contrario</returns>
+    public async Task<bool> ActualizarPerfilAsync(int userId, ActualizarPerfilDto dto)
+    {
+        var usuario = await _repo.GetByIdAsync(userId);
+        if (usuario == null)
+            return false;
+
+        // Validación: email único
+        if (await _repo.EmailExistsAsync(dto.Email, userId))
+            return false;
+
+        usuario.Nombre = dto.Nombre;
+        usuario.Apellidos = dto.Apellidos;
+        usuario.Email = dto.Email;
+
+        _repo.Update(usuario);
+        await _repo.SaveChangesAsync();
+
+        return true;
+    }
+
+    /// <summary>
+    /// Cambio de contraseña
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="dto"></param>
+    /// <returns>Devuelve verdadero si se ha podido cambiar en caso contrario devuelve falso.</returns>
+    public async Task<bool> CambiarPasswordAsync(int userId, CambiarPasswordDto dto)
+    {
+        var usuario = await _repo.GetByIdAsync(userId);
+        if (usuario == null)
+            return false;
+
+        // Validar contraseña actual
+        var resultado = _passwordHasher.VerifyHashedPassword(
+            usuario,
+            usuario.PasswordHash,
+            dto.PasswordActual
+        );
+
+        if (resultado == PasswordVerificationResult.Failed)
+            return false;
+
+        // Generar nuevo hash
+        usuario.PasswordHash = _passwordHasher.HashPassword(usuario, dto.NuevaPassword);
+
+        _repo.Update(usuario);
+        await _repo.SaveChangesAsync();
+
+        return true;
     }
 }

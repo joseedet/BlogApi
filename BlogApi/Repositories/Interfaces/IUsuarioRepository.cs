@@ -26,4 +26,12 @@ public interface IUsuarioRepository : IGenericRepository<Usuario>
     /// <param name="limit"></param>
     /// <returns>List&lt;Usuario&gt;</returns>
     Task<List<Usuario>> GetRecentUsuariosAsync(int limit);
+
+    /// <summary>
+    /// Existe Email
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="excludeUserId"></param>
+    /// <returns>Verdadero si existe en caso contrario falso</returns>
+    Task<bool> EmailExistsAsync(string email, int excludeUserId);
 }

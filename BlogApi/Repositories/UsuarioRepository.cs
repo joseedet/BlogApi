@@ -45,4 +45,15 @@ public class UsuarioRepository : GenericRepository<Usuario>, IUsuarioRepository
     {
         return _context.Usuarios.OrderByDescending(u => u.FechaRegistro).Take(limit).ToListAsync();
     }
+
+    /// <summary>
+    /// ¿Existe Email?
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="excludeUserId"></param>
+    /// <returns>Devuelve verdadero si existe o falso en caso contrario</returns>
+    public Task<bool> EmailExistsAsync(string email, int excludeUserId)
+    {
+        return _context.Usuarios.AnyAsync(u => u.Email == email && u.Id != excludeUserId);
+    }
 }

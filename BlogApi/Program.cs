@@ -12,6 +12,7 @@ using BlogApi.Services.Interfaces;
 using BlogApi.Services.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -21,7 +22,6 @@ builder.WebHost.ConfigureKestrel(options =>
 {
     options.Limits.MaxRequestBodySize = 10 * 1024 * 1024; // 10 MB
 });
-
 
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
@@ -46,6 +46,7 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
 /*builder.Services.AddSingleton(resolver =>
     resolver.GetRequiredService<IOptions<AppSettings>>().Value
 );*/
@@ -78,8 +79,7 @@ builder.Services.AddScoped<IBannerService, BannerService>();
 builder.Services.AddScoped<IEmailSettingsService, EmailSettingsService>();
 builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IStatsService, EstadisticasService>();
-
-
+builder.Services.AddScoped<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
 
 
 // Configuración de autenticación JWT
