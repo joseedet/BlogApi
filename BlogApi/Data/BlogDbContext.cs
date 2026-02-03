@@ -91,6 +91,11 @@ public class BlogDbContext : DbContext
     public DbSet<UserNotificationPreferences> UserNotificationPreferences { get; set; }
 
     /// <summary>
+    /// Token para resetear la contraseña.
+    /// </summary>
+    public DbSet<PasswordResetToken> PasswordResetTokens { get; set; } = null!;
+
+    /// <summary>
     ///  Configuración de las relaciones entre entidades
     /// </summary>
     /// <param name="modelBuilder"></param>

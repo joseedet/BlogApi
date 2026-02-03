@@ -1,6 +1,8 @@
 {
   "dotnet.defaultSolution": "BlogAPI+.sln",
   "cSpell.words": [
+    "devolvemos",
+    "mismo",
     "relaciones"
   ],
   "docomment.activateOnEnter": true

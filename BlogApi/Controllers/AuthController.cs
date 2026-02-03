@@ -1,6 +1,7 @@
 using BlogApi.DTO;
 using BlogApi.Services;
 using BlogApi.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers;
@@ -15,6 +16,7 @@ public class AuthController : ControllerBase
     private readonly IUsuarioService _usuarioService;
     private readonly ITokenService _tokenService;
     private readonly IRefreshTokenService _refreshTokenService;
+    private readonly IPasswordResetService _passwordResetService;
 
     //private readonly JwtService _jwtService;
 
@@ -24,15 +26,18 @@ public class AuthController : ControllerBase
     /// <param name="usuarioService"></param>
     /// <param name="tokenService"></param>
     /// <param name="refreshTokenService"></param>
+    /// <param name="passwordResetService"></param>
     public AuthController(
         IUsuarioService usuarioService,
         ITokenService tokenService,
-        IRefreshTokenService refreshTokenService
+        IRefreshTokenService refreshTokenService,
+        IPasswordResetService passwordResetService
     )
     {
         _usuarioService = usuarioService;
         _tokenService = tokenService;
         _refreshTokenService = refreshTokenService;
+        _passwordResetService = passwordResetService;
     }
 
     /// <summary>
@@ -168,5 +173,23 @@ public class AuthController : ControllerBase
         await _refreshTokenService.GuardarRefreshTokenAsync(nuevoRefreshToken);
 
         return Ok(new { token = nuevoAccessToken, refreshToken = nuevoRefreshToken.Token });
+    }
+
+    /// <summary>
+    /// Solicitud para la recuperación de la contraseña.
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPost("forgot-password")]
+    [AllowAnonymous]
+    public async Task<IActionResult> SolicitarRecuperacionPassword(
+        [FromBody] SolicitarRecuperacionPasswordDto dto
+    )
+    {
+        if (string.IsNullOrWhiteSpace(dto.Email))
+            return BadRequest("Email es obligatorio");
+        await _passwordResetService.SolicitarRecuperacionAsync(dto.Email);
+        // Siempre devolvemos lo mismo, exista o no el email
+        return Ok("Si el email existe, se ha enviado un enlace de recuperación");
     }
 }

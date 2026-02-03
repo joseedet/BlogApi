@@ -30,6 +30,11 @@ public class PostsController : ControllerBase
         _notificaciones = notificaciones;
     }
 
+    /// <summary>
+    /// Obtener todos
+    /// </summary>
+    /// <returns></returns>
+
     // ------------------------------------------------------------
     // GET ALL
     // ------------------------------------------------------------

@@ -81,6 +81,8 @@ builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 builder.Services.AddScoped<IStatsService, EstadisticasService>();
 builder.Services.AddScoped<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
 builder.Services.AddScoped<IAuthorizationServiceBlog, AuthorizationService>();
+builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
+
 
 
 

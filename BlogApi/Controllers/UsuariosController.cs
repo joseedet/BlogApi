@@ -9,6 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers;
 
+/// <summary>
+/// Controlador de usuario
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class UsuariosController : ControllerBase
@@ -16,12 +19,22 @@ public class UsuariosController : ControllerBase
     private readonly IUsuarioService _service;
     private readonly ITokenService _tokenService;
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="service"></param>
+    /// <param name="tokenService"></param>
     public UsuariosController(IUsuarioService service, ITokenService tokenService)
     {
         _service = service;
         _tokenService = tokenService;
     }
 
+    /// <summary>
+    /// Registro usuario
+    /// </summary>
+    /// <param name="usuario"></param>
+    /// <returns></returns>
     [Authorize(Roles = "Administrador")]
     [HttpPost("registro")]
     public async Task<IActionResult> Registrar(Usuario usuario)
@@ -54,6 +67,7 @@ public class UsuariosController : ControllerBase
     /// </summary>
     /// <param name="dto"></param>
     /// <returns></returns>
+    [Authorize]
     [HttpPut("perfil")]
     public async Task<IActionResult> ActualizarPerfil([FromBody] ActualizarPerfilDto dto)
     {
@@ -66,6 +80,7 @@ public class UsuariosController : ControllerBase
     /// </summary>
     /// <param name="dto"></param>
     /// <returns></returns>
+    [Authorize]
     [HttpPut("cambiar-password")]
     public async Task<IActionResult> CambiarPassword([FromBody] CambiarPasswordDto dto)
     {

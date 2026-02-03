@@ -17,4 +17,12 @@ public interface IEmailService
     /// <param name="message"></param>
     /// <returns>Task</returns>
     Task EnviarAsync(string toEmail, string subject, string message);
+
+    /// <summary>
+    /// Envia email con enlace para la recuperación de la contraseña
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="urlRecuperacion"></param>
+    /// <returns></returns>
+    Task EnviarEmailRecuperacionPasswordAsync(string email, string urlRecuperacion);
 }
