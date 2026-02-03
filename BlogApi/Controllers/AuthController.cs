@@ -17,6 +17,7 @@ public class AuthController : ControllerBase
     private readonly ITokenService _tokenService;
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly IPasswordResetService _passwordResetService;
+    private readonly ILogger _logger;
 
     //private readonly JwtService _jwtService;
 
@@ -31,13 +32,15 @@ public class AuthController : ControllerBase
         IUsuarioService usuarioService,
         ITokenService tokenService,
         IRefreshTokenService refreshTokenService,
-        IPasswordResetService passwordResetService
+        IPasswordResetService passwordResetService,
+        ILogger logger
     )
     {
         _usuarioService = usuarioService;
         _tokenService = tokenService;
         _refreshTokenService = refreshTokenService;
         _passwordResetService = passwordResetService;
+        _logger = logger;
     }
 
     /// <summary>
@@ -200,30 +203,45 @@ public class AuthController : ControllerBase
     [HttpPost("validate-reset-token")]
     public async Task<IActionResult> ValidateResetToken([FromBody] ValidateResetTokenDto dto)
     {
+        if (string.IsNullOrWhiteSpace(dto.Email))
+            return BadRequest(new { message = "Email es obligatorio" });
+        if (string.IsNullOrWhiteSpace(dto.Token))
+            return BadRequest(new { message = "Token es obligatorio" });
         var isValid = await _passwordResetService.ValidarTokenAsync(dto.Email, dto.Token);
-
         if (!isValid)
+        {
+            _logger.LogWarning("Validación de token fallida para {Email}", dto.Email);
             return BadRequest(new { message = "Token inválido o expirado" });
-
+        }
+        _logger.LogInformation("Token válido para {Email}", dto.Email);
         return Ok(new { message = "Token válido" });
     }
 
     /// <summary>
-    /// Resetear contraseña
+    /// Resetear contraseña + token
     /// </summary>
     /// <param name="dto"></param>
     /// <returns></returns>
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
     {
+        if (string.IsNullOrWhiteSpace(dto.Email))
+            return BadRequest(new { message = "Email es obligatorio" });
+        if (string.IsNullOrWhiteSpace(dto.Token))
+            return BadRequest(new { message = "Token es obligatorio" });
+        if (string.IsNullOrWhiteSpace(dto.NuevaPassword))
+            return BadRequest(new { message = "La nueva contraseña es obligatoria" });
         var ok = await _passwordResetService.ResetPasswordAsync(
             dto.Email,
             dto.Token,
             dto.NuevaPassword
         );
-
-        return ok
-            ? Ok("Contraseña actualizada correctamente")
-            : BadRequest("Token inválido o expirado");
+        if (!ok)
+        {
+            _logger.LogWarning("Intento fallido de restablecer contraseña para {Email}", dto.Email);
+            return BadRequest(new { message = "Token inválido o expirado" });
+        }
+        _logger.LogInformation("Contraseña restablecida correctamente para {Email}", dto.Email);
+        return Ok(new { message = "Contraseña actualizada correctamente" });
     }
 }
