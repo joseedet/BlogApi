@@ -192,4 +192,38 @@ public class AuthController : ControllerBase
         // Siempre devolvemos lo mismo, exista o no el email
         return Ok("Si el email existe, se ha enviado un enlace de recuperación");
     }
+
+    /// <summary>
+    /// Valida el Token
+    /// </summary>
+    ///<param name="dto"></param>
+    [HttpPost("validate-reset-token")]
+    public async Task<IActionResult> ValidateResetToken([FromBody] ValidateResetTokenDto dto)
+    {
+        var isValid = await _passwordResetService.ValidarTokenAsync(dto.Email, dto.Token);
+
+        if (!isValid)
+            return BadRequest(new { message = "Token inválido o expirado" });
+
+        return Ok(new { message = "Token válido" });
+    }
+
+    /// <summary>
+    /// Resetear contraseña
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+    {
+        var ok = await _passwordResetService.ResetPasswordAsync(
+            dto.Email,
+            dto.Token,
+            dto.NuevaPassword
+        );
+
+        return ok
+            ? Ok("Contraseña actualizada correctamente")
+            : BadRequest("Token inválido o expirado");
+    }
 }

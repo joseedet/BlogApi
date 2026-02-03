@@ -11,7 +11,7 @@ namespace BlogApi.Services;
 /// <summary>
 /// Implementación de la interfaz IPasswordResetService
 /// </summary>
-public class PasswordResetService:IPasswordResetService
+public class PasswordResetService : IPasswordResetService
 {
     private readonly BlogDbContext _context;
     private readonly IEmailService _emailService; // ya lo tienes
@@ -39,7 +39,6 @@ public class PasswordResetService:IPasswordResetService
     /// </summary>
     /// <param name="email"></param>
     /// <returns></returns>
-
     public async Task SolicitarRecuperacionAsync(string email)
     { // 1. Buscar usuario por email
         var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
@@ -86,5 +85,81 @@ public class PasswordResetService:IPasswordResetService
         var bytes = Encoding.UTF8.GetBytes(token);
         var hash = sha256.ComputeHash(bytes);
         return Convert.ToBase64String(hash);
+    }
+
+    /// <summary>
+    /// Valida el Token
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="tokenPlano"></param>
+    /// <returns>Devuelve verdadero si está ok en caso contrario falso</returns>
+    public async Task<bool> ValidarTokenAsync(string email, string tokenPlano)
+    {
+        var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+
+        if (usuario == null)
+            return false;
+
+        var token = await _context
+            .PasswordResetTokens.Where(t => t.UsuarioId == usuario.Id && t.Usado == null)
+            .OrderByDescending(t => t.Creado)
+            .FirstOrDefaultAsync();
+
+        if (token == null)
+            return false;
+
+        if (token.Expira < DateTime.UtcNow)
+            return false;
+
+        var hash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(tokenPlano)));
+
+        if (hash != token.TokenHash)
+            return false;
+
+        return true;
+    }
+
+    /// <summary>
+    /// Resetear contraseña
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="tokenPlano"></param>
+    /// <param name="nuevaPassword"></param>
+    /// <returns>Devuelve verdadero si se ha podido en caso contrario falso</returns>
+    public async Task<bool> ResetPasswordAsync(
+        string email,
+        string tokenPlano,
+        string nuevaPassword
+    )
+    {
+        var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+        if (usuario == null)
+            return false;
+
+        var token = await _context
+            .PasswordResetTokens.Where(t => t.UsuarioId == usuario.Id && t.Usado == null)
+            .OrderByDescending(t => t.Creado)
+            .FirstOrDefaultAsync();
+
+        if (token == null)
+            return false;
+
+        if (token.Expira < DateTime.UtcNow)
+            return false;
+
+        var hash = Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(tokenPlano)));
+        if (hash != token.TokenHash)
+            return false;
+
+        // Marcar token como usado
+        token.Usado = DateTime.UtcNow;
+
+        // Actualizar contraseña del usuario
+        usuario.PasswordHash = BCrypt.Net.BCrypt.HashPassword(nuevaPassword);
+
+        // Guardar cambios
+        await _context.SaveChangesAsync();
+
+        return true;
     }
 }

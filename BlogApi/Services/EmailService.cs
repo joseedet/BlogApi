@@ -117,11 +117,19 @@ public class EmailService : IEmailService
         }
 
     }
+    /// <summary>
+    /// Recuperación de contraseña
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="urlRecuperacion"></param>
+    /// <returns></returns>
     public async Task EnviarEmailRecuperacionPasswordAsync(string email, string urlRecuperacion)
     {
         var asunto = "Recuperación de contraseña";
         var cuerpo =
-            $@" <p>Has solicitado recuperar tu contraseña.</p> <p>Haz clic en el siguiente enlace para continuar:</p> <p><a href=""{urlRecuperacion}"">Recuperar contraseña</a></p> <p>Si no has solicitado este cambio, puedes ignorar este mensaje.</p> ";
+            $@" <p>Has solicitado recuperar tu contraseña.</p> <p>Haz clic en el siguiente enlace para continuar:
+            </p> <p><a href=""{urlRecuperacion}"">Recuperar contraseña</a></p> <p>Si no has solicitado este cambio, 
+            puedes ignorar este mensaje.</p> ";
         await EnviarAsync(email, asunto, cuerpo);
     }
 }

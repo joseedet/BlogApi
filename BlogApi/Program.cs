@@ -63,28 +63,26 @@ builder.Services.AddScoped<INotificacionRepository, NotificacionRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
 
 // Servicios de la aplicación
-builder.Services.AddScoped<IUsuarioService, UsuarioService>();
-builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddSingleton<IAuthorizationHandler, PuedeEditarPostHandler>();
+builder.Services.AddScoped<IAuthorizationServiceBlog, AuthorizationService>();
+builder.Services.AddScoped<IBannerService, BannerService>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<IComentarioService, ComentarioService>();
-builder.Services.AddScoped<IPostService, PostService>();
-builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
-builder.Services.AddScoped<INotificacionesService, NotificacionesService>();
-builder.Services.AddScoped<ILikeService, LikeService>();
-builder.Services.AddScoped<ISanitizerService, SanitizerService>();
-builder.Services.AddSingleton<IAuthorizationHandler, PuedeEditarPostHandler>();
+builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<IBannerService, BannerService>();
 builder.Services.AddScoped<IEmailSettingsService, EmailSettingsService>();
-builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
-builder.Services.AddScoped<IStatsService, EstadisticasService>();
+builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
+builder.Services.AddScoped<ILikeService, LikeService>();
+builder.Services.AddScoped<INotificacionesService, NotificacionesService>();
 builder.Services.AddScoped<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
-builder.Services.AddScoped<IAuthorizationServiceBlog, AuthorizationService>();
 builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
-
-
-
+builder.Services.AddScoped<IPostService, PostService>();
+builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+builder.Services.AddScoped<ISanitizerService, SanitizerService>();
+builder.Services.AddScoped<IStatsService, EstadisticasService>();
+builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 
 // Configuración de autenticación JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt");
