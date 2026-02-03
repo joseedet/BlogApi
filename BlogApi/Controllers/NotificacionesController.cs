@@ -3,6 +3,9 @@ using BlogApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+/// <summary>
+/// Notificaciones
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 [Authorize] // Todas requieren usuario autenticado
@@ -10,11 +13,21 @@ public class NotificacionesController : ControllerBase
 {
     private readonly INotificacionesService _service;
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="service"></param>
     public NotificacionesController(INotificacionesService service)
     {
         _service = service;
     }
 
+    /// <summary>
+    ///  Obtener notificaciones paginadas
+    /// </summary>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <returns></returns>
     // ------------------------------------------------------------
     // Obtener notificaciones paginadas
     // ------------------------------------------------------------
@@ -31,6 +44,10 @@ public class NotificacionesController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Obtener no leídas
+    /// </summary>
+    /// <returns></returns>
     // ------------------------------------------------------------
     // Obtener no leídas
     // ------------------------------------------------------------
@@ -47,6 +64,11 @@ public class NotificacionesController : ControllerBase
         return Ok(noLeidas);
     }
 
+    /// <summary>
+    /// Marcar una notificación como leída
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     // ------------------------------------------------------------
     // Marcar una notificación como leída
     // ------------------------------------------------------------
@@ -63,6 +85,10 @@ public class NotificacionesController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Marcar todas como leídas
+    /// </summary>
+    /// <returns></returns>
     // ------------------------------------------------------------
     // Marcar todas como leídas
     // ------------------------------------------------------------
@@ -76,6 +102,11 @@ public class NotificacionesController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Eliminar notificación
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     // ------------------------------------------------------------
     // Eliminar notificación
     // ------------------------------------------------------------

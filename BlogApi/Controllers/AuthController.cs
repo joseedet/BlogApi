@@ -23,6 +23,7 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="usuarioService"></param>
     /// <param name="tokenService"></param>
+    /// <param name="refreshTokenService"></param>
     public AuthController(
         IUsuarioService usuarioService,
         ITokenService tokenService,
@@ -105,7 +106,11 @@ public class AuthController : ControllerBase
  
          return Ok("Correo verificado correctamente. Ya puedes iniciar sesión.");
      } */
-
+    /// <summary>
+    /// Logout
+    /// /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
     [HttpPost("logout")]
     public async Task<IActionResult> Logout(LogoutDto dto)
     {
@@ -122,6 +127,10 @@ public class AuthController : ControllerBase
         return Ok("Sesión cerrada correctamente.");
     }
 
+    /// <summary>
+    /// Logout todos
+    /// </summary>
+    /// <returns></returns>
     [HttpPost("logout-all")]
     public async Task<IActionResult> LogoutAll()
     {
@@ -133,6 +142,11 @@ public class AuthController : ControllerBase
         return Ok("Sesión cerrada en todos los dispositivos.");
     }
 
+    /// <summary>
+    /// Refresh Token
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh(RefreshTokenDto dto)
     {
