@@ -54,13 +54,14 @@ builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSet
 // Repositorios
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
-builder.Services.AddScoped<IPostRepository, PostRepository>();
-builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IComentarioRepository, ComentarioRepository>();
-builder.Services.AddScoped<ILikePostRepository, LikePostRepository>();
 builder.Services.AddScoped<ILikeComentarioRepository, LikeComentarioRepository>();
+builder.Services.AddScoped<ILikePostRepository, LikePostRepository>();
 builder.Services.AddScoped<INotificacionRepository, NotificacionRepository>();
+builder.Services.AddScoped<IPageRepository, PageRepository>();
+builder.Services.AddScoped<IPostRepository, PostRepository>();
 builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
 // Servicios de la aplicación
 builder.Services.AddSingleton<IAuthorizationHandler, PuedeEditarPostHandler>();
