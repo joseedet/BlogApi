@@ -56,4 +56,12 @@ public interface IPageService
     /// <returns>PageDto</returns>
     Task<PageDto> ObtenerPaginaInicioAsync();
 
+    /// <summary>
+    /// Restaura la versión de la página
+    /// </summary>
+    /// <param name="versionId"></param>
+    /// <returns>PageDto</returns>
+    Task<PageDto> RestaurarVersionAsync(int versionId);
+
+
 }

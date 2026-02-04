@@ -196,8 +196,8 @@ public class PageService:IPageService
             Actualizado = p.Actualizado
         };
     }
-    
-     /// <summary>
+
+    /// <summary>
     /// Obtenemos página de inicio
     /// </summary>
     /// <returns>PageDto</returns>
@@ -210,5 +210,32 @@ public class PageService:IPageService
             throw new KeyNotFoundException("No hay página de inicio configurada");
 
         return MapToDto(inicio);
+    }
+
+    /// <summary>
+    /// Restaura la versión de la página
+    /// </summary>
+    /// <param name="versionId"></param>
+    /// <returns>PageDto</returns>
+    public async Task<PageDto> RestaurarVersionAsync(int versionId)
+    {
+        var version = await _pageRepository.ObtenerVersionPorIdAsync(versionId);
+        if (version == null)
+            throw new KeyNotFoundException("Versión no encontrada");
+
+        var page = await _pageRepository.ObtenerPorIdAsync(version.PageId);
+        if (page == null)
+            throw new KeyNotFoundException("Página no encontrada");
+
+        page.Titulo = version.Titulo;
+        page.Slug = version.Slug;
+        page.Contenido = version.Contenido;
+        page.Publicado = version.Publicado;
+        page.EsInicio = version.EsInicio;
+        page.Actualizado = DateTime.UtcNow;
+
+        await _pageRepository.ActualizarAsync(page);
+
+        return MapToDto(page);
     }
 }
