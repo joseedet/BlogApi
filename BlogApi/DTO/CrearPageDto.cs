@@ -21,4 +21,10 @@ public class CrearPageDto
     /// Si está publicado
     /// </summary>
     public bool Publicado { get; set; }
+
+    /// <summary>
+    /// Si es una página de inicio
+    /// </summary>
+    public bool EsInicio { get; set; }
+
 }

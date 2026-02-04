@@ -64,4 +64,10 @@ public class Page
     /// </summary>
     // Opcional: para ocultar sin borrar
     public bool Publicado { get; set; }
+
+    /// <summary>
+    /// Si es una página de inicio
+    /// </summary>
+    public bool EsInicio { get; set; }
+
 }

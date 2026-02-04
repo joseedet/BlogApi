@@ -49,4 +49,11 @@ public interface IPageService
     /// <param name="id"></param>
     /// <returns></returns>
     Task EliminarAsync(int id);
+
+    /// <summary>
+    /// Obtenemos página de inicio
+    /// </summary>
+    /// <returns>PageDto</returns>
+    Task<PageDto> ObtenerPaginaInicioAsync();
+
 }

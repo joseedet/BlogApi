@@ -56,7 +56,17 @@ public class PageService:IPageService
             IpCreacion = ip,
             UserAgentCreacion = ua
         };
-        await _pageRepository.CrearAsync(page);
+        if (dto.EsInicio)
+        {
+            var todas = await _pageRepository.ObtenerTodasAsync();
+            foreach (var p in todas.Where(x => x.EsInicio))
+            {
+
+                p.EsInicio = false;
+                await _pageRepository.ActualizarAsync(p);
+                //await _pageRepository.CrearAsync(page);
+            }
+        }
         _logger.LogInformation("Página creada: {Titulo} (Slug={Slug})",
          page.Titulo, page.Slug);
         return MapToDto(page);
@@ -71,7 +81,7 @@ public class PageService:IPageService
     /// <exception cref="KeyNotFoundException"></exception>
     /// <exception cref="ArgumentException"></exception>
     public async Task<PageDto> ActualizarAsync(int id, ActualizarPageDto dto)
-    {
+    {   
         var page = await _pageRepository.ObtenerPorIdAsync(id);
         if (page == null) throw new KeyNotFoundException("Página no encontrada");
         if (string.IsNullOrWhiteSpace(dto.Titulo)) throw new ArgumentException("El título es obligatorio");
@@ -85,7 +95,16 @@ public class PageService:IPageService
         page.Titulo = dto.Titulo; page.Contenido = dto.Contenido;
         page.Publicado = dto.Publicado; page.Actualizado = DateTime.UtcNow;
         page.IpActualizacion = ip; page.UserAgentActualizacion = ua;
-        await _pageRepository.ActualizarAsync(page);
+        if (dto.EsInicio)
+        {
+            var todas = await _pageRepository.ObtenerTodasAsync();
+            foreach (var p in todas.Where(x => x.EsInicio))
+            {
+                p.EsInicio = false;
+                await _pageRepository.ActualizarAsync(p);
+            }
+        }
+        //await _pageRepository.ActualizarAsync(page);
         _logger.LogInformation("Página actualizada: {Titulo} (Slug={Slug})", page.Titulo, page.Slug);
         return MapToDto(page);
     }
@@ -163,7 +182,7 @@ public class PageService:IPageService
         texto = texto.ToLowerInvariant().Trim();
         texto = texto.Replace(" ", "-");
         texto = System.Text.RegularExpressions.Regex.Replace(texto, @"[^a-z0-9\-]", ""); return texto;
-    } 
+    }
     private PageDto MapToDto(Page p)
     {
         return new PageDto
@@ -175,6 +194,21 @@ public class PageService:IPageService
             Publicado = p.Publicado,
             Creado = p.Creado,
             Actualizado = p.Actualizado
-        }; 
+        };
+    }
+    
+     /// <summary>
+    /// Obtenemos página de inicio
+    /// </summary>
+    /// <returns>PageDto</returns>
+    public async Task<PageDto> ObtenerPaginaInicioAsync()
+    {
+        var pages = await _pageRepository.ObtenerTodasAsync();
+        var inicio = pages.FirstOrDefault(p => p.EsInicio && p.Publicado);
+
+        if (inicio == null)
+            throw new KeyNotFoundException("No hay página de inicio configurada");
+
+        return MapToDto(inicio);
     }
 }

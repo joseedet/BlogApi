@@ -27,6 +27,17 @@ namespace BlogApi.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Obtiene página de inicio
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("inicio")]
+        public async Task<IActionResult> ObtenerPaginaInicio()
+        {
+            var result = await _pageService.ObtenerPaginaInicioAsync();
+            return Ok(result);
+        }
+
         // --------------------------------------------------------- // Crear página //
         // POST: api/page // ---------------------------------------------------------
         /// <summary>
@@ -34,7 +45,6 @@ namespace BlogApi.Controllers
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-
         [Authorize(Policy = "PuedeEditarContenido")]
         [HttpPost]
         public async Task<IActionResult> Crear([FromBody] CrearPageDto dto)
@@ -51,7 +61,6 @@ namespace BlogApi.Controllers
         /// <param name="id"></param>
         /// <param name="dto"></param>
         /// <returns></returns>
-        
         [Authorize(Policy = "PuedeEditarContenido")]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Actualizar(int id, [FromBody] ActualizarPageDto dto)
@@ -107,7 +116,6 @@ namespace BlogApi.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        
         [Authorize(Policy = "PuedeEditarContenido")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Eliminar(int id)

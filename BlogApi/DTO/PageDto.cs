@@ -42,4 +42,9 @@ public class PageDto
     /// Fecha de actualización
     /// </summary>
     public DateTime Actualizado { get; set; }
+
+    /// <summary>
+    /// Si es una página de inicio
+    /// </summary>
+    public bool EsInicio { get; set; }
 }
