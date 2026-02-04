@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Text;
 using BlogApi.Authorization;
 using BlogApi.Data;
+using BlogApi.DTO;
 using BlogApi.Hubs;
 using BlogApi.Middleware;
 using BlogApi.Models;
@@ -10,6 +11,7 @@ using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
 using BlogApi.Services.Interfaces;
 using BlogApi.Services.Security;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -24,6 +26,7 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 builder.Services.AddControllers();
+builder.Services.AddValidatorsFromAssemblyContaining<CrearPageDtoValidator>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
@@ -85,6 +88,8 @@ builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddHttpContextAccessor();
+
+
 
 
 // Configuración de autenticación JWT
