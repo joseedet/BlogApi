@@ -25,7 +25,7 @@ public interface IPageRepository
     /// <summary>
     /// Obtener todas las páginas.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>List&lt;Page&gt;</returns>
     Task<List<Page>> ObtenerTodasAsync();
 
     /// <summary>
