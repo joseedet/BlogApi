@@ -16,6 +16,7 @@ public class PasswordResetService : IPasswordResetService
     private readonly BlogDbContext _context;
     private readonly IEmailService _emailService; // ya lo tienes
     private readonly IConfiguration _config;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     private readonly ILogger<PasswordResetService> _logger;
 
@@ -26,17 +27,22 @@ public class PasswordResetService : IPasswordResetService
     /// <param name="emailService"></param>
     /// <param name="config"></param>
     /// <param name="logger"></param>
+    /// <param name="httpContextAccessor"></param>
     public PasswordResetService(
         BlogDbContext context,
         IEmailService emailService,
         IConfiguration config,
-        ILogger<PasswordResetService> logger
+        ILogger<PasswordResetService> logger,
+        IHttpContextAccessor httpContextAccessor
+
+
     )
     {
         _context = context;
         _emailService = emailService;
         _config = config;
         _logger = logger;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     /// <summary>
@@ -69,12 +75,19 @@ public class PasswordResetService : IPasswordResetService
         // 3. Hashear el token antes de guardarlo
         var tokenHash = CalcularHash(token);
         // 4. Crear registro en PasswordResetToken
+        var ip = _httpContextAccessor?.HttpContext?.Connection?.RemoteIpAddress?.ToString();
+        var userAgent = _httpContextAccessor
+            ?.HttpContext?.Request?.Headers["User-Agent"]
+            .ToString();
         var resetToken = new PasswordResetToken
         {
             UsuarioId = usuario.Id,
             TokenHash = tokenHash,
             Creado = DateTime.UtcNow,
             Expira = DateTime.UtcNow.AddMinutes(30),
+            Usado = null,
+            IpCreacion = ip,
+            UserAgentCreacion = userAgent
             // configurable
         };
         _context.PasswordResetTokens.Add(resetToken);
@@ -197,6 +210,14 @@ public class PasswordResetService : IPasswordResetService
             _logger.LogWarning("Reset password fallido: hash no coincide para {Email}", email);
             return false;
         }
+        var ip = _httpContextAccessor?.HttpContext?.Connection?.RemoteIpAddress?.ToString();
+        var userAgent = _httpContextAccessor
+            ?.HttpContext?.Request?.Headers["User-Agent"]
+            .ToString();
+
+        token.Usado = DateTime.UtcNow;
+        token.IpUso = ip;
+        token.UserAgentUso = userAgent;
 
         // Invalidar todos los tokens activos del usuario
         var tokens = await _context
@@ -204,7 +225,11 @@ public class PasswordResetService : IPasswordResetService
             .ToListAsync();
         var ahora = DateTime.UtcNow;
         foreach (var t in tokens)
+        {
             t.Usado = ahora;
+            t.IpUso = ip;
+            t.UserAgentUso = userAgent;
+        }
 
         // Actualizar contraseña del usuario
         usuario.PasswordHash = BCrypt.Net.BCrypt.HashPassword(nuevaPassword);

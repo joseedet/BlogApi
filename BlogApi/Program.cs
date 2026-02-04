@@ -83,6 +83,8 @@ builder.Services.AddScoped<IStatsService, EstadisticasService>();
 builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddHttpContextAccessor();
+
 
 // Configuración de autenticación JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt");

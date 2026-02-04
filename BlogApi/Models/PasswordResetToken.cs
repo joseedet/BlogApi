@@ -53,4 +53,23 @@ public class PasswordResetToken
     /// Devuelve verdadero si está expirado en caso contrario falso
     /// </summary>
     public bool EstaExpirado => DateTime.UtcNow >= Expira;
+
+    /// <summary>
+    /// Creacion Ip
+    /// </summary>
+    public string IpCreacion { get; set; }
+    /// <summary>
+    /// Creación del User-Agent
+    /// </summary>
+    public string UserAgentCreacion { get; set; }
+
+    /// <summary>
+    /// IP usada
+    /// </summary>
+    public string IpUso { get; set; }
+
+    /// <summary>
+    /// User-Agent usado
+    /// </summary>
+    public string UserAgentUso { get; set; }
 }
