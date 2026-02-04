@@ -96,6 +96,11 @@ public class BlogDbContext : DbContext
     public DbSet<PasswordResetToken> PasswordResetTokens { get; set; } = null!;
 
     /// <summary>
+    /// Pagina
+    /// </summary>
+    public DbSet<Page> Pages { get; set; }
+
+    /// <summary>
     ///  Configuración de las relaciones entre entidades
     /// </summary>
     /// <param name="modelBuilder"></param>
