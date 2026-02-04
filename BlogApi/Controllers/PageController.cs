@@ -1,5 +1,6 @@
 using BlogApi.DTO;
 using BlogApi.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +26,7 @@ namespace BlogApi.Controllers
             _pageService = pageService;
             _logger = logger;
         }
+
         // --------------------------------------------------------- // Crear página //
         // POST: api/page // ---------------------------------------------------------
         /// <summary>
@@ -32,12 +34,15 @@ namespace BlogApi.Controllers
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
+
+        [Authorize(Policy = "PuedeEditarContenido")]
         [HttpPost]
         public async Task<IActionResult> Crear([FromBody] CrearPageDto dto)
         {
             var result = await _pageService.CrearAsync(dto);
             return CreatedAtAction(nameof(ObtenerPorId), new { id = result.Id }, result);
         }
+
         // --------------------------------------------------------- // Actualizar página
         // PUT: api/page/{id} // ---------------------------------------------------------
         /// <summary>
@@ -46,13 +51,16 @@ namespace BlogApi.Controllers
         /// <param name="id"></param>
         /// <param name="dto"></param>
         /// <returns></returns>
+        
+        [Authorize(Policy = "PuedeEditarContenido")]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Actualizar(int id, [FromBody] ActualizarPageDto dto)
         {
             var result = await _pageService.ActualizarAsync(id, dto);
             return Ok(result);
         }
-        // --------------------------------------------------------- // Obtener página por ID 
+
+        // --------------------------------------------------------- // Obtener página por ID
         // GET: api/page/{id} // ---------------------------------------------------------
         /// <summary>
         /// Obtener página por ID
@@ -65,6 +73,7 @@ namespace BlogApi.Controllers
             var result = await _pageService.ObtenerPorIdAsync(id);
             return Ok(result);
         } // --------------------------------------------------------- // Obtener página por slug
+
         // GET: api/page/slug/{slug} // ---------------------------------------------------------
         /// <summary>
         /// Obtener página por slug
@@ -77,7 +86,8 @@ namespace BlogApi.Controllers
             var result = await _pageService.ObtenerPorSlugAsync(slug);
             return Ok(result);
         }
-        // --------------------------------------------------------- // Listado de páginas 
+
+        // --------------------------------------------------------- // Listado de páginas
         // GET: api/page // ---------------------------------------------------------
         /// <summary>
         /// Listado de páginas
@@ -89,17 +99,21 @@ namespace BlogApi.Controllers
             var result = await _pageService.ObtenerTodasAsync();
             return Ok(result);
         }
-     // --------------------------------------------------------- // Eliminar página
-     // DELETE: api/page/{id} // --------------------------------------------------------- 
-/// <summary>
-/// Eliminar página
-/// </summary>
-/// <param name="id"></param>
-/// <returns></returns>
-     
-     [HttpDelete("{id:int}")] public async Task<IActionResult> Eliminar(int id)
+
+        // --------------------------------------------------------- // Eliminar página
+        // DELETE: api/page/{id} // ---------------------------------------------------------
+        /// <summary>
+        /// Eliminar página
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        
+        [Authorize(Policy = "PuedeEditarContenido")]
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Eliminar(int id)
         {
-            await _pageService.EliminarAsync(id); return NoContent();
-         }
+            await _pageService.EliminarAsync(id);
+            return NoContent();
+        }
     }
 }
