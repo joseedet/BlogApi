@@ -48,4 +48,25 @@ public interface IPageRepository
     /// <param name="page"></param>
     /// <returns></returns>
     Task EliminarAsync(Page page);
+
+    /// <summary>
+    /// Guarda la versión de la pagina
+    /// </summary>
+    /// <param name="version"></param>
+    /// <returns></returns>
+    Task GuardarVersionAsync(PageVersion version);
+    /// <summary>
+    /// Obtiene versiones de página
+    /// </summary>
+    /// <param name="pageId"></param>
+    /// <returns>List&lt;PageVersion&gt;</returns>
+
+    Task<List<PageVersion>> ObtenerVersionesAsync(int pageId);
+
+    /// <summary>
+    /// Obtiene versión por ID
+    /// </summary>
+    /// <param name="versionId"></param>
+    /// <returns>PageVersion</returns>
+    Task<PageVersion> ObtenerVersionPorIdAsync(int versionId);
 }

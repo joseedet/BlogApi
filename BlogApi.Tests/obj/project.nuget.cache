@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "wUOCf6rk1q0=",
+  "dgSpecHash": "CQVGdWqBSuA=",
   "success": true,
   "projectFilePath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/BlogApi.Tests.csproj",
   "expectedPackageFiles": [
@@ -13,7 +13,7 @@
     "/home/tedekeya/.nuget/packages/coverlet.collector/6.0.4/coverlet.collector.6.0.4.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/fluentvalidation/12.1.1/fluentvalidation.12.1.1.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/fluentvalidation.dependencyinjectionextensions/12.1.1/fluentvalidation.dependencyinjectionextensions.12.1.1.nupkg.sha512",
-    "/home/tedekeya/.nuget/packages/htmlsanitizer/9.0.889/htmlsanitizer.9.0.889.nupkg.sha512",
+    "/home/tedekeya/.nuget/packages/htmlsanitizer/9.0.892/htmlsanitizer.9.0.892.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/markdig/0.44.0/markdig.0.44.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.aspnetcore.authentication.jwtbearer/10.0.1/microsoft.aspnetcore.authentication.jwtbearer.10.0.1.nupkg.sha512",
@@ -119,18 +119,5 @@
     "/home/tedekeya/.nuget/packages/xunit.extensibility.execution/2.9.3/xunit.extensibility.execution.2.9.3.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/xunit.runner.visualstudio/3.1.4/xunit.runner.visualstudio.3.1.4.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1902",
-      "level": "Warning",
-      "message": "Package 'HtmlSanitizer' 9.0.889 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-j92c-7v7g-gj3f",
-      "projectPath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/BlogApi.Tests.csproj",
-      "warningLevel": 1,
-      "filePath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/BlogApi.Tests.csproj",
-      "libraryId": "HtmlSanitizer",
-      "targetGraphs": [
-        "net10.0"
-      ]
-    }
-  ]
+  "logs": []
 }
