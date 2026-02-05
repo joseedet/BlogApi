@@ -151,5 +151,18 @@ namespace BlogApi.Controllers
             var result = await _pageService.ObtenerVersionPorIdAsync(versionId);
             return Ok(result);
         }
+
+        /// <summary>
+        /// Restaura la versión solicitada
+        /// </summary>
+        /// <param name="versionId"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "PuedeEditarContenido")]
+        [HttpPost("version/{versionId:int}/restaurar")]
+        public async Task<IActionResult> RestaurarVersion(int versionId)
+        {
+            var result = await _pageService.RestaurarVersionAsync(versionId);
+            return Ok(result);
+        }
     }
 }
