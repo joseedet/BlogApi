@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.Mail;
+using BlogApi.Models;
 using BlogApi.Services.Interfaces;
+using Microsoft.Extensions.Options;
 
 namespace BlogApi.Services;
 
@@ -14,14 +16,18 @@ public class SmtpEmailService : IEmailService
     /// </summary>
     private readonly IConfiguration _config;
 
+    private readonly EmailSettings _settings;
+
     /// <summary>
     /// Constructor de SmtpEmailService
     /// </summary>
     /// <param name="config"></param>
-    public SmtpEmailService(IConfiguration config)
+    public SmtpEmailService(IConfiguration config, IOptions<EmailSettings> settings)
     {
         _config = config;
+        _settings = settings.Value; 
     }
+
 
     /// <summary>
     /// Envía un correo electrónico
@@ -87,5 +93,48 @@ public class SmtpEmailService : IEmailService
 
         await smtp.SendMailAsync(mail);
     }
-    public async Task EnviarEmailRecuperacionPasswordAsync(string email, string urlRecuperacion) { var asunto = "Recuperación de contraseña"; var cuerpo = $@" <p>Has solicitado recuperar tu contraseña.</p> <p>Haz clic en el siguiente enlace para continuar:</p> <p><a href=""{urlRecuperacion}"">Recuperar contraseña</a></p> <p>Si no has solicitado este cambio, puedes ignorar este mensaje.</p> "; await EnviarAsync(email, asunto, cuerpo); }
+    /// <summary>
+    /// Envia Email de recuperación
+    /// </summary>
+    /// <param name="email"></param>
+    /// <param name="urlRecuperacion"></param>
+    /// <returns></returns>
+    public async Task EnviarEmailRecuperacionPasswordAsync(string email, string urlRecuperacion)
+     {
+        var asunto = "Recuperación de contraseña";
+        var cuerpo = $@" <p>Has solicitado recuperar tu contraseña.</p>
+       <p>Haz clic en el siguiente enlace para continuar:</p> <p><a href=""{urlRecuperacion}"">Recuperar contraseña</a></p> <p>Si no has solicitado este cambio, puedes ignorar este mensaje.</p> ";
+        await EnviarAsync(email, asunto, cuerpo);
+        }
+
+
+/// <summary>
+/// Enviar Email Verificacion Async
+/// </summary>
+/// <param name="emailDestino"></param>
+/// <param name="tokenPlano"></param>
+/// <returns></returns>
+/// <exception cref="InvalidOperationException"></exception>
+    public async Task EnviarEmailVerificacionAsync(string emailDestino, string tokenPlano)
+    {
+        if (!_settings.Activo) throw new InvalidOperationException("La cuenta de email no está activa.");
+        var mensaje = new MailMessage {
+            From = new MailAddress(_settings.Remitente, _settings.NombreRemitente),
+            Subject = "Verificación de correo",
+            Body = GenerarCuerpoEmail(tokenPlano),
+            IsBodyHtml = true
+        }; mensaje.To.Add(emailDestino);
+        using var smtp = new SmtpClient(_settings.Host, _settings.Puerto)
+        {
+            Credentials = new NetworkCredential(_settings.Usuario, _settings.Password),
+            EnableSsl = _settings.UsarSSL
+        };
+        await smtp.SendMailAsync(mensaje);
+    } 
+     private string GenerarCuerpoEmail(string token)
+    {
+        return $@" <h2>Verificación de correo</h2> <p>Gracias por registrarte.
+          Para verificar tu cuenta,
+           haz clic en el siguiente enlace:</p> <p> <a href=""https://tudominio.com/auth/verify-email?token={token}"" style=""padding:10px 20px; background:#4CAF50; color:white; text-decoration:none; border-radius:5px;""> Verificar mi correo </a> </p> <p>Este enlace expirará en 12 horas.</p> <p>Si no solicitaste esta verificación, puedes ignorar este mensaje.</p> "; 
+    }
 }

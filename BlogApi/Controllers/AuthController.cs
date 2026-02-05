@@ -18,6 +18,8 @@ public class AuthController : ControllerBase
     private readonly IRefreshTokenService _refreshTokenService;
     private readonly IPasswordResetService _passwordResetService;
     private readonly ILogger _logger;
+    //private readonly IUsuarioService _usuarioService;
+    private readonly IEmailVerificationTokenService _emailVerificationService;
 
     //private readonly JwtService _jwtService;
 
@@ -28,12 +30,14 @@ public class AuthController : ControllerBase
     /// <param name="tokenService"></param>
     /// <param name="refreshTokenService"></param>
     /// <param name="passwordResetService"></param>
+    /// <param name="emailVerificationTokenService"></param>
+
     public AuthController(
         IUsuarioService usuarioService,
         ITokenService tokenService,
         IRefreshTokenService refreshTokenService,
         IPasswordResetService passwordResetService,
-        ILogger logger
+        ILogger logger, IEmailVerificationTokenService emailVerificationTokenService
     )
     {
         _usuarioService = usuarioService;
@@ -41,6 +45,7 @@ public class AuthController : ControllerBase
         _refreshTokenService = refreshTokenService;
         _passwordResetService = passwordResetService;
         _logger = logger;
+        _emailVerificationService = emailVerificationTokenService;
     }
 
     /// <summary>
@@ -244,4 +249,33 @@ public class AuthController : ControllerBase
         _logger.LogInformation("Contraseña restablecida correctamente para {Email}", dto.Email);
         return Ok(new { message = "Contraseña actualizada correctamente" });
     }
+    // --------------------------------------------------------- // 1. REGISTRO + ENVÍO DE TOKEN // --------------------------------------------------------- 
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegistroDto dto)
+    {
+        var usuario = await _usuarioService.RegistrarUsuarioAsync(dto); if (usuario == null)
+            return BadRequest("El correo ya está registrado.");
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        var userAgent = Request.Headers["User-Agent"].ToString();
+        await _emailVerificationService.GenerarYEnviarTokenAsync(usuario, ip, userAgent);
+        return Ok("Usuario registrado. Revisa tu correo para verificar la cuenta.");
+    }
+    // --------------------------------------------------------- // 2. VERIFICAR EMAIL // ---------------------------------------------------------
+    [HttpGet("verify-email")] public async Task<IActionResult> VerifyEmail([FromQuery] string token) {
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        var userAgent = Request.Headers["User-Agent"].ToString();
+        var ok = await _emailVerificationService.VerificarTokenAsync(token, ip, userAgent);
+        if (!ok) return BadRequest("Token inválido o expirado.");
+        return Ok("Correo verificado correctamente.");
+      }
+    // --------------------------------------------------------- // 3. REENVIAR TOKEN // --------------------------------------------------------- 
+    [HttpPost("resend-verification")]
+     public async Task<IActionResult> ResendVerification([FromBody] int userId)
+    {
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        var userAgent = Request.Headers["User-Agent"].ToString();
+        var ok = await _emailVerificationService.ReenviarTokenAsync(userId, ip, userAgent);
+        if (!ok) return BadRequest("No se puede reenviar el token (límite alcanzado o usuario inválido).");
+        return Ok("Token reenviado correctamente.");
+     }
 }
