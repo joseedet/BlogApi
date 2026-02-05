@@ -10,6 +10,43 @@ y el versionado se basa en **Semantic Versioning**.
 ### Añadido
 - Pendiente de definir tras completar Fase 4 – Bloque 1.
 
+[1.5.0] – Fase 4 · Bloque 2 · SEO, Auditoría y Versionado de Pages
+
+Añadido
+- Campos SEO en la entidad Page:
+  - MetaTitulo
+  - MetaDescripcion
+  - MetaKeywords
+- Campos de auditoría adicionales expuestos en PageDto:
+  - IpCreacion
+  - UserAgentCreacion
+  - IpActualizacion
+  - UserAgentActualizacion
+- Regla automática de borrador:
+  - Si el contenido está vacío, la página se guarda como borrador (Publicado = false).
+- Sistema de versionado en ActualizarAsync:
+  - Se guarda una entrada en PageVersion antes de aplicar cambios.
+- Mapeo completo de SEO y auditoría en PageDto.
+
+Cambiado
+- CrearAsync:
+  - Ahora guarda la página antes de desmarcar otras páginas de inicio.
+  - Se aplica la regla de borrador automático.
+  - Se integran los campos SEO.
+- ActualizarAsync:
+  - Se aplica la regla de borrador automático.
+  - Se integran los campos SEO.
+  - Se actualiza la auditoría de modificación.
+  - Se guarda la versión previa mediante _pageRepository.GuardarVersionAsync.
+- Mapper:
+  - Ampliado para incluir SEO y campos de auditoría en PageDto.
+
+Corregido
+- Falta de asignación de EsInicio en la creación de páginas.
+- Error conceptual en CrearAsync:
+  - Antes se desmarcaban páginas de inicio antes de guardar la nueva.
+  - Ahora se guarda primero la nueva página y luego se desmarcan las demás.
+
 ---
 
 ## [1.4.0] – Fase 4 · Bloque 1 · Analíticas y Relacionados
