@@ -10,9 +10,9 @@ y el versionado se basa en **Semantic Versioning**.
 ### Añadido
 
 
-[1.5.0] – Fase 4 · Bloque 2 · SEO, Auditoría y Versionado de Pages
+## [1.5.0] – Fase 4 · Bloque 2 · SEO, Auditoría y Versionado de Pages
 
-Añadido
+### Añadido
 - Campos SEO en la entidad Page:
   - MetaTitulo
   - MetaDescripcion
