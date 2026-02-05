@@ -1,7 +1,6 @@
 using System;
 using FluentValidation;
 
-
 namespace BlogApi.DTO;
 
 /// <summary>
@@ -21,5 +20,10 @@ public class CrearPageDtoValidator : AbstractValidator<CrearPageDto>
             .WithMessage("El título no puede superar los 200 caracteres");
         RuleFor(x => x.Contenido).NotEmpty().WithMessage("El contenido es obligatorio");
         RuleFor(x => x.Publicado).NotNull().WithMessage("El estado de publicación es obligatorio");
+        RuleFor(x => x.MetaTitulo).MaximumLength(70);
+
+        RuleFor(x => x.MetaDescripcion).MaximumLength(160);
+
+        RuleFor(x => x.MetaKeywords).MaximumLength(255);
     }
 }

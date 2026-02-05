@@ -7,7 +7,6 @@ namespace BlogApi.DTO;
 /// </summary>
 public class PageDto
 {
-
     /// <summary>
     /// Identificador
     /// </summary>
@@ -47,4 +46,39 @@ public class PageDto
     /// Si es una página de inicio
     /// </summary>
     public bool EsInicio { get; set; }
+
+    /// <summary>
+    /// MetaTitulo
+    /// </summary>
+    public string MetaTitulo { get; set; }
+
+    /// <summary>
+    /// MetaDescripcion
+    /// </summary>
+    public string MetaDescripcion { get; set; }
+
+    /// <summary>
+    /// MetaKeywords
+    /// </summary>
+    public string MetaKeywords { get; set; }
+
+    /// <summary>
+    /// IPCreación
+    /// </summary>
+    public string IpCreacion { get; set; }
+
+    /// <summary>
+    /// UserAgentCreacion
+    /// </summary>
+    public string UserAgentCreacion { get; set; }
+
+    /// <summary>
+    /// IpActualizacion
+    /// </summary>
+    public string IpActualizacion { get; set; }
+
+    /// <summary>
+    /// /// UserAgentActualizacion
+    /// </summary>
+    public string UserAgentActualizacion { get; set; }
 }

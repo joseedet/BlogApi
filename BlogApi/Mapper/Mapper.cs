@@ -161,4 +161,27 @@ public static class Mapper
     {
         return posts.Select(p => p.ToDto()).ToList();
     }
+    public static PageDto ToDto(this Page page) =>
+        new PageDto
+        {
+            Id = page.Id,
+            Titulo = page.Titulo,
+            Contenido = page.Contenido,
+            Slug = page.Slug,
+            Publicado = page.Publicado,
+            EsInicio = page.EsInicio,
+
+            // SEO
+            MetaTitulo = page.MetaTitulo,
+            MetaDescripcion = page.MetaDescripcion,
+            MetaKeywords = page.MetaKeywords,
+
+            // Auditoría
+            Creado = page.Creado,
+            Actualizado = page.Actualizado,
+            IpCreacion = page.IpCreacion,
+            UserAgentCreacion = page.UserAgentCreacion,
+            IpActualizacion = page.IpActualizacion,
+            UserAgentActualizacion = page.UserAgentActualizacion,
+        };
 }

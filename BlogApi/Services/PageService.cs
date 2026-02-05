@@ -1,25 +1,27 @@
 using System;
 using BlogApi.DTO;
+using BlogApi.Mapper;
 using BlogApi.Models;
 using BlogApi.Repositories.Interfaces;
 using BlogApi.Services.Interfaces;
 
 namespace BlogApi.Services;
+
 /// <summary>
 /// Implementacion de IPageService
 /// </summary>
-public class PageService:IPageService
+public class PageService : IPageService
 {
     private readonly IPageRepository _pageRepository;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ILogger<PageService> _logger;
 
-/// <summary>
-/// Constructor
-/// </summary>
-/// <param name="pageRepository"></param>
-/// <param name="httpContextAccessor"></param>
-/// <param name="logger"></param>
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="pageRepository"></param>
+    /// <param name="httpContextAccessor"></param>
+    /// <param name="logger"></param>
     public PageService(
         IPageRepository pageRepository,
         IHttpContextAccessor httpContextAccessor,
@@ -30,6 +32,7 @@ public class PageService:IPageService
         _httpContextAccessor = httpContextAccessor;
         _logger = logger;
     }
+
     // --------------------------------------------------------- // Crear página // ---------------------------------------------------------
 
     /// <summary>
@@ -38,40 +41,60 @@ public class PageService:IPageService
     /// <param name="dto"></param>
     /// <returns>PageDto</returns>
     /// <exception cref="ArgumentException"></exception>
-
     public async Task<PageDto> CrearAsync(CrearPageDto dto)
     {
-        if (string.IsNullOrWhiteSpace(dto.Titulo)) throw new ArgumentException("El título es obligatorio");
+        if (string.IsNullOrWhiteSpace(dto.Titulo))
+            throw new ArgumentException("El título es obligatorio");
+
         var slug = await GenerarSlugUnicoAsync(dto.Titulo);
+
         var ip = _httpContextAccessor?.HttpContext?.Connection?.RemoteIpAddress?.ToString();
         var ua = _httpContextAccessor?.HttpContext?.Request?.Headers["User-Agent"].ToString();
+
+        // REGLA: si no hay contenido → borrador
+        var publicado = !string.IsNullOrWhiteSpace(dto.Contenido) && dto.Publicado;
+
         var page = new Page
         {
             Titulo = dto.Titulo,
             Slug = slug,
             Contenido = dto.Contenido,
-            Publicado = dto.Publicado,
+            Publicado = publicado, // ← aquí aplicamos la regla
+            EsInicio = dto.EsInicio,
+
+            // SEO
+            MetaTitulo = dto.MetaTitulo,
+            MetaDescripcion = dto.MetaDescripcion,
+            MetaKeywords = dto.MetaKeywords,
+
+            // Auditoría
             Creado = DateTime.UtcNow,
             Actualizado = DateTime.UtcNow,
             IpCreacion = ip,
-            UserAgentCreacion = ua
+            UserAgentCreacion = ua,
         };
+
+        // Guardar primero
+        await _pageRepository.CrearAsync(page);
+
+        // Si es inicio, desmarcar las demás
         if (dto.EsInicio)
         {
             var todas = await _pageRepository.ObtenerTodasAsync();
-            foreach (var p in todas.Where(x => x.EsInicio))
-            {
 
+            foreach (var p in todas.Where(x => x.Id != page.Id && x.EsInicio))
+            {
                 p.EsInicio = false;
                 await _pageRepository.ActualizarAsync(p);
-                //await _pageRepository.CrearAsync(page);
             }
         }
-        _logger.LogInformation("Página creada: {Titulo} (Slug={Slug})",
-         page.Titulo, page.Slug);
-        return MapToDto(page);
+
+        _logger.LogInformation("Página creada: {Titulo} (Slug={Slug})", page.Titulo, page.Slug);
+
+        return page.ToDto();
     }
-    // --------------------------------------------------------- // Actualizar página // --------------------------------------------------------- 
+
+    // --------------------------------------------------------- // Actualizar página // ---------------------------------------------------------
     /// <summary>
     /// Actualiza Page
     /// </summary>
@@ -81,33 +104,54 @@ public class PageService:IPageService
     /// <exception cref="KeyNotFoundException"></exception>
     /// <exception cref="ArgumentException"></exception>
     public async Task<PageDto> ActualizarAsync(int id, ActualizarPageDto dto)
-    {   
+    {
         var page = await _pageRepository.ObtenerPorIdAsync(id);
-        if (page == null) throw new KeyNotFoundException("Página no encontrada");
-        if (string.IsNullOrWhiteSpace(dto.Titulo)) throw new ArgumentException("El título es obligatorio");
-        // Regenerar slug si cambia el título
-        if (!string.Equals(page.Titulo, dto.Titulo, StringComparison.OrdinalIgnoreCase))
-        {
-            page.Slug = await GenerarSlugUnicoAsync(dto.Titulo, page.Id);
-        }
-        var ip = _httpContextAccessor?.HttpContext?.Connection?.RemoteIpAddress?.ToString();
-        var ua = _httpContextAccessor?.HttpContext?.Request?.Headers["User-Agent"].ToString();
-        page.Titulo = dto.Titulo; page.Contenido = dto.Contenido;
-        page.Publicado = dto.Publicado; page.Actualizado = DateTime.UtcNow;
-        page.IpActualizacion = ip; page.UserAgentActualizacion = ua;
-        if (dto.EsInicio)
-        {
-            var todas = await _pageRepository.ObtenerTodasAsync();
-            foreach (var p in todas.Where(x => x.EsInicio))
+        if (page == null)
+            throw new KeyNotFoundException("Página no encontrada");
+
+        // REGLA: si el contenido está vacío → borrador
+        var publicado = !string.IsNullOrWhiteSpace(dto.Contenido) && dto.Publicado;
+
+        page.Titulo = dto.Titulo;
+        page.Slug = await GenerarSlugUnicoAsync(dto.Titulo, id);
+        page.Contenido = dto.Contenido;
+        page.Publicado = publicado; // ← aquí aplicamos la regla
+        page.EsInicio = dto.EsInicio;
+
+        // SEO
+        page.MetaTitulo = dto.MetaTitulo;
+        page.MetaDescripcion = dto.MetaDescripcion;
+        page.MetaKeywords = dto.MetaKeywords;
+
+        // Auditoría
+        page.Actualizado = DateTime.UtcNow;
+        page.IpActualizacion =
+            _httpContextAccessor.HttpContext?.Connection?.RemoteIpAddress?.ToString();
+        page.UserAgentActualizacion = _httpContextAccessor
+            .HttpContext?.Request?.Headers["User-Agent"]
+            .ToString();
+
+        // Guardar versión antes de actualizar
+        await _pageRepository.GuardarVersionAsync(
+            new PageVersion
             {
-                p.EsInicio = false;
-                await _pageRepository.ActualizarAsync(p);
+                PageId = page.Id,
+                Titulo = page.Titulo,
+                Slug = page.Slug,
+                Contenido = page.Contenido,
+                Publicado = page.Publicado,
+                EsInicio = page.EsInicio,
+                FechaVersion = DateTime.UtcNow,
+                IpCreacion = page.IpCreacion,
+                UserAgentCreacion = page.UserAgentCreacion,
             }
-        }
-        //await _pageRepository.ActualizarAsync(page);
-        _logger.LogInformation("Página actualizada: {Titulo} (Slug={Slug})", page.Titulo, page.Slug);
-        return MapToDto(page);
+        );
+
+        await _pageRepository.ActualizarAsync(page);
+
+        return page.ToDto();
     }
+
     // --------------------------------------------------------- // Obtener por ID // ---------------------------------------------------------
     /// <summary>
     /// Obtiene página por Id
@@ -118,10 +162,12 @@ public class PageService:IPageService
     public async Task<PageDto> ObtenerPorIdAsync(int id)
     {
         var page = await _pageRepository.ObtenerPorIdAsync(id);
-        if (page == null) throw new KeyNotFoundException("Página no encontrada");
+        if (page == null)
+            throw new KeyNotFoundException("Página no encontrada");
         return MapToDto(page);
     }
-    // --------------------------------------------------------- // Obtener por Slug // --------------------------------------------------------- 
+
+    // --------------------------------------------------------- // Obtener por Slug // ---------------------------------------------------------
     /// <summary>
     /// Obtene página por slug
     /// </summary>
@@ -131,27 +177,31 @@ public class PageService:IPageService
     public async Task<PageDto> ObtenerPorSlugAsync(string slug)
     {
         var page = await _pageRepository.ObtenerPorSlugAsync(slug);
-        if (page == null) throw new KeyNotFoundException("Página no encontrada");
+        if (page == null)
+            throw new KeyNotFoundException("Página no encontrada");
         return MapToDto(page);
     }
+
     // --------------------------------------------------------- // Listado // ---------------------------------------------------------
     /// <summary>
     /// Obtiene todas páginas
     /// </summary>
     /// <returns>List&lt;ListadoDto&gt;</returns>
-
     public async Task<List<PageListadoDto>> ObtenerTodasAsync()
     {
         var pages = await _pageRepository.ObtenerTodasAsync();
-        return pages.Select(p => new PageListadoDto
-        {
-            Id = p.Id,
-            Titulo = p.Titulo,
-            Slug = p.Slug,
-            Publicado = p.Publicado,
-            Actualizado = p.Actualizado
-        }).ToList();
+        return pages
+            .Select(p => new PageListadoDto
+            {
+                Id = p.Id,
+                Titulo = p.Titulo,
+                Slug = p.Slug,
+                Publicado = p.Publicado,
+                Actualizado = p.Actualizado,
+            })
+            .ToList();
     }
+
     // --------------------------------------------------------- // Eliminar // ---------------------------------------------------------
     /// <summary>
     /// Elimina una página.
@@ -162,27 +212,36 @@ public class PageService:IPageService
     public async Task EliminarAsync(int id)
     {
         var page = await _pageRepository.ObtenerPorIdAsync(id);
-        if (page == null) throw new KeyNotFoundException("Página no encontrada");
-        await _pageRepository.EliminarAsync(page); _logger.LogInformation("Página eliminada: {Titulo} (Slug={Slug})", page.Titulo, page.Slug);
+        if (page == null)
+            throw new KeyNotFoundException("Página no encontrada");
+        await _pageRepository.EliminarAsync(page);
+        _logger.LogInformation("Página eliminada: {Titulo} (Slug={Slug})", page.Titulo, page.Slug);
     }
+
     // --------------------------------------------------------- // Helpers // ---------------------------------------------------------
     private async Task<string> GenerarSlugUnicoAsync(string titulo, int? idActual = null)
     {
         string baseSlug = CrearSlug(titulo);
-        string slug = baseSlug; int contador = 1;
+        string slug = baseSlug;
+        int contador = 1;
         while (true)
         {
             var existente = await _pageRepository.ObtenerPorSlugAsync(slug);
-            if (existente == null || existente.Id == idActual) return slug;
-            slug = $"{baseSlug}-{contador}"; contador++;
+            if (existente == null || existente.Id == idActual)
+                return slug;
+            slug = $"{baseSlug}-{contador}";
+            contador++;
         }
     }
+
     private string CrearSlug(string texto)
     {
         texto = texto.ToLowerInvariant().Trim();
         texto = texto.Replace(" ", "-");
-        texto = System.Text.RegularExpressions.Regex.Replace(texto, @"[^a-z0-9\-]", ""); return texto;
+        texto = System.Text.RegularExpressions.Regex.Replace(texto, @"[^a-z0-9\-]", "");
+        return texto;
     }
+
     private PageDto MapToDto(Page p)
     {
         return new PageDto
@@ -193,7 +252,7 @@ public class PageService:IPageService
             Contenido = p.Contenido,
             Publicado = p.Publicado,
             Creado = p.Creado,
-            Actualizado = p.Actualizado
+            Actualizado = p.Actualizado,
         };
     }
 
@@ -238,6 +297,7 @@ public class PageService:IPageService
 
         return MapToDto(page);
     }
+
     /// <summary>
     /// Obtiene la versión de una página dada
     /// </summary>
