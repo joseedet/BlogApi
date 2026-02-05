@@ -70,4 +70,18 @@ public class Page
     /// </summary>
     public bool EsInicio { get; set; }
 
+    /// <summary>
+    /// MetaTítulo
+    /// </summary>
+    public string MetaTitulo { get; set; }
+
+    /// <summary>
+    /// MetaDescripcion
+    /// </summary>
+    public string MetaDescripcion { get; set; }
+
+    /// <summary>
+    /// MetaKeywords
+    /// </summary>
+    public string MetaKeywords { get; set; }
 }
