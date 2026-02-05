@@ -57,16 +57,21 @@ public class EmailVerificationTokenService : IEmailVerificationTokenService
                 usuario.EmailVerificationSalt
             );
         }
-        // 2) Generar token plano
+
+        // 2) Generar token plano (solo para enviar por email)
         var tokenPlano = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+
         // 3) Hashear token + salt
         var tokenHash = HashToken(tokenPlano, usuario.EmailVerificationSalt);
+
         // 4) Crear registro en tabla EmailVerificationTokens
         var token = new EmailVerificationToken
         {
             UserId = usuario.Id,
-            Token = tokenPlano,
-            // opcional, pero existe en tu modelo
+
+            // NO guardamos el token plano por seguridad
+            Token = string.Empty, // o "***" si prefieres
+
             TokenHash = tokenHash,
             ExpiraEn = DateTime.UtcNow.AddHours(12),
             Usado = false,
@@ -75,8 +80,10 @@ public class EmailVerificationTokenService : IEmailVerificationTokenService
             IpCreacion = ip,
             UserAgentCreacion = userAgent,
         };
+
         await _tokenRepo.CrearAsync(token);
-        // 5) Enviar email real
+
+        // 5) Enviar email real con el token plano
         await _emailService.EnviarEmailVerificacionAsync(usuario.Email, tokenPlano);
     }
 
