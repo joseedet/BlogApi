@@ -265,10 +265,11 @@ public class PageService:IPageService
     }
 
     /// <summary>
-    /// Obtiene un versión específica de una página
+    /// Obtiene verisión de página especifica
     /// </summary>
     /// <param name="versionId"></param>
-    /// <returns>PageVersionDto</returns>
+    /// <returns></returns>
+    /// <exception cref="KeyNotFoundException"></exception>
     public async Task<PageVersionDto> ObtenerVersionPorIdAsync(int versionId)
     {
         var version = await _pageRepository.ObtenerVersionPorIdAsync(versionId);
