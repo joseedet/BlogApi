@@ -18,16 +18,18 @@ public class SmtpEmailService : IEmailService
 
     private readonly EmailSettings _settings;
 
+    private readonly ILogger _logger;
+
     /// <summary>
     /// Constructor de SmtpEmailService
     /// </summary>
     /// <param name="config"></param>
-    public SmtpEmailService(IConfiguration config, IOptions<EmailSettings> settings)
+    public SmtpEmailService(IConfiguration config, IOptions<EmailSettings> settings, ILogger logger)
     {
         _config = config;
-        _settings = settings.Value; 
+        _settings = settings.Value;
+        _logger = logger;
     }
-
 
     /// <summary>
     /// Envía un correo electrónico
@@ -93,6 +95,7 @@ public class SmtpEmailService : IEmailService
 
         await smtp.SendMailAsync(mail);
     }
+
     /// <summary>
     /// Envia Email de recuperación
     /// </summary>
@@ -100,41 +103,82 @@ public class SmtpEmailService : IEmailService
     /// <param name="urlRecuperacion"></param>
     /// <returns></returns>
     public async Task EnviarEmailRecuperacionPasswordAsync(string email, string urlRecuperacion)
-     {
+    {
         var asunto = "Recuperación de contraseña";
-        var cuerpo = $@" <p>Has solicitado recuperar tu contraseña.</p>
+        var cuerpo =
+            $@" <p>Has solicitado recuperar tu contraseña.</p>
        <p>Haz clic en el siguiente enlace para continuar:</p> <p><a href=""{urlRecuperacion}"">Recuperar contraseña</a></p> <p>Si no has solicitado este cambio, puedes ignorar este mensaje.</p> ";
         await EnviarAsync(email, asunto, cuerpo);
-        }
+    }
 
-
-/// <summary>
-/// Enviar Email Verificacion Async
-/// </summary>
-/// <param name="emailDestino"></param>
-/// <param name="tokenPlano"></param>
-/// <returns></returns>
-/// <exception cref="InvalidOperationException"></exception>
+    /// <summary>
+    /// Enviar Email Verificacion Async
+    /// </summary>
+    /// <param name="emailDestino"></param>
+    /// <param name="tokenPlano"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task EnviarEmailVerificacionAsync(string emailDestino, string tokenPlano)
     {
-        if (!_settings.Activo) throw new InvalidOperationException("La cuenta de email no está activa.");
-        var mensaje = new MailMessage {
+        if (!_settings.Activo)
+        {
+            _logger.LogWarning("Intento de enviar email, pero la cuenta SMTP está desactivada.");
+            return;
+        }
+        var mensaje = new MailMessage
+        {
             From = new MailAddress(_settings.Remitente, _settings.NombreRemitente),
             Subject = "Verificación de correo",
             Body = GenerarCuerpoEmail(tokenPlano),
-            IsBodyHtml = true
-        }; mensaje.To.Add(emailDestino);
+            IsBodyHtml = true,
+        };
+        mensaje.To.Add(emailDestino);
         using var smtp = new SmtpClient(_settings.Host, _settings.Puerto)
         {
             Credentials = new NetworkCredential(_settings.Usuario, _settings.Password),
-            EnableSsl = _settings.UsarSSL
+            EnableSsl = _settings.UsarSSL,
+            Timeout = 15000,
+            // 15 segundos
         };
-        await smtp.SendMailAsync(mensaje);
-    } 
-     private string GenerarCuerpoEmail(string token)
+        try
+        {
+            _logger.LogInformation(
+                "Enviando email de verificación a {EmailDestino} usando host {Host}:{Puerto}",
+                emailDestino,
+                _settings.Host,
+                _settings.Puerto
+            );
+            await smtp.SendMailAsync(mensaje);
+            _logger.LogInformation(
+                "Email de verificación enviado correctamente a {EmailDestino}",
+                emailDestino
+            );
+        }
+        catch (SmtpException ex)
+        {
+            _logger.LogError(
+                ex,
+                "Error SMTP al enviar email a {EmailDestino}. Código: {StatusCode}",
+                emailDestino,
+                ex.StatusCode
+            );
+            throw new InvalidOperationException(
+                "No se pudo enviar el email de verificación. Inténtalo más tarde."
+            );
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error inesperado al enviar email a {EmailDestino}", emailDestino);
+            throw new InvalidOperationException("Ocurrió un error inesperado al enviar el email.");
+        }
+    }
+
+    private string GenerarCuerpoEmail(string token)
     {
         return $@" <h2>Verificación de correo</h2> <p>Gracias por registrarte.
-          Para verificar tu cuenta,
-           haz clic en el siguiente enlace:</p> <p> <a href=""https://tudominio.com/auth/verify-email?token={token}"" style=""padding:10px 20px; background:#4CAF50; color:white; text-decoration:none; border-radius:5px;""> Verificar mi correo </a> </p> <p>Este enlace expirará en 12 horas.</p> <p>Si no solicitaste esta verificación, puedes ignorar este mensaje.</p> "; 
+      Para verificar tu cuenta, haz clic
+       en el siguiente enlace:</p> <p> <a href=""https://tudominio.com/auth/verify-email?token={token}"" style=""padding:10px 20px; 
+       background:#4CAF50; color:white; text-decoration:none; border-radius:5px;""> Verificar mi correo </a>
+        </p> <p>Este enlace expirará en 12 horas.</p> <p>Si no solicitaste esta verificación, puedes ignorar este mensaje.</p> ";
     }
 }
