@@ -106,6 +106,11 @@ public class BlogDbContext : DbContext
     public DbSet<PageVersion> PageVersions { get; set; }
 
     /// <summary>
+    /// Verificación de Email por tokens
+    /// </summary>
+    public DbSet<EmailVerificationToken> EmailVerificationTokens { get; set; }
+
+    /// <summary>
     ///  Configuración de las relaciones entre entidades
     /// </summary>
     /// <param name="modelBuilder"></param>
@@ -181,10 +186,12 @@ public class BlogDbContext : DbContext
             .HasForeignKey(n => n.UsuarioDestinoId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<PageVersion>()
-             .HasOne(v => v.Page)
-             .WithMany() .HasForeignKey(v => v.PageId)
-             .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder
+            .Entity<PageVersion>()
+            .HasOne(v => v.Page)
+            .WithMany()
+            .HasForeignKey(v => v.PageId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         base.OnModelCreating(modelBuilder);
     }

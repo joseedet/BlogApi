@@ -63,4 +63,15 @@ public class EmailVerificationToken
     /// Fecha de creación
     /// </summary>
     public DateTime CreadoEn { get; set; }
+
+    /// <summary>
+    /// Número de reenvios de Token
+    /// </summary>
+    public int Reenvios { get; set; }
+
+    /// <summary>
+    /// Hash Token
+    /// </summary>
+    // Hash del token: SHA512(token + salt)
+    public string TokenHash { get; set; }
 }
