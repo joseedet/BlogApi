@@ -28,7 +28,7 @@ y el versionado se basa en **Semantic Versioning**.
   - Se guarda una entrada en PageVersion antes de aplicar cambios.
 - Mapeo completo de SEO y auditoría en PageDto.
 
-Cambiado
+###Cambiado
 - CrearAsync:
   - Ahora guarda la página antes de desmarcar otras páginas de inicio.
   - Se aplica la regla de borrador automático.
@@ -41,7 +41,7 @@ Cambiado
 - Mapper:
   - Ampliado para incluir SEO y campos de auditoría en PageDto.
 
-Corregido
+###Corregido
 - Falta de asignación de EsInicio en la creación de páginas.
 - Error conceptual en CrearAsync:
   - Antes se desmarcaban páginas de inicio antes de guardar la nueva.
