@@ -8,7 +8,7 @@ y el versionado se basa en **Semantic Versioning**.
 
 ## [Unreleased]
 ### Añadido
-- Pendiente de definir tras completar Fase 4 – Bloque 2.
+
 
 [1.5.0] – Fase 4 · Bloque 2 · SEO, Auditoría y Versionado de Pages
 
