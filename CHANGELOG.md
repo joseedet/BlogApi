@@ -28,7 +28,7 @@ y el versionado se basa en **Semantic Versioning**.
   - Se guarda una entrada en PageVersion antes de aplicar cambios.
 - Mapeo completo de SEO y auditoría en PageDto.
 
-### Cambiado
+## Cambiado
 - CrearAsync:
   - Ahora guarda la página antes de desmarcar otras páginas de inicio.
   - Se aplica la regla de borrador automático.
