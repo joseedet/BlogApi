@@ -132,4 +132,10 @@ public class EmailService : IEmailService
             puedes ignorar este mensaje.</p> ";
         await EnviarAsync(email, asunto, cuerpo);
     }
+    public Task EnviarEmailVerificacionAsync(string emailDestino, string tokenPlano)
+    {
+        // TEMPORAL: solo para pruebas 
+        Console.WriteLine($"[EMAIL DEBUG] Enviando verificación a: {emailDestino}");
+        Console.WriteLine($"[EMAIL DEBUG] Token: {tokenPlano}"); return Task.CompletedTask;
+    }
 }

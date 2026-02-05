@@ -5,7 +5,7 @@ namespace BlogApi.Services.Interfaces;
 /// <summary>
 /// Interfaz Email Verification Service
 /// </summary>
-public interface IEmailVerificationService
+public interface IEmailVerificationTokenService
 {
     /// <summary>
     /// Geneera el envio de Token

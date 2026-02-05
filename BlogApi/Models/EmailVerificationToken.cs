@@ -2,6 +2,9 @@ using System;
 
 namespace BlogApi.Models;
 
+/// <summary>
+/// Email verification Token
+/// </summary>
 public class EmailVerificationToken
 {
     /// <summary>

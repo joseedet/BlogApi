@@ -25,4 +25,12 @@ public interface IEmailService
     /// <param name="urlRecuperacion"></param>
     /// <returns></returns>
     Task EnviarEmailRecuperacionPasswordAsync(string email, string urlRecuperacion);
+
+    /// <summary>
+    /// Email de verificación
+    /// </summary>
+    /// <param name="emailDestino"></param>
+    /// <param name="tokenPlano"></param>
+    /// <returns></returns>
+    Task EnviarEmailVerificacionAsync(string emailDestino, string tokenPlano);
 }
