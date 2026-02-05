@@ -24,6 +24,7 @@ public class EmailVerificationTokenRepository : IEmailVerificationTokenRepositor
     /// <summary>
     /// Crea un nuevo token de verificación.
     /// </summary>
+    /// <param name="token"></param>
     public async Task CrearAsync(EmailVerificationToken token)
     {
         await _context.EmailVerificationTokens.AddAsync(token);
@@ -35,6 +36,7 @@ public class EmailVerificationTokenRepository : IEmailVerificationTokenRepositor
     /// - No usado
     /// - No expirado
     /// </summary>
+    /// <param name="userId"></param>
     public async Task<EmailVerificationToken?> ObtenerTokenActivoAsync(int userId)
     {
         return await _context
@@ -48,6 +50,7 @@ public class EmailVerificationTokenRepository : IEmailVerificationTokenRepositor
     /// <summary>
     /// Obtiene todos los reenvíos realizados en la última hora.
     /// </summary>
+    /// <param name="userId"></param>
     public async Task<IEnumerable<EmailVerificationToken>> ObtenerReenviosUltimaHoraAsync(
         int userId
     )
@@ -66,6 +69,7 @@ public class EmailVerificationTokenRepository : IEmailVerificationTokenRepositor
     /// <summary>
     /// Busca un token por su hash (SHA-512(token + salt)).
     /// </summary>
+    /// <param name="tokenHash"></param>
     public async Task<EmailVerificationToken?> ObtenerPorHashAsync(string tokenHash)
     {
         return await _context
@@ -76,6 +80,7 @@ public class EmailVerificationTokenRepository : IEmailVerificationTokenRepositor
     /// <summary>
     /// Actualiza un token existente.
     /// </summary>
+    /// <param name="token"></param>
     public async Task ActualizarAsync(EmailVerificationToken token)
     {
         _context.EmailVerificationTokens.Update(token);
