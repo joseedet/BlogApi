@@ -238,4 +238,56 @@ public class PageService:IPageService
 
         return MapToDto(page);
     }
+    /// <summary>
+    /// Obtiene la versión de una página dada
+    /// </summary>
+    /// <param name="pageId"></param>
+    /// <returns>List&lt;PageVersionDto&gt;</returns>
+    public async Task<List<PageVersionDto>> ObtenerVersionesAsync(int pageId)
+    {
+        var versiones = await _pageRepository.ObtenerVersionesAsync(pageId);
+
+        return versiones
+            .Select(v => new PageVersionDto
+            {
+                Id = v.Id,
+                PageId = v.PageId,
+                Titulo = v.Titulo,
+                Slug = v.Slug,
+                Contenido = v.Contenido,
+                Publicado = v.Publicado,
+                EsInicio = v.EsInicio,
+                FechaVersion = v.FechaVersion,
+                IpCreacion = v.IpCreacion,
+                UserAgentCreacion = v.UserAgentCreacion,
+            })
+            .ToList();
+    }
+
+    /// <summary>
+    /// Obtiene un versión específica de una página
+    /// </summary>
+    /// <param name="versionId"></param>
+    /// <returns>PageVersionDto</returns>
+    public async Task<PageVersionDto> ObtenerVersionPorIdAsync(int versionId)
+    {
+        var version = await _pageRepository.ObtenerVersionPorIdAsync(versionId);
+
+        if (version == null)
+            throw new KeyNotFoundException("Versión no encontrada");
+
+        return new PageVersionDto
+        {
+            Id = version.Id,
+            PageId = version.PageId,
+            Titulo = version.Titulo,
+            Slug = version.Slug,
+            Contenido = version.Contenido,
+            Publicado = version.Publicado,
+            EsInicio = version.EsInicio,
+            FechaVersion = version.FechaVersion,
+            IpCreacion = version.IpCreacion,
+            UserAgentCreacion = version.UserAgentCreacion,
+        };
+    }
 }

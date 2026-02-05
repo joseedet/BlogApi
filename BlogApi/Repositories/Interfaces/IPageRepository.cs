@@ -69,4 +69,6 @@ public interface IPageRepository
     /// <param name="versionId"></param>
     /// <returns>PageVersion</returns>
     Task<PageVersion> ObtenerVersionPorIdAsync(int versionId);
+
+   
 }

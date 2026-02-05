@@ -123,5 +123,33 @@ namespace BlogApi.Controllers
             await _pageService.EliminarAsync(id);
             return NoContent();
         }
+        /// <summary>
+        /// Obtiene una lista de versiones de un página.
+        /// </summary>
+        /// <param name="pageId"></param>
+        /// <returns></returns>
+        // ---------------------------------------------------------
+        // Versiones de página
+        // ---------------------------------------------------------
+
+        [Authorize(Policy = "PuedeEditarContenido")]
+        [HttpGet("{pageId:int}/versiones")]
+        public async Task<IActionResult> ObtenerVersiones(int pageId)
+        {
+            var result = await _pageService.ObtenerVersionesAsync(pageId);
+            return Ok(result);
+        }
+        /// <summary>
+        /// Obtiene una versión concreta.
+        /// </summary>
+        /// <param name="versionId"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "PuedeEditarContenido")]
+        [HttpGet("version/{versionId:int}")]
+        public async Task<IActionResult> ObtenerVersion(int versionId)
+        {
+            var result = await _pageService.ObtenerVersionPorIdAsync(versionId);
+            return Ok(result);
+        }
     }
 }

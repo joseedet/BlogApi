@@ -63,5 +63,17 @@ public interface IPageService
     /// <returns>PageDto</returns>
     Task<PageDto> RestaurarVersionAsync(int versionId);
 
+    /// <summary>
+    /// Obtiene la versión de una página dada
+    /// </summary>
+    /// <param name="pageId"></param>
+    /// <returns>List&lt;PageVersionDto&gt;</returns>
+    Task<List<PageVersionDto>> ObtenerVersionesAsync(int pageId);
 
+    /// <summary>
+    /// Obtiene un versión específica de una página
+    /// </summary>
+    /// <param name="versionId"></param>
+    /// <returns>PageVersionDto</returns>
+    Task<PageVersionDto> ObtenerVersionPorIdAsync(int versionId);
 }
