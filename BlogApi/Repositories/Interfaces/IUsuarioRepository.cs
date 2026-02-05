@@ -34,4 +34,26 @@ public interface IUsuarioRepository : IGenericRepository<Usuario>
     /// <param name="excludeUserId"></param>
     /// <returns>Verdadero si existe en caso contrario falso</returns>
     Task<bool> EmailExistsAsync(string email, int excludeUserId);
+
+    /// <summary>
+    /// Establece el salt
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="salt"></param>
+    /// <returns></returns>
+    Task EstablecerSaltVerificacionAsync(int userId, string salt);
+
+    /// <summary>
+    /// Marca el email como verificado
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
+    Task MarcarEmailVerificadoAsync(int userId);
+
+    /// <summary>
+    /// Obtiene usuario por TokenHash
+    /// </summary>
+    /// <param name="tokenHash"></param>
+    /// <returns>Usuario?</returns>
+    Task<Usuario?> ObtenerPorTokenHashAsync(string tokenHash);
 }

@@ -56,4 +56,36 @@ public class UsuarioRepository : GenericRepository<Usuario>, IUsuarioRepository
     {
         return _context.Usuarios.AnyAsync(u => u.Email == email && u.Id != excludeUserId);
     }
+    // --------------------------------------------------------- // NUEVOS MÉTODOS PARA VERIFICACIÓN DE EMAIL // --------------------------------------------------------- 
+    ///  <summary>
+    /// Guarda o actualiza el salt único del usuario para verificación de email.
+    /// </summary>
+    public async Task EstablecerSaltVerificacionAsync(int userId, string salt)
+    {
+        var usuario = await _dbSet.FirstOrDefaultAsync(u => u.Id == userId);
+        if (usuario == null) return; usuario.EmailVerificationSalt = salt;
+        _dbSet.Update(usuario); await _context.SaveChangesAsync();
+    }
+    /// <summary> 
+    /// Marca el email del usuario como verificado.
+    /// </summary>
+    public async Task MarcarEmailVerificadoAsync(int userId)
+    {
+        var usuario = await _dbSet.FirstOrDefaultAsync(u => u.Id == userId);
+        if (usuario == null) return; usuario.EmailVerificado = true;
+        usuario.EmailVerificadoEn = DateTime.UtcNow;
+        _dbSet.Update(usuario);
+        await _context.SaveChangesAsync();
+    } 
+    /// <summary>
+    /// Obtiene un usuario a partir del hash del token (SHA-512(token + salt)).
+    /// </summary>
+     public async Task<Usuario?> ObtenerPorTokenHashAsync(string tokenHash)
+    {
+        // El token hash NO está en Usuarios, sino en EmailVerificationTokens.
+        // Por tanto, hacemos un join manual.
+        return await _context.EmailVerificationTokens
+        .Where(t => t.TokenHash == tokenHash)
+        .Select(t => t.Usuario).FirstOrDefaultAsync();
+     }
 }

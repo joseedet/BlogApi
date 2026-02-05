@@ -44,10 +44,11 @@ public class Usuario
     /// <summary>
     /// Url de la imagen
     /// </summary>
-    
+
     public string AvatarUrl { get; set; } = string.Empty;
 
     // Recuperación de contraseña
+    
     /// <summary>
     /// Token para la recuperación de contraseña.
     /// </summary>
@@ -70,21 +71,25 @@ public class Usuario
     /// </summary>
     public DateTime? BloqueadoHasta { get; set; }
 
-    /// <summary>
-    /// Token para la verificación del correo electrónico.
-    /// </summary>
-    public string? VerificacionToken { get; set; }
-
-    /// <summary> Fecha de expiración del token de verificación de correo electrónico. </summary>
-    public DateTime? VerificacionTokenExpira { get; set; }
+    // Nuevo sistema de verificación de email
 
     /// <summary> Indica si el correo electrónico ha sido verificado. </summary>
     public bool EmailVerificado { get; set; }
+    /// <summary>
+    /// Email verificado en
+    /// </summary>
+    public DateTime? EmailVerificadoEn { get; set; }
+
+    /// <summary>
+    /// Salt para la verificación de email
+    /// </summary>
+    public string? EmailVerificationSalt { get; set; }
 
     /// <summary>
     /// Rol del usuario en el sistema.
     /// </summary>
-    //  // Protección fuerza bruta public int IntentosFallidos { get; set; } public DateTime? BloqueadoHasta { get; set; }
+    /// Protección fuerza bruta   
+    
     public RolUsuario Rol { get; set; } = RolUsuario.Suscriptor;
 
     /// <summary>

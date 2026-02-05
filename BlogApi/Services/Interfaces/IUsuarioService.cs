@@ -34,7 +34,7 @@ public interface IUsuarioService
     /// </summary>
     /// <param name="token"></param>
     /// <returns>Verdadero si se verificó correctamente, falso en caso contrario</returns>
-    Task<bool> VerificarEmailAsync(string token);
+    //Task<bool> VerificarEmailAsync(string token);
 
     /// <summary>
     /// Inicia sesión con email y contraseña

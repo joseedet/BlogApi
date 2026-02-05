@@ -95,7 +95,7 @@ public class AuthController : ControllerBase
         if (created == null)
             return BadRequest("El correo ya está registrado.");
         // Aquí enviarías el email real Console.WriteLine($"TOKEN DE VERIFICACIÓN:
-        Console.WriteLine($"TOKEN DE VERIFICACIÓN: {created.VerificacionToken}");
+        //Console.WriteLine($"TOKEN DE VERIFICACIÓN: {created.VerificacionToken}");
         return Ok("Usuario registrado. Revisa tu correo para verificar la cuenta.");
     }
 

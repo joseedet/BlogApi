@@ -79,8 +79,8 @@ public class UsuarioService : IUsuarioService
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
             FechaRegistro = DateTime.UtcNow,
             EmailVerificado = false,
-            VerificacionToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)),
-            VerificacionTokenExpira = DateTime.UtcNow.AddHours(24),
+            /*VerificacionToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)),
+            VerificacionTokenExpira = DateTime.UtcNow.AddHours(24),*/
             Rol = RolUsuario.Suscriptor,
         };
         _context.Usuarios.Add(usuario);
@@ -93,7 +93,7 @@ public class UsuarioService : IUsuarioService
     /// </summary>
     /// <param name="token"></param>
     /// <returns>Verdadero si se verificó correctamente, falso en caso contrario</returns>
-    public async Task<bool> VerificarEmailAsync(string token)
+   /* public async Task<bool> VerificarEmailAsync(string token)
     {
         var usuario = await _context.Usuarios.FirstOrDefaultAsync(u =>
             u.VerificacionToken == token
@@ -114,7 +114,7 @@ public class UsuarioService : IUsuarioService
 
         await _context.SaveChangesAsync();
         return true;
-    }
+    }*/
 
     /// <summary>
     /// Inicia sesión con email y contraseña
