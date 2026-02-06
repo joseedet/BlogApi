@@ -261,7 +261,8 @@ public class AuthController : ControllerBase
         return Ok("Usuario registrado. Revisa tu correo para verificar la cuenta.");
     }
     // --------------------------------------------------------- // 2. VERIFICAR EMAIL // ---------------------------------------------------------
-    [HttpGet("verify-email")] public async Task<IActionResult> VerifyEmail([FromQuery] string token) {
+    [HttpGet("verify-email")] 
+    public async Task<IActionResult> VerifyEmail([FromQuery] string token) {
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
         var userAgent = Request.Headers["User-Agent"].ToString();
         var ok = await _emailVerificationService.VerificarTokenAsync(token, ip, userAgent);

@@ -254,6 +254,9 @@ public class BlogDbContext : DbContext
             .WithMany()
             .HasForeignKey(a => a.UsuarioId)
             .OnDelete(DeleteBehavior.SetNull);
+        
+
+            
 
         base.OnModelCreating(modelBuilder);
     }
