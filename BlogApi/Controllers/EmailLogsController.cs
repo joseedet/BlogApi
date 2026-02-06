@@ -13,7 +13,7 @@ namespace BlogApi.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "Admin")]
+//[Authorize(Roles = "Admin")]
 public class EmailLogsController : ControllerBase
 {
     private readonly IEmailLogService _service;

@@ -35,12 +35,12 @@ public class UsuariosController : ControllerBase
     /// </summary>
     /// <param name="usuario"></param>
     /// <returns></returns>
-    [Authorize(Roles = "Administrador")]
+    //[Authorize(Roles = "Administrador")]
     [HttpPost("registro")]
     public async Task<IActionResult> Registrar(Usuario usuario)
     {
         usuario.PasswordHash = BCrypt.Net.BCrypt.HashPassword(usuario.PasswordHash);
-        usuario.Rol = RolUsuario.Suscriptor;
+        //usuario.Rol = RolUsuario.Suscriptor;
         // por seguridad
         var created = await _service.CrearUsuarioAsync(usuario);
         return Ok(created.ToDto());

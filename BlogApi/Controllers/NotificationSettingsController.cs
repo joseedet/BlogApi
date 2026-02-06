@@ -11,7 +11,7 @@ namespace BlogApi.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")] // Solo administradores
+    //[Authorize(Roles = "Admin")] // Solo administradores
     public class NotificationSettingsController : ControllerBase
     {
         private readonly INotificationSettingsService _service;

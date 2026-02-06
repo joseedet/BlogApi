@@ -55,8 +55,8 @@ public class UsuarioService : IUsuarioService
     /// </summary>
     public async Task<Usuario> CrearUsuarioAsync(Usuario usuario)
     {
-        if (usuario.Rol == 0)
-            usuario.Rol = RolUsuario.Suscriptor;
+       /* if (usuario.Roles == 0)
+            usuario.Rol = RolUsuario.Suscriptor;*/
         await _repo.AddAsync(usuario);
         await _repo.SaveChangesAsync();
         return usuario;
@@ -81,7 +81,8 @@ public class UsuarioService : IUsuarioService
             EmailVerificado = false,
             /*VerificacionToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)),
             VerificacionTokenExpira = DateTime.UtcNow.AddHours(24),*/
-            Rol = RolUsuario.Suscriptor,
+
+            //Rol = RolUsuario.Suscriptor,
         };
         _context.Usuarios.Add(usuario);
         await _context.SaveChangesAsync();

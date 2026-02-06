@@ -8,7 +8,7 @@ namespace BlogApi.Controllers;
 public class UploadController : ControllerBase
 {
     [HttpPost]
-    [Authorize(Roles = "Administrador,Editor,Autor")]
+    //[Authorize(Roles = "Administrador,Editor,Autor")]
     public async Task<IActionResult> UploadImage(IFormFile file)
     {
         if (file == null || file.Length == 0)

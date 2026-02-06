@@ -10,7 +10,7 @@ namespace BlogApi.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "Admin")] // Solo el admin puede gestionar esto
+//[Authorize(Roles = "Admin")] // Solo el admin puede gestionar esto
 public class EmailSettingsController : ControllerBase
 {
     private readonly IEmailSettingsService _service;

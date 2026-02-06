@@ -89,11 +89,16 @@ public class Usuario
     /// Rol del usuario en el sistema.
     /// </summary>
     /// Protección fuerza bruta   
-    
-    public RolUsuario Rol { get; set; } = RolUsuario.Suscriptor;
+
+    //public RolUsuario Rol { get; set; } = RolUsuario.Suscriptor;
 
     /// <summary>
     /// Lista de tokens refrescados
     /// </summary>
     public List<RefreshToken> RefreshTokens { get; set; } = new();
+    
+    /// <summary>
+    /// Usuario Roles
+    /// </summary>
+    public List<UsuarioRol> UsuarioRoles { get; set; } = new();
 }

@@ -19,7 +19,7 @@ public class CategoriasController : ControllerBase
         _service = service;
     }
 
-    [Authorize(Roles = "Administrador,Editor")]
+    //[Authorize(Roles = "Administrador,Editor")]
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
@@ -27,7 +27,7 @@ public class CategoriasController : ControllerBase
         return Ok(categorias.Select(c => c.ToDto()));
     }
 
-    [Authorize(Roles = "Administrador,Editor")]
+    //[Authorize(Roles = "Administrador,Editor")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -37,7 +37,7 @@ public class CategoriasController : ControllerBase
         return Ok(categoria.ToDto());
     }
 
-    [Authorize(Roles = "Administrador,Editor")]
+    //[Authorize(Roles = "Administrador,Editor")]
     [HttpPost]
     public async Task<IActionResult> Create(CategoriaDto categoria)
     {
@@ -52,7 +52,7 @@ public class CategoriasController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }*/
 
-    [Authorize(Roles = "Administrador,Editor")]
+    //[Authorize(Roles = "Administrador,Editor")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, CategoriaDto dto)
     {
@@ -71,7 +71,7 @@ public class CategoriasController : ControllerBase
         return NoContent();
     }*/
 
-    [Authorize(Roles = "Administrador")]
+    //[Authorize(Roles = "Administrador")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

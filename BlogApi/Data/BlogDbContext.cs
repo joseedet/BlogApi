@@ -111,6 +111,31 @@ public class BlogDbContext : DbContext
     public DbSet<EmailVerificationToken> EmailVerificationTokens { get; set; }
 
     /// <summary>
+    /// Roles
+    /// </summary>
+    public DbSet<Rol> Roles { get; set; }
+
+    /// <summary>
+    /// Permisos
+    /// </summary>
+    public DbSet<Permiso> Permisos { get; set; }
+
+    /// <summary>
+    /// Rol Permisos
+    /// </summary>
+    public DbSet<RolPermiso> RolPermisos { get; set; }
+
+    /// <summary>
+    /// Usuario Roles
+    /// </summary>
+    public DbSet<UsuarioRol> UsuarioRoles { get; set; }
+
+    /// <summary>
+    /// Log de Acceso
+    /// </summary>
+    public DbSet<AccessLog> AccessLogs { get; set; }
+
+    /// <summary>
     ///  Configuración de las relaciones entre entidades
     /// </summary>
     /// <param name="modelBuilder"></param>
@@ -192,6 +217,43 @@ public class BlogDbContext : DbContext
             .WithMany()
             .HasForeignKey(v => v.PageId)
             .OnDelete(DeleteBehavior.Cascade);
+            
+        //Permisos
+
+        modelBuilder.Entity<UsuarioRol>().HasKey(ur => new { ur.UsuarioId, ur.RolId });
+
+        modelBuilder
+            .Entity<UsuarioRol>()
+            .HasOne(ur => ur.Usuario)
+            .WithMany(u => u.UsuarioRoles)
+            .HasForeignKey(ur => ur.UsuarioId);
+
+        modelBuilder
+            .Entity<UsuarioRol>()
+            .HasOne(ur => ur.Rol)
+            .WithMany(r => r.UsuarioRoles)
+            .HasForeignKey(ur => ur.RolId);
+
+        modelBuilder.Entity<RolPermiso>().HasKey(rp => new { rp.RolId, rp.PermisoId });
+
+        modelBuilder
+            .Entity<RolPermiso>()
+            .HasOne(rp => rp.Rol)
+            .WithMany(r => r.RolPermisos)
+            .HasForeignKey(rp => rp.RolId);
+
+        modelBuilder
+            .Entity<RolPermiso>()
+            .HasOne(rp => rp.Permiso)
+            .WithMany(p => p.RolPermisos)
+            .HasForeignKey(rp => rp.PermisoId);
+
+        modelBuilder
+            .Entity<AccessLog>()
+            .HasOne(a => a.Usuario)
+            .WithMany()
+            .HasForeignKey(a => a.UsuarioId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         base.OnModelCreating(modelBuilder);
     }

@@ -27,7 +27,7 @@ public class ComentariosController : ControllerBase
     }
 
     // Obtener comentarios raíz de un post
-    [Authorize(Roles = "Administrador,Editor,Autor")]
+    //[Authorize(Roles = "Administrador,Editor,Autor")]
     [HttpGet("post/{postId}")]
     public async Task<IActionResult> GetByPost(int postId)
     {
@@ -36,7 +36,7 @@ public class ComentariosController : ControllerBase
     }
 
     // Crear comentario o respuesta
-    [Authorize(Roles = "Administrador,Editor,Autor,Suscriptor")]
+    //[Authorize(Roles = "Administrador,Editor,Autor,Suscriptor")]
     [HttpPost]
     public async Task<IActionResult> Create(CreateComentarioDto dto)
     {
@@ -85,7 +85,7 @@ public class ComentariosController : ControllerBase
 
     // Eliminar comentario
     [Authorize(Roles = "Administrador,Editor")]
-    [HttpDelete("{id}")]
+    //[HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -104,7 +104,7 @@ public class ComentariosController : ControllerBase
 
     // Cambiar estado (solo Admin/Editor)
     [Authorize(Roles = "Administrador,Editor")]
-    [HttpPatch("{id}/estado")]
+    //[HttpPatch("{id}/estado")]
     public async Task<IActionResult> CambiarEstado(int id, [FromBody] string estado)
     {
         var estadosValidos = new[] { "Pendiente", "Aprobado", "Rechazado" };
@@ -119,7 +119,7 @@ public class ComentariosController : ControllerBase
     }
 
     // Obtener comentarios por estado
-    [Authorize(Roles = "Administrador,Editor")]
+    //[Authorize(Roles = "Administrador,Editor")]
     [HttpGet("estado/{estado}")]
     public async Task<IActionResult> GetByEstado(string estado)
     {
@@ -128,7 +128,7 @@ public class ComentariosController : ControllerBase
     }
 
     // Aprobar comentario
-    [Authorize(Roles = "Administrador,Editor")]
+    //[Authorize(Roles = "Administrador,Editor")]
     [HttpPatch("{id}/aprobar")]
     public async Task<IActionResult> Aprobar(int id)
     {
@@ -140,7 +140,7 @@ public class ComentariosController : ControllerBase
     }
 
     // Rechazar comentario
-    [Authorize(Roles = "Administrador,Editor")]
+    //[Authorize(Roles = "Administrador,Editor")]
     [HttpPatch("{id}/rechazar")]
     public async Task<IActionResult> Rechazar(int id)
     {
@@ -152,7 +152,7 @@ public class ComentariosController : ControllerBase
     }
 
     // Comentarios pendientes paginados
-    [Authorize(Roles = "Administrador,Editor")]
+    //[Authorize(Roles = "Administrador,Editor")]
     [HttpGet("pendientes")]
     public async Task<IActionResult> GetPendientes(
         [FromQuery] int page = 1,

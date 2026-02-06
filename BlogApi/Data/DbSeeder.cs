@@ -18,7 +18,7 @@ public static class DbSeeder
                 Nombre = "Administrador",
                 Email = "admin@blog.com",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
-                Rol = RolUsuario.Administrador,
+                //Rol = RolUsuario.Administrador,
             };
             context.Usuarios.Add(admin);
             context.SaveChanges();

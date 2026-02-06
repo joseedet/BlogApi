@@ -10,7 +10,7 @@ namespace BlogApi.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "Admin")] // Solo admin gestiona banners
+//[Authorize(Roles = "Admin")] // Solo admin gestiona banners
 public class BannerController : ControllerBase
 {
     private readonly IBannerService _service;

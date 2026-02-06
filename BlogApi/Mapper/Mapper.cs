@@ -32,7 +32,7 @@ public static class Mapper
             Id = usuario.Id,
             Nombre = usuario.Nombre,
             Email = usuario.Email,
-            Rol = usuario.Rol,
+            //Rol = usuario.Rol,
         };
 
     /// <summary>

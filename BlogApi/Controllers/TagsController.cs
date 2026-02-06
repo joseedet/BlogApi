@@ -35,7 +35,7 @@ public class TagsController : ControllerBase
         return Ok(tag.ToDto());
     }
 
-    [Authorize(Roles = "Administrador,Editor")]
+    //[Authorize(Roles = "Administrador,Editor")]
     [HttpPost]
     public async Task<IActionResult> Create(TagDto dto)
     {
@@ -44,7 +44,7 @@ public class TagsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created.ToDto());
     }
 
-    [Authorize(Roles = "Administrador,Editor")]
+    //[Authorize(Roles = "Administrador,Editor")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, TagDto dto)
     {
@@ -56,7 +56,7 @@ public class TagsController : ControllerBase
         return Ok(updated!.ToDto());
     }
 
-    [Authorize(Roles = "Administrador,Editor")]
+    //[Authorize(Roles = "Administrador,Editor")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {

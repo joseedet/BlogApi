@@ -46,7 +46,7 @@ public class TokenService : ITokenService
             //Email
             new Claim(ClaimTypes.Email, usuario.Email),
             // Rol (para User.IsInRole("Administrador"), etc.)
-            new Claim(ClaimTypes.Role, usuario.Rol.ToString()),
+            //new Claim(ClaimTypes.Role, usuario.Rol.ToString()),
         };
         var token = new JwtSecurityToken(
             issuer: _config["Jwt:Issuer"],

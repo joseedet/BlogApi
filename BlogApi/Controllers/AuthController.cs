@@ -82,7 +82,7 @@ public class AuthController : ControllerBase
                 usuario.Id,
                 usuario.Nombre,
                 usuario.Email,
-                Rol = usuario.Rol.ToString(),
+                //Rol = usuario.Rol.ToString(),
             },
         };
         return Ok(response);

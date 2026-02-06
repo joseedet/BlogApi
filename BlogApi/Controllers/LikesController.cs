@@ -13,7 +13,7 @@ namespace BlogApi.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-[Authorize] // Requiere JWT
+//[Authorize] // Requiere JWT
 public class LikesController : ControllerBase
 {
     private readonly ILikeService _likeService;
