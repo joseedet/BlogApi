@@ -183,15 +183,26 @@ public static class DbSeeder
                 {
                     Clave = "NotificationSettings.Editar",
                     Descripcion = "Editar configuración global de notificaciones",
-
                 },
                 // Páginas
-                new Permiso { Clave = "Paginas.Ver", Descripcion = "Ver listado completo de páginas" },
+                new Permiso
+                {
+                    Clave = "Paginas.Ver",
+                    Descripcion = "Ver listado completo de páginas",
+                },
                 new Permiso { Clave = "Paginas.Crear", Descripcion = "Crear páginas" },
                 new Permiso { Clave = "Paginas.Editar", Descripcion = "Editar páginas" },
                 new Permiso { Clave = "Paginas.Eliminar", Descripcion = "Eliminar páginas" },
-                new Permiso { Clave = "Paginas.VerVersiones", Descripcion = "Ver historial de versiones de páginas" },
-                new Permiso { Clave = "Paginas.RestaurarVersion", Descripcion = "Restaurar versiones anteriores de páginas" },
+                new Permiso
+                {
+                    Clave = "Paginas.VerVersiones",
+                    Descripcion = "Ver historial de versiones de páginas",
+                },
+                new Permiso
+                {
+                    Clave = "Paginas.RestaurarVersion",
+                    Descripcion = "Restaurar versiones anteriores de páginas",
+                },
                 // Estadísticas
                 new Permiso
                 {
@@ -204,11 +215,12 @@ public static class DbSeeder
                     Descripcion = "Ver actividad reciente del sistema",
                 },
                 // Media
-                new Permiso { Clave = "Media.Subir", Descripcion = "Subir imágenes o archivos multimedia" },
-           
-                
-             };
-            
+                new Permiso
+                {
+                    Clave = "Media.Subir",
+                    Descripcion = "Subir imágenes o archivos multimedia",
+                },
+            };
 
             context.Permisos.AddRange(permisos);
             context.SaveChanges();
