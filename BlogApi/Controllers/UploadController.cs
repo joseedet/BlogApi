@@ -3,12 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers;
 
+/// <summary>
+/// Controlador para subir archivos (imágenes) al servidor
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class UploadController : ControllerBase
 {
+    [Authorize(Policy = "Permiso:Media.Subir")]
     [HttpPost]
-    //[Authorize(Roles = "Administrador,Editor,Autor")]
     public async Task<IActionResult> UploadImage(IFormFile file)
     {
         if (file == null || file.Length == 0)
