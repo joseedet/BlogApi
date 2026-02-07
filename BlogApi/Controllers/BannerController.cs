@@ -76,6 +76,7 @@ public class BannerController : ControllerBase
     // ------------------------------------------------------------
     // POST /api/banner
     // ------------------------------------------------------------
+    [Authorize(Policy = "Permiso:Banners.Crear")]
     [HttpPost]
     [Consumes("multipart/form-data")]
     public async Task<ActionResult<BannerDto>> Crear([FromForm] BannerCreateDto dto)
@@ -94,6 +95,7 @@ public class BannerController : ControllerBase
     /// <param name="id"></param>
     /// <param name="dto"></param>
     /// <returns>BannerDto</returns>
+    [Authorize(Policy = "Permiso:Banners.Editar")]
     [HttpPut("{id:int}")]
     [Consumes("multipart/form-data")]
     public async Task<ActionResult<BannerDto>> Actualizar(int id, [FromForm] BannerUpdateDto dto)
@@ -115,6 +117,7 @@ public class BannerController : ControllerBase
     /// </summary>
     /// <param name="id"></param>
     /// <returns>Verdadero si se ha eliminado en caso contrario falso</returns>
+    [Authorize(Policy = "Permiso:Banners.Eliminar")]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Eliminar(int id)
     {

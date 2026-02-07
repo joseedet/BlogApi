@@ -1,4 +1,5 @@
 using BlogApi.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers
@@ -25,6 +26,8 @@ namespace BlogApi.Controllers
         /// Obtener estadísticas
         /// </summary>
         /// <returns></returns>
+
+        [Authorize(Policy = "Permiso:Stats.Ver")]
         [HttpGet]
         public async Task<IActionResult> GetStats()
         {
@@ -37,6 +40,7 @@ namespace BlogApi.Controllers
         /// </summary>
         /// <param name="limit"></param>
         /// <returns></returns>
+        [Authorize(Policy = "Permiso:Stats.VerActividad")]
         [HttpGet("actividad-reciente")]
         public async Task<IActionResult> GetActividadReciente([FromQuery] int limit = 10)
         {

@@ -28,6 +28,7 @@ namespace BlogApi.Controllers
         /// <summary>
         /// Obtiene la configuración global de notificaciones.
         /// </summary>
+        [Authorize(Policy = "Permiso:NotificationSettings.Ver")]
         [HttpGet]
         public async Task<ActionResult<NotificationSettingsDto>> Get()
         {
@@ -46,6 +47,7 @@ namespace BlogApi.Controllers
         /// <summary>
         ///  Actualiza la configuración global de notificaciones.
         ///  </summary>
+        [Authorize(Policy = "Permiso:NotificationSettings.Ver")]        
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] NotificationSettingsDto dto)
         {
