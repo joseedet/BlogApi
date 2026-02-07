@@ -230,6 +230,8 @@ builder.Services.AddAuthorization(options =>
 
     // Media
     options.AddPolicy("Permiso:Media.Subir", p => p.RequireClaim("permiso", "Media.Subir"));
+
+    
 });
 
 var app = builder.Build();

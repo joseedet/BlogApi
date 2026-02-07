@@ -220,6 +220,11 @@ public static class DbSeeder
                     Clave = "Media.Subir",
                     Descripcion = "Subir imágenes o archivos multimedia",
                 },
+                // Tags
+                new Permiso { Clave = "Tags.Ver", Descripcion = "Ver listado de tags" },
+                new Permiso { Clave = "Tags.Crear", Descripcion = "Crear tags" },
+                new Permiso { Clave = "Tags.Editar", Descripcion = "Editar tags" },
+                new Permiso { Clave = "Tags.Eliminar", Descripcion = "Eliminar tags" },
             };
 
             context.Permisos.AddRange(permisos);

@@ -18,7 +18,7 @@ public class TagsController : ControllerBase
     {
         _service = service;
     }
-
+    [Authorize(Policy = "Permiso:Tags.Ver")]
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
@@ -26,6 +26,7 @@ public class TagsController : ControllerBase
         return Ok(tags.Select(t => t.ToDto()));
     }
 
+    [Authorize(Policy = "Permiso:Tags.Ver")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -36,6 +37,7 @@ public class TagsController : ControllerBase
     }
 
     //[Authorize(Roles = "Administrador,Editor")]
+    [Authorize(Policy = "Permiso:Tags.Crear")]
     [HttpPost]
     public async Task<IActionResult> Create(TagDto dto)
     {
@@ -45,6 +47,7 @@ public class TagsController : ControllerBase
     }
 
     //[Authorize(Roles = "Administrador,Editor")]
+    [Authorize(Policy = "Permiso:Tags.Editar")]
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, TagDto dto)
     {
@@ -57,6 +60,7 @@ public class TagsController : ControllerBase
     }
 
     //[Authorize(Roles = "Administrador,Editor")]
+    [Authorize(Policy = "Permiso:Tags.Eliminar")]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
