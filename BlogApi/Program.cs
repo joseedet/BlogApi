@@ -220,6 +220,8 @@ builder.Services.AddAuthorization(options =>
         "Permiso:Paginas.RestaurarVersion",
         p => p.RequireClaim("permiso", "Paginas.RestaurarVersion")
     );
+    options.AddPolicy("Permiso:Posts.Publicar", p => p.RequireClaim("permiso", "Posts.Publicar"));
+    options.AddPolicy("Permiso:Posts.Destacar", p => p.RequireClaim("permiso", "Posts.Destacar"));
 
     // Estadísticas
     options.AddPolicy("Permiso:Stats.Ver", p => p.RequireClaim("permiso", "Stats.Ver"));
