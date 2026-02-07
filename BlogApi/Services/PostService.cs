@@ -730,4 +730,41 @@ public class PostService : IPostService
 
         return await query.ToListAsync();
     }
+
+    /// <summary>
+    ///     Publica o despublica un post (toggle)
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Post</returns>
+    /// <exception cref="Exception"></exception>
+    public async Task<Post> PublicarAsync(int id)
+    {
+        var post = await _repo.GetByIdAsync(id);
+        if (post == null)
+            throw new Exception("Post no encontrado");
+
+        post.Publicado = !post.Publicado;
+        post.FechaPublicacion = post.Publicado ? DateTime.UtcNow : null;
+
+        await _repo.SaveChangesAsync();
+        return post;
+    }
+
+    /// <summary>
+    ///     Destaca o desdestaca un post (toggle)
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Post</returns>
+    /// <exception cref="Exception"></exception>
+    public async Task<Post> DestacarAsync(int id)
+    {
+        var post = await _repo.GetByIdAsync(id);
+        if (post == null)
+            throw new Exception("Post no encontrado");
+
+        post.Destacado = !post.Destacado;
+
+        await _repo.SaveChangesAsync();
+        return post;
+    }
 }
