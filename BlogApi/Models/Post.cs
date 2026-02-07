@@ -72,6 +72,22 @@ public class Post
     public DateTime FechaActualizacion { get; set; }
 
     /// <summary>
+    /// Indica si el post está publicado o no
+     /// </summary>
+    /// </summary>
+    public bool Publicado { get; set; }
+
+    /// <summary>
+    /// Fecha de publicación (si está publicado)
+    /// </summary>
+    public DateTime? FechaPublicacion { get; set; }
+
+    /// <summary>
+    ///     Indica si el post es destacado o no   
+    /// </summary>
+    public bool Destacado { get; set; }
+
+    /// <summary>
     /// Lista de comentario
     /// </summary>
     public List<Comentario> Comentarios { get; set; } = new();

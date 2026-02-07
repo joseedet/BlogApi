@@ -46,6 +46,7 @@ public class ComentariosController : ControllerBase
 
     // Crear comentario o respuesta
     //[Authorize(Roles = "Administrador,Editor,Autor,Suscriptor")]
+    [Authorize(Policy = "Permiso:Comentarios.Crear")]
     [HttpPost]
     public async Task<IActionResult> Create(CreateComentarioDto dto)
     {

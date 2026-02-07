@@ -55,8 +55,8 @@ public class PostsController : ControllerBase
     // GET BY ID
     // ------------------------------------------------------------
     // SOLO ADMIN/EDITOR/AUTOR
+    [Authorize(Policy = "Permiso:Posts.Ver")]
     [HttpGet("admin/{id}")]
-    [Authorize(Roles = "Administrador,Editor,Autor")]
     public async Task<IActionResult> GetByIdAdmin(int id)
     {
         var post = await _service.GetByIdAsync(id);
@@ -74,8 +74,9 @@ public class PostsController : ControllerBase
     // ------------------------------------------------------------
     // CREATE
     // ------------------------------------------------------------
+    [Authorize(Policy = "Permiso:Posts.Crear")]
     [HttpPost]
-    [Authorize(Roles = "Administrador,Editor,Autor")]
+    //[Authorize(Roles = "Administrador,Editor,Autor")]
     public async Task<IActionResult> Create(CreatePostDto dto)
     {
         if (!ModelState.IsValid)
@@ -126,8 +127,9 @@ public class PostsController : ControllerBase
     // ------------------------------------------------------------
     // UPDATE
     // ------------------------------------------------------------
+    [Authorize(Policy = "Permiso:Posts.Editar")]
     [HttpPut("{id}")]
-    [Authorize(Policy = "PuedeEditarPost")]
+    //[Authorize(Policy = "PuedeEditarPost")]
     public async Task<IActionResult> Update(int id, CreatePostDto dto)
     {
         if (!ModelState.IsValid)
@@ -176,8 +178,9 @@ public class PostsController : ControllerBase
     // ------------------------------------------------------------
     // DELETE
     // ------------------------------------------------------------
+    [Authorize(Policy = "Permiso:Posts.Eliminar")]
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Administrador,Editor,Autor")]
+    //[Authorize(Roles = "Administrador,Editor,Autor")]
     public async Task<IActionResult> Delete(int id)
     {
         int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

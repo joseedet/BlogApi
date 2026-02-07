@@ -193,4 +193,19 @@ public interface IPostService
     /// <param name="p"></param>
     /// <returns>IEnumerable&lt;Post&gt;</returns>
     Task<IEnumerable<Post>> SearchAdvancedAsync(PostSearchParams p);
+
+    /// <summary>
+    /// Publica un post, cambiando su estado a publicado y estableciendo la fecha de publicación
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    Task<Post> PublicarAsync(int id);
+
+    /// <summary>
+    /// Destaca un post, estableciendo su estado como destacado
+    /// </summary>    
+    /// <param name="id"></param>
+    /// <returns></returns> 
+
+    Task<Post> DestacarAsync(int id);
 }
