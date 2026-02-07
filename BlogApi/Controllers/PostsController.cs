@@ -34,7 +34,6 @@ public class PostsController : ControllerBase
     /// Obtener todos
     /// </summary>
     /// <returns></returns>
-
     // ------------------------------------------------------------
     // GET ALL
     // ------------------------------------------------------------
@@ -267,12 +266,12 @@ public class PostsController : ControllerBase
         var posts = await _service.GetByCategoriaAsync(categoriaId);
         return Ok(posts.Select(p => p.ToDto()));
     }
+
     /// <summary>
     /// Categoia slug
     /// </summary>
     /// <param name="slug"></param>
     /// <returns></returns>
-
     [HttpGet("categoria/slug/{slug}")]
     public async Task<IActionResult> GetByCategoriaSlug(string slug)
     {
@@ -411,6 +410,7 @@ public class PostsController : ControllerBase
         var posts = await _service.GetRelatedPostsAsync(id, count);
         return Ok(posts);
     }
+
     /// <summary>
     /// Búsqueda avanzada
     /// </summary>
@@ -422,6 +422,13 @@ public class PostsController : ControllerBase
         var posts = await _service.SearchAdvancedAsync(p);
         return Ok(posts.Select(x => x.ToDto()));
     }
+
+    /// <summary>
+    /// Publicar o despublicar un post
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
     [Authorize(Policy = "Permiso:Posts.Publicar")]
     [HttpPost("{id:int}/publicar")]
     public async Task<IActionResult> Publicar(int id, [FromBody] PublicarPostDto dto)
@@ -429,6 +436,13 @@ public class PostsController : ControllerBase
         var result = await _service.PublicarAsync(id);
         return Ok(result);
     }
+
+    /// <summary>
+    /// Marcar o desmarcar un post como destacado
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
     [Authorize(Policy = "Permiso:Posts.Destacar")]
     [HttpPost("{id:int}/destacar")]
     public async Task<IActionResult> Destacar(int id, [FromBody] DestacarPostDto dto)
