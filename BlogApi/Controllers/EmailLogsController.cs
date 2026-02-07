@@ -11,6 +11,7 @@ namespace BlogApi.Controllers;
 /// <summary>
 /// Controlador de EmailLogs
 /// </summary>
+[Authorize(Policy = "Permiso:EmailLogs.Ver")]
 [ApiController]
 [Route("api/[controller]")]
 //[Authorize(Roles = "Admin")]

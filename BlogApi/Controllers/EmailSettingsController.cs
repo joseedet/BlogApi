@@ -34,6 +34,7 @@ public class EmailSettingsController : ControllerBase
     // ------------------------------------------------------------
     // GET /api/emailsettings
     // ------------------------------------------------------------
+    [Authorize(Policy = "Permiso:EmailSettings.Ver")]
     [HttpGet]
     public async Task<ActionResult<EmailSettingsDto>> Obtener()
     {
@@ -49,6 +50,7 @@ public class EmailSettingsController : ControllerBase
     // ------------------------------------------------------------
     // PUT /api/emailsettings
     // ------------------------------------------------------------
+    [Authorize(Policy = "Permiso:EmailSettings.Editar")]
     [HttpPut]
     public async Task<ActionResult<EmailSettingsDto>> Actualizar(
         [FromBody] EmailSettingsUpdateDto dto
@@ -66,6 +68,7 @@ public class EmailSettingsController : ControllerBase
     // ------------------------------------------------------------
     // POST /api/emailsettings/test
     // ------------------------------------------------------------
+    [Authorize(Policy = "Permiso:EmailSettings.Test")]
     [HttpPost("test")]
     public async Task<IActionResult> EnviarEmailPrueba([FromBody] EmailTestRequest dto)
     {

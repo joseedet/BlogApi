@@ -7,6 +7,10 @@ using BlogApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+
+/// <summary>
+/// Controlador para gestionar comentarios en los posts del blog.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class ComentariosController : ControllerBase
@@ -14,7 +18,12 @@ public class ComentariosController : ControllerBase
     private readonly IComentarioService _service;
     private readonly IPostService _postService;
     private readonly INotificacionesService _notificaciones;
-
+    /// <summary>
+    /// Constructor del controlador de comentarios, inyecta los servicios necesarios para gestionar comentarios, posts y notificaciones.
+    /// </summary>
+    /// <param name="service"></param>
+    /// <param name="postService"></param>
+    /// <param name="notificaciones"></param>
     public ComentariosController(
         IComentarioService service,
         IPostService postService,
@@ -84,8 +93,8 @@ public class ComentariosController : ControllerBase
     }
 
     // Eliminar comentario
-    [Authorize(Roles = "Administrador,Editor")]
-    //[HttpDelete("{id}")]
+    [Authorize(Policy = "Permiso:Comentarios.Eliminar")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -103,8 +112,8 @@ public class ComentariosController : ControllerBase
     }
 
     // Cambiar estado (solo Admin/Editor)
-    [Authorize(Roles = "Administrador,Editor")]
-    //[HttpPatch("{id}/estado")]
+    [Authorize(Policy = "Permiso:Comentarios.Moderar")]
+    [HttpPatch("{id}/estado")]
     public async Task<IActionResult> CambiarEstado(int id, [FromBody] string estado)
     {
         var estadosValidos = new[] { "Pendiente", "Aprobado", "Rechazado" };
@@ -128,7 +137,7 @@ public class ComentariosController : ControllerBase
     }
 
     // Aprobar comentario
-    //[Authorize(Roles = "Administrador,Editor")]
+    [Authorize(Policy = "Permiso:Comentarios.Moderar")]
     [HttpPatch("{id}/aprobar")]
     public async Task<IActionResult> Aprobar(int id)
     {
@@ -140,7 +149,7 @@ public class ComentariosController : ControllerBase
     }
 
     // Rechazar comentario
-    //[Authorize(Roles = "Administrador,Editor")]
+    [Authorize(Policy = "Permiso:Comentarios.Moderar")]
     [HttpPatch("{id}/rechazar")]
     public async Task<IActionResult> Rechazar(int id)
     {
@@ -152,7 +161,7 @@ public class ComentariosController : ControllerBase
     }
 
     // Comentarios pendientes paginados
-    //[Authorize(Roles = "Administrador,Editor")]
+    [Authorize(Policy = "Permiso:Comentarios.Moderar")]
     [HttpGet("pendientes")]
     public async Task<IActionResult> GetPendientes(
         [FromQuery] int page = 1,
