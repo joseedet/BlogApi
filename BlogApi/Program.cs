@@ -144,13 +144,92 @@ builder.Services.PostConfigure<JwtBearerOptions>(
 // Políticas de autorización
 builder.Services.AddAuthorization(options =>
 {
+    // Banners
+    options.AddPolicy("Permiso:Banners.Crear", p => p.RequireClaim("permiso", "Banners.Crear"));
+    options.AddPolicy("Permiso:Banners.Editar", p => p.RequireClaim("permiso", "Banners.Editar"));
     options.AddPolicy(
-        "PuedeEditarPost",
-        policy =>
-        {
-            policy.Requirements.Add(new PuedeEditarPostRequirement());
-        }
+        "Permiso:Banners.Eliminar",
+        p => p.RequireClaim("permiso", "Banners.Eliminar")
     );
+
+    // Categorías
+    options.AddPolicy("Permiso:Categorias.Ver", p => p.RequireClaim("permiso", "Categorias.Ver"));
+    options.AddPolicy(
+        "Permiso:Categorias.Crear",
+        p => p.RequireClaim("permiso", "Categorias.Crear")
+    );
+    options.AddPolicy(
+        "Permiso:Categorias.Editar",
+        p => p.RequireClaim("permiso", "Categorias.Editar")
+    );
+    options.AddPolicy(
+        "Permiso:Categorias.Eliminar",
+        p => p.RequireClaim("permiso", "Categorias.Eliminar")
+    );
+
+    // Comentarios
+    options.AddPolicy(
+        "Permiso:Comentarios.Moderar",
+        p => p.RequireClaim("permiso", "Comentarios.Moderar")
+    );
+    options.AddPolicy(
+        "Permiso:Comentarios.Eliminar",
+        p => p.RequireClaim("permiso", "Comentarios.Eliminar")
+    );
+
+    // Email Logs
+    options.AddPolicy("Permiso:EmailLogs.Ver", p => p.RequireClaim("permiso", "EmailLogs.Ver"));
+
+    // Email Settings
+    options.AddPolicy(
+        "Permiso:EmailSettings.Ver",
+        p => p.RequireClaim("permiso", "EmailSettings.Ver")
+    );
+    options.AddPolicy(
+        "Permiso:EmailSettings.Editar",
+        p => p.RequireClaim("permiso", "EmailSettings.Editar")
+    );
+    options.AddPolicy(
+        "Permiso:EmailSettings.Test",
+        p => p.RequireClaim("permiso", "EmailSettings.Test")
+    );
+
+    // Notification Settings
+    options.AddPolicy(
+        "Permiso:NotificationSettings.Ver",
+        p => p.RequireClaim("permiso", "NotificationSettings.Ver")
+    );
+    options.AddPolicy(
+        "Permiso:NotificationSettings.Editar",
+        p => p.RequireClaim("permiso", "NotificationSettings.Editar")
+    );
+
+    // Páginas
+    options.AddPolicy("Permiso:Paginas.Ver", p => p.RequireClaim("permiso", "Paginas.Ver"));
+    options.AddPolicy("Permiso:Paginas.Crear", p => p.RequireClaim("permiso", "Paginas.Crear"));
+    options.AddPolicy("Permiso:Paginas.Editar", p => p.RequireClaim("permiso", "Paginas.Editar"));
+    options.AddPolicy(
+        "Permiso:Paginas.Eliminar",
+        p => p.RequireClaim("permiso", "Paginas.Eliminar")
+    );
+    options.AddPolicy(
+        "Permiso:Paginas.VerVersiones",
+        p => p.RequireClaim("permiso", "Paginas.VerVersiones")
+    );
+    options.AddPolicy(
+        "Permiso:Paginas.RestaurarVersion",
+        p => p.RequireClaim("permiso", "Paginas.RestaurarVersion")
+    );
+
+    // Estadísticas
+    options.AddPolicy("Permiso:Stats.Ver", p => p.RequireClaim("permiso", "Stats.Ver"));
+    options.AddPolicy(
+        "Permiso:Stats.VerActividad",
+        p => p.RequireClaim("permiso", "Stats.VerActividad")
+    );
+
+    // Media
+    options.AddPolicy("Permiso:Media.Subir", p => p.RequireClaim("permiso", "Media.Subir"));
 });
 
 var app = builder.Build();
