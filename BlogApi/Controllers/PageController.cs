@@ -45,7 +45,7 @@ namespace BlogApi.Controllers
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        [Authorize(Policy = "PuedeEditarContenido")]
+        [Authorize(Policy = "Permiso:Paginas.Crear")]
         [HttpPost]
         public async Task<IActionResult> Crear([FromBody] CrearPageDto dto)
         {
@@ -61,7 +61,7 @@ namespace BlogApi.Controllers
         /// <param name="id"></param>
         /// <param name="dto"></param>
         /// <returns></returns>
-        [Authorize(Policy = "PuedeEditarContenido")]
+        [Authorize(Policy = "Permiso:Paginas.Editar")]
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Actualizar(int id, [FromBody] ActualizarPageDto dto)
         {
@@ -116,7 +116,7 @@ namespace BlogApi.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [Authorize(Policy = "PuedeEditarContenido")]
+        [Authorize(Policy = "Permiso:Paginas.Eliminar")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Eliminar(int id)
         {
@@ -132,7 +132,7 @@ namespace BlogApi.Controllers
         // Versiones de página
         // ---------------------------------------------------------
 
-        [Authorize(Policy = "PuedeEditarContenido")]
+        [Authorize(Policy = "Permiso:Paginas.VerVersiones")]
         [HttpGet("{pageId:int}/versiones")]
         public async Task<IActionResult> ObtenerVersiones(int pageId)
         {
@@ -144,7 +144,7 @@ namespace BlogApi.Controllers
         /// </summary>
         /// <param name="versionId"></param>
         /// <returns></returns>
-        [Authorize(Policy = "PuedeEditarContenido")]
+        [Authorize(Policy = "Permiso:Paginas.VerVersiones")]
         [HttpGet("version/{versionId:int}")]
         public async Task<IActionResult> ObtenerVersion(int versionId)
         {
@@ -157,7 +157,7 @@ namespace BlogApi.Controllers
         /// </summary>
         /// <param name="versionId"></param>
         /// <returns></returns>
-        [Authorize(Policy = "PuedeEditarContenido")]
+        [Authorize(Policy = "Permiso:Paginas.RestaurarVersion")]
         [HttpPost("version/{versionId:int}/restaurar")]
         public async Task<IActionResult> RestaurarVersion(int versionId)
         {
