@@ -1,5 +1,11 @@
 {
   "dotnet.defaultSolution": "BlogAPI+.sln",
-  "cSpell.words": ["devolvemos", "específica", "mismo", "relaciones"],
+  "cSpell.words": [
+    "devolvemos",
+    "específica",
+    "mismo",
+    "quitarse",
+    "relaciones"
+  ],
   "docomment.activateOnEnter": true
 }

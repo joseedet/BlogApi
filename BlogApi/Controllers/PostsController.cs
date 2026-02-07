@@ -422,4 +422,18 @@ public class PostsController : ControllerBase
         var posts = await _service.SearchAdvancedAsync(p);
         return Ok(posts.Select(x => x.ToDto()));
     }
+    [Authorize(Policy = "Permiso:Posts.Publicar")]
+    [HttpPost("{id:int}/publicar")]
+    public async Task<IActionResult> Publicar(int id, [FromBody] PublicarPostDto dto)
+    {
+        var result = await _service.PublicarAsync(id);
+        return Ok(result);
+    }
+    [Authorize(Policy = "Permiso:Posts.Destacar")]
+    [HttpPost("{id:int}/destacar")]
+    public async Task<IActionResult> Destacar(int id, [FromBody] DestacarPostDto dto)
+    {
+        var result = await _service.DestacarAsync(id);
+        return Ok(result);
+    }
 }
