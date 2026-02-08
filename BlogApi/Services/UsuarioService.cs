@@ -286,4 +286,12 @@ public class UsuarioService : IUsuarioService
     {
         return await _repo.DesbloquearAsync(id);
     }
+    /// <summary>
+    /// Obtiene todos los usuarios
+    /// </summary>
+    /// <returns>IEnumerable&lt;Usuario&gt;</returns>
+    public async Task<IEnumerable<Usuario>> GetAllAsync()
+    {
+        return await _context.Usuarios.ToListAsync();
+    }
 }

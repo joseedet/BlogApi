@@ -103,6 +103,7 @@ public class UsuariosController : ControllerBase
     {
         return int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
     }
+
     /// <summary>
     /// Bloquea un usuario
     /// </summary>
@@ -123,5 +124,16 @@ public class UsuariosController : ControllerBase
     {
         var ok = await _service.DesbloquearAsync(id);
         return ok ? Ok("Usuario desbloqueado") : NotFound("Usuario no encontrado");
+    }
+
+    /// <summary>
+    /// Lista todos los usuarios (solo admin/panel)
+    /// </summary>
+    [Authorize(Policy = "Permiso:Usuarios.Ver")]
+    [HttpGet("admin")]
+    public async Task<IActionResult> GetAllAdmin()
+    {
+        var usuarios = await _service.GetAllAsync();
+        return Ok(usuarios.Select(u => u.ToDto()));
     }
 }
