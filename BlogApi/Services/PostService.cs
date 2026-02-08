@@ -41,6 +41,11 @@ public class PostService : IPostService
     private readonly INotificacionesService _notificationService;
 
     /// <summary>
+    /// Servicio de usuarios
+    /// </summary>
+    private readonly IUsuarioService _usuarioService;
+
+    /// <summary>
     /// Repositorio de categorías
     /// </summary>
     /// <summary>
@@ -56,7 +61,8 @@ public class PostService : IPostService
         ITagRepository tagRepo,
         ICategoriaRepository categoriaRepository,
         ISanitizerService sanitizerService,
-        INotificacionesService notificationService
+        INotificacionesService notificationService,
+        IUsuarioService usuarioService
     )
     {
         _repo = repo;
@@ -64,6 +70,7 @@ public class PostService : IPostService
         _categoriaRepository = categoriaRepository;
         _sanitizerService = sanitizerService;
         _notificationService = notificationService;
+        _usuarioService = usuarioService;
     }
 
     /// <summary>
@@ -112,28 +119,23 @@ public class PostService : IPostService
     /// <returns>Post</returns>
     public async Task<Post> CreateAsync(Post post, List<int> tagIds, int usuarioId)
     {
+        // Validar usuario
+        var usuario = await _usuarioService.BuscarUsuarioPorIdAsync(usuarioId);
+        if (usuario == null || usuario.EstaBloqueado)
+            throw new UnauthorizedAccessException("El usuario no está autorizado.");
+
         ValidarEntrada(post, tagIds);
         await ValidarCategoriaAsync(post.CategoriaId);
         await ValidarTagsAsync(tagIds);
-        // Generar slug
-        var slug = await GenerateUniqueSlugAsync(post.Titulo);
 
-        // Asegurar que sea único
-        //var slug = baseSlug;
-        //int contador = 1;
-        /*while (await _repo.Query().AnyAsync(p => p.Slug == slug))
-         {
-             slug = $"{baseSlug}-{contador}";
-             contador++;
-         }*/
-        post.Slug = slug.ToString();
+        // Slug único
+        post.Slug = await GenerateUniqueSlugAsync(post.Titulo);
 
-        // Cargar tags desde la BD
-        var tags = await _tagRepo.Query().Where(t => tagIds.Contains(t.Id)).ToListAsync();
-
-        post.Tags = tags;
+        // Cargar tags
+        post.Tags = await _tagRepo.Query().Where(t => tagIds.Contains(t.Id)).ToListAsync();
 
         SanitizarPost(post);
+
         post.UsuarioId = usuarioId;
         post.FechaCreacion = DateTime.UtcNow;
         post.FechaActualizacion = DateTime.UtcNow;
@@ -153,14 +155,13 @@ public class PostService : IPostService
     /// <param name="puedeEditarTodo"></param>
     /// <param name="usuarioId"></param>
     /// <returns>bool</returns>
-    public async Task<bool> UpdateAsync(
-        int id,
-        Post post,
-        List<int> tagIds,
-        int usuarioId,
-        bool puedeEditarTodo
-    )
+    public async Task<bool> UpdateAsync(int id, Post post, List<int> tagIds, int usuarioId)
     {
+        // Validar usuario
+        var usuario = await _usuarioService.BuscarUsuarioPorIdAsync(usuarioId);
+        if (usuario == null || usuario.EstaBloqueado)
+            throw new UnauthorizedAccessException("El usuario no está autorizado.");
+
         ValidarEntrada(post, tagIds);
         await ValidarCategoriaAsync(post.CategoriaId);
         await ValidarTagsAsync(tagIds);
@@ -173,21 +174,16 @@ public class PostService : IPostService
         if (existing == null)
             return false;
 
-        // 🔥 VALIDACIÓN DE PERMISOS
-        if (!puedeEditarTodo && existing.UsuarioId != usuarioId)
-            return false;
+        // Validar autoría (el permiso global lo controla la policy del controlador)
+        if (existing.UsuarioId != usuarioId)
+            throw new UnauthorizedAccessException("No puedes editar posts de otros usuarios.");
 
         SanitizarPost(post);
 
-        // Actualizar campos básicos
         existing.Titulo = post.Titulo;
         existing.Contenido = post.Contenido;
         existing.CategoriaId = post.CategoriaId;
         existing.FechaActualizacion = DateTime.UtcNow;
-
-        // ⚠️ Nunca actualices UsuarioId desde el body
-        // existing.UsuarioId = post.UsuarioId;  ❌
-        // El usuario del post NO debe cambiar
 
         // Actualizar tags
         var tags = await _tagRepo.Query().Where(t => tagIds.Contains(t.Id)).ToListAsync();
@@ -207,18 +203,21 @@ public class PostService : IPostService
     /// </summary>
     /// <param name="id"></param>
     /// <param name="usuarioId"></param>
-    /// <param name="puedeElimarTodo"></param>
     /// <returns>bool</returns>
-    public async Task<bool> DeleteAsync(int id, int usuarioId, bool puedeElimarTodo)
+    public async Task<bool> DeleteAsync(int id, int usuarioId)
     {
-        var existing = await _repo.GetByIdAsync(id);
+        // Validar usuario
+        var usuario = await _usuarioService.BuscarUsuarioPorIdAsync(usuarioId);
+        if (usuario == null || usuario.EstaBloqueado)
+            throw new UnauthorizedAccessException("El usuario no está autorizado.");
 
+        var existing = await _repo.GetByIdAsync(id);
         if (existing == null)
             return false;
 
-        // Validación de permisos
-        if (!puedeElimarTodo && existing.UsuarioId != usuarioId)
-            return false;
+        // Validar autoría (el permiso global lo controla la policy)
+        if (existing.UsuarioId != usuarioId)
+            throw new UnauthorizedAccessException("No puedes eliminar posts de otros usuarios.");
 
         _repo.Remove(existing);
         await _repo.SaveChangesAsync();
@@ -737,11 +736,18 @@ public class PostService : IPostService
     /// <param name="id"></param>
     /// <returns>Post</returns>
     /// <exception cref="Exception"></exception>
-    public async Task<Post> PublicarAsync(int id)
+    public async Task<Post> PublicarAsync(int id, int usuarioId)
     {
+        var usuario = await _usuarioService.BuscarUsuarioPorIdAsync(usuarioId);
+        if (usuario == null || usuario.EstaBloqueado)
+            throw new UnauthorizedAccessException("El usuario no está autorizado.");
+
         var post = await _repo.GetByIdAsync(id);
         if (post == null)
             throw new Exception("Post no encontrado");
+
+        if (post.UsuarioId != usuarioId)
+            throw new UnauthorizedAccessException("No puedes publicar posts de otros usuarios.");
 
         post.Publicado = !post.Publicado;
         post.FechaPublicacion = post.Publicado ? DateTime.UtcNow : null;
@@ -756,11 +762,18 @@ public class PostService : IPostService
     /// <param name="id"></param>
     /// <returns>Post</returns>
     /// <exception cref="Exception"></exception>
-    public async Task<Post> DestacarAsync(int id)
+    public async Task<Post> DestacarAsync(int id, int usuarioId)
     {
+        var usuario = await _usuarioService.BuscarUsuarioPorIdAsync(usuarioId);
+        if (usuario == null || usuario.EstaBloqueado)
+            throw new UnauthorizedAccessException("El usuario no está autorizado.");
+
         var post = await _repo.GetByIdAsync(id);
         if (post == null)
             throw new Exception("Post no encontrado");
+
+        if (post.UsuarioId != usuarioId)
+            throw new UnauthorizedAccessException("No puedes destacar posts de otros usuarios.");
 
         post.Destacado = !post.Destacado;
 

@@ -32,7 +32,7 @@ public interface IPostService
     /// <param name="usuarioId"></param>
     /// <param name="puedeEditarTodo"></param>
     /// <returns>bool</returns>
-    Task<bool> DeleteAsync(int id, int usuarioId, bool puedeEditarTodo);
+    Task<bool> DeleteAsync(int id, int usuarioId);
 
     /// <summary>
     /// Crea un nuevo post con tags asociados
@@ -50,17 +50,10 @@ public interface IPostService
     /// </summary>
     /// <param name="id"></param>
     /// <param name="post"></param>
-    /// <param name="tagIds"></param>
-    /// <param name="puedeEditarTodo"></param>
     /// <param name="usuarioId"></param>
+    /// <param name="List&lt;int&gt;"></param>
     /// <returns>bool</returns>
-    Task<bool> UpdateAsync(
-        int id,
-        Post post,
-        List<int> tagIds,
-        int usuarioId,
-        bool puedeEditarTodo
-    );
+    Task<bool> UpdateAsync(int id, Post post, List<int> tagIds, int usuarioId);
 
     /// <summary>
     /// Obtiene los posts paginados
@@ -198,14 +191,15 @@ public interface IPostService
     /// Publica un post, cambiando su estado a publicado y estableciendo la fecha de publicación
     /// </summary>
     /// <param name="id"></param>
+    /// <param name="usuarioId"></param>
     /// <returns></returns>
-    Task<Post> PublicarAsync(int id);
+    Task<Post> PublicarAsync(int id, int usuarioId);
 
     /// <summary>
     /// Destaca un post, estableciendo su estado como destacado
-    /// </summary>    
+    /// </summary>
     /// <param name="id"></param>
-    /// <returns></returns> 
-
-    Task<Post> DestacarAsync(int id);
+    /// <param name="usuarioId"></param>
+    /// <returns></returns>
+    Task<Post> DestacarAsync(int id, int usuarioId);
 }

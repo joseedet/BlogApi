@@ -1,5 +1,6 @@
 using BlogApi.DTO;
 using BlogApi.Models;
+using BlogApi.Utils.Enums;
 
 namespace BlogApi.Services.Interfaces;
 
@@ -30,7 +31,7 @@ public interface IComentarioService
     /// <param name="estado"></param>
     /// <returns>True si se cambió el estado, false si no se encontró el comentario</returns>
     /// </summary>
-    Task<bool> CambiarEstadoAsync(int id, string estado);
+    Task<bool> CambiarEstadoAsync(int comentarioId, int usuarioId, ComentarioEstado estado);
 
     /// <summary>
     /// Obtiene comentarios por estado.
@@ -56,7 +57,7 @@ public interface IComentarioService
     /// <param name="puedeBorrarTodo"></param>
     /// <returns>True si se eliminó el comentario, false si no se encontró o no se pudo eliminar</returns>
     /// </summary>
-    Task<bool> EliminarComentarioAsync(int comentarioId, int usuarioId, bool puedeBorrarTodo);
+    Task<bool> EliminarComentarioAsync(int comentarioId, int usuarioId);
 
     /// <summary>
     /// Obtiene comentarios pendientes paginados
@@ -65,6 +66,4 @@ public interface IComentarioService
     /// <param name="pageSize"></param>
     /// <returns>PaginadoResultado&lt;Comentario&gt;</returns>
     Task<PaginacionResultado<Comentario>> GetPendientesPaginadoAsync(int page, int pageSize);
-
-   
 }

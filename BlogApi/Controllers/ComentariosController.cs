@@ -4,9 +4,9 @@ using BlogApi.DTO;
 using BlogApi.Mapper;
 using BlogApi.Models;
 using BlogApi.Services.Interfaces;
+using BlogApi.Utils.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 
 /// <summary>
 /// Controlador para gestionar comentarios en los posts del blog.
@@ -18,6 +18,7 @@ public class ComentariosController : ControllerBase
     private readonly IComentarioService _service;
     private readonly IPostService _postService;
     private readonly INotificacionesService _notificaciones;
+
     /// <summary>
     /// Constructor del controlador de comentarios, inyecta los servicios necesarios para gestionar comentarios, posts y notificaciones.
     /// </summary>
@@ -101,35 +102,28 @@ public class ComentariosController : ControllerBase
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var usuarioId))
             return Unauthorized();
-
-        bool esAdmin = User.IsInRole("Administrador");
-        bool esEditor = User.IsInRole("Editor");
-
-        var ok = await _service.EliminarComentarioAsync(id, usuarioId, esAdmin || esEditor);
+        var ok = await _service.EliminarComentarioAsync(id, usuarioId);
         if (!ok)
             return Forbid();
-
+        // o NotFound, según tu lógica
         return NoContent();
     }
 
     // Cambiar estado (solo Admin/Editor)
     [Authorize(Policy = "Permiso:Comentarios.Moderar")]
     [HttpPatch("{id}/estado")]
-    public async Task<IActionResult> CambiarEstado(int id, [FromBody] string estado)
+    public async Task<IActionResult> CambiarEstado(int id, [FromBody] CambiarEstadoDto dto)
     {
-        var estadosValidos = new[] { "Pendiente", "Aprobado", "Rechazado" };
-        if (!estadosValidos.Contains(estado))
-            return BadRequest("Estado inválido.");
-
-        var ok = await _service.CambiarEstadoAsync(id, estado);
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var ok = await _service.CambiarEstadoAsync(id, userId, dto.Estado);
         if (!ok)
             return NotFound();
-
         return NoContent();
     }
 
     // Obtener comentarios por estado
     //[Authorize(Roles = "Administrador,Editor")]
+    [Authorize(Policy = "Permiso:Comentarios.Moderar")]
     [HttpGet("estado/{estado}")]
     public async Task<IActionResult> GetByEstado(string estado)
     {
@@ -142,10 +136,10 @@ public class ComentariosController : ControllerBase
     [HttpPatch("{id}/aprobar")]
     public async Task<IActionResult> Aprobar(int id)
     {
-        var ok = await _service.CambiarEstadoAsync(id, "Aprobado");
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var ok = await _service.CambiarEstadoAsync(id, userId, ComentarioEstado.Aprobado);
         if (!ok)
             return NotFound();
-
         return NoContent();
     }
 
@@ -154,10 +148,10 @@ public class ComentariosController : ControllerBase
     [HttpPatch("{id}/rechazar")]
     public async Task<IActionResult> Rechazar(int id)
     {
-        var ok = await _service.CambiarEstadoAsync(id, "Rechazado");
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var ok = await _service.CambiarEstadoAsync(id, userId, ComentarioEstado.Rechazado);
         if (!ok)
             return NotFound();
-
         return NoContent();
     }
 

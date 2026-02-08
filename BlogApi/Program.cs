@@ -258,9 +258,11 @@ app.UseCors("Default");
 
 app.UseAuthentication();
 
-app.UseSecurityHeaders();
+app.UseMiddleware<UsuarioBloqueadoMiddleware>();
 
 app.UseAuthorization();
+
+app.UseSecurityHeaders();
 
 app.UseStaticFiles();
 

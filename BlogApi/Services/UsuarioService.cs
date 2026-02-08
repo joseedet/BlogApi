@@ -294,4 +294,13 @@ public class UsuarioService : IUsuarioService
     {
         return await _context.Usuarios.ToListAsync();
     }
+    /// <summary>
+    /// Busca un usuario por su ID
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Usuario o null si no se encuentra</returns>
+    public Task<Usuario?> BuscarUsuarioPorIdAsync(int id)
+    {
+        return _repo.GetByIdAsync(id);
+    }
 }

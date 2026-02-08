@@ -83,9 +83,16 @@ public interface IUsuarioService
     /// <returns>Verdadero si se desbloqueó correctamente, falso en caso contrario</returns>
     Task<bool> DesbloquearAsync(int id);
 
-/// <summary>
-/// Obtiene todos los usuarios
-/// </summary>
-/// <returns>IEnumerable&lt;Usuario&gt;</returns>
+    /// <summary>
+    /// Obtiene todos los usuarios
+    /// </summary>
+    /// <returns>IEnumerable&lt;Usuario&gt;</returns>
     Task<IEnumerable<Usuario>> GetAllAsync();
+    
+    /// <summary>
+    /// Busca un usuario por su ID
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Usuario o null si no se encuentra</returns>
+    Task <Usuario?>BuscarUsuarioPorIdAsync(int id);
 }

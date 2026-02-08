@@ -102,92 +102,109 @@ public class ComentarioService : IComentarioService
     /// <returns>Comentario</returns>
     public async Task<Comentario> CrearComentarioAsync(Comentario comentario)
     {
+        // 1. Validar usuario
+        var usuario = await _context.Usuarios.FirstOrDefaultAsync(u =>
+            u.Id == comentario.UsuarioId!.Value
+        );
+
+        if (usuario == null)
+            throw new UnauthorizedAccessException("El usuario no existe.");
+
+        if (usuario.EstaBloqueado)
+            throw new UnauthorizedAccessException("El usuario está bloqueado.");
+
+        if (usuario.EstaBloqueado)
+            throw new UnauthorizedAccessException("El usuario está bloqueado.");
+
+        // 2. Validar post
+        var post = await _context
+            .Posts.Include(p => p.Usuario)
+            .Where(p => p.Id == comentario.PostId)
+            .Select(p => new
+            {
+                p.Id,
+                p.Titulo,
+                AutorId = p.UsuarioId,
+                AutorEmail = p.Usuario.Email,
+                AutorNombre = p.Usuario.Nombre,
+            })
+            .FirstOrDefaultAsync();
+
+        if (post == null)
+            throw new ArgumentException("El post no existe.");
+
+        // 3. Crear comentario
         comentario.FechaCreacion = DateTime.UtcNow;
         comentario.Estado = ComentarioEstado.Pendiente;
 
         await _repo.AddAsync(comentario);
         await _repo.SaveChangesAsync();
 
-        var postAutor = await _context
-            .Posts.Include(p => p.Usuario)
-            // ← NECESARIO
-            .Where(p => p.Id == comentario.PostId)
-            .Select(p => new
-            {
-                p.UsuarioId,
-                Email = p.Usuario.Email,
-                Nombre = p.Usuario.Nombre,
-                p.Titulo,
-            })
-            .FirstAsync();
-
-        // Enviar notificación al autor del post
-
-        var autorComentario = await _context
-            .Usuarios.Where(u => u.Id == comentario.UsuarioId)
-            .Select(u => u.Nombre)
-            .FirstAsync();
-
-        // Crear notificación en la base de datos
-
-        /*await _notificacionService.CrearAsync(
-            postAutor.UsuarioId,
-            $"Tu post ha recibido un nuevo comentario de {autorComentario}"
-        );*/
-        Notificacion notificacion = NotificacionFactory.NuevoComentario(
-            usuarioDestinoId: postAutor.UsuarioId,
-            usuarioOrigenId: comentario.UsuarioId.Value,
+        // 4. Crear notificación para el autor del post
+        var notificacion = NotificacionFactory.NuevoComentario(
+            usuarioDestinoId: post.AutorId,
+            usuarioOrigenId: comentario.UsuarioId!.Value,
             postId: comentario.PostId,
             comentarioId: comentario.Id,
             contenido: comentario.Contenido
-        //autorComentario: autorComentario
         );
+
         await _notificacionesService.CrearAsync(notificacion);
 
-        // Enviar notificación en tiempo real vía SignalR
+        // 5. Notificación en tiempo real vía SignalR
         await _hub
-            .Clients.User(postAutor.UsuarioId.ToString())
+            .Clients.User(post.AutorId.ToString())
             .SendAsync(
                 "NuevaNotificacion",
                 new
                 {
-                    mensaje = $"Tu post '{postAutor.Titulo}' ha recibido un nuevo comentario.",
+                    mensaje = $"Tu post '{post.Titulo}' ha recibido un nuevo comentario.",
                     FechaCreacion = DateTime.UtcNow,
                 }
             );
-        // Enviar email al autor del post
+
+        // 6. Enviar email al autor del post
         var plantilla = await _emailTemplateService.CargarPlantillaAsync("NuevoComentario.html");
+
         var html = _emailTemplateService.ReemplazarVariables(
             plantilla,
             new Dictionary<string, string>
             {
-                { "NOMBRE_USUARIO", postAutor.Nombre },
-                { "TITULO_POST", postAutor.Titulo },
+                { "NOMBRE_USUARIO", post.AutorNombre },
+                { "TITULO_POST", post.Titulo },
             }
         );
-        // 🔥 Enviar email
-        await _emailService.EnviarAsync(
-            postAutor.Email,
-            "Nuevo comentario en tu post",
-            $"Has recibido un nuevo comentario en tu post: {postAutor.Titulo}"
-        );
+
+        await _emailService.EnviarAsync(post.AutorEmail, "Nuevo comentario en tu post", html);
 
         return comentario;
     }
 
     /// <summary>
-    /// Cambia el estado de un comentario
+    ///     Cambia el estado de un comentario (Aprobar, Rechazar, Pendiente)
+    /// Solo Admin/Editor pueden cambiar el estado
+    /// Un usuario no puede cambiar el estado de su propio comentario
+    /// El nuevo estado se pasa como string pero se convierte a enum internamente
+    /// Devuelve true si se cambió el estado, false si no se encontró el comentario o el estado es inválido
+    /// Lanza UnauthorizedAccessException si el usuario no existe o está bloqueado
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="comentarioId"></param>
+    /// <param name="usuarioId"></param>
     /// <param name="estado"></param>
-    /// <returns>bool</returns>
-    public async Task<bool> CambiarEstadoAsync(int id, string estado)
+    /// <returns>True si se cambió el estado, false si no se encontró el comentario o el estado es inválido</returns>
+    /// <exception cref="UnauthorizedAccessException"></exception>
+    /// </summary>
+    public async Task<bool> CambiarEstadoAsync(
+        int comentarioId,
+        int usuarioId,
+        ComentarioEstado nuevoEstado
+    )
     {
-        var comentario = await _repo.GetByIdAsync(id);
+        var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == usuarioId); // ✔ BIEN
+        if (usuario == null || usuario.EstaBloqueado)
+            throw new UnauthorizedAccessException("El usuario no está autorizado.");
+        var comentario = await _repo.GetByIdAsync(comentarioId);
         if (comentario == null)
-            return false;
-        // Convertir string → enum
-        if (!Enum.TryParse<ComentarioEstado>(estado, true, out var nuevoEstado))
             return false;
         comentario.Estado = nuevoEstado;
         _repo.Update(comentario);
@@ -200,13 +217,8 @@ public class ComentarioService : IComentarioService
     /// </summary>
     /// <param name="comentarioId"></param>
     /// <param name="usuarioId"></param>
-    /// <param name="puedeBorrarTodo"></param>
     /// <returns>true si se eliminó correctamente</returns>
-    public async Task<bool> EliminarComentarioAsync(
-        int comentarioId,
-        int usuarioId,
-        bool puedeBorrarTodo
-    )
+    public async Task<bool> EliminarComentarioAsync(int comentarioId, int usuarioId)
     {
         var comentario = await _repo
             .Query()
@@ -215,12 +227,19 @@ public class ComentarioService : IComentarioService
         if (comentario == null)
             return false;
 
-        // Si no es admin/editor, solo puede borrar sus propios comentarios
-
-        if (!puedeBorrarTodo && comentario.UsuarioId != usuarioId)
-            return false;
-
-        // Si tiene respuestas, las borramos también (estilo WordPress)
+        // 1. Si el usuario es el autor → puede borrar su comentario
+        if (comentario.UsuarioId == usuarioId)
+        {
+            // Borrar respuestas si existen
+            if (comentario.Respuestas.Any())
+            {
+                foreach (var respuesta in comentario.Respuestas)
+                    _repo.Remove(respuesta);
+            }
+            _repo.Remove(comentario);
+            await _repo.SaveChangesAsync();
+            return true;
+        }
 
         if (comentario.Respuestas.Any())
         {
