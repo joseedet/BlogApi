@@ -48,8 +48,8 @@ public static class Mapper
             Contenido = comentario.Contenido,
             FechaCreacion = comentario.FechaCreacion,
             Estado = comentario.Estado.ToString(),
-            Usuario = comentario.Usuario?.ToDto(),
-            Respuestas = comentario.Respuestas.Select(r => r.ToDto()).ToList(),
+            Usuario = comentario.Usuario != null ? comentario.Usuario.ToDto() : null,
+            Respuestas = comentario.Respuestas?.Select(r => r.ToDto()).ToList() ?? new(),
         };
 
     /// <summary>
@@ -67,12 +67,11 @@ public static class Mapper
             Slug = post.Slug,
             FechaCreacion = post.FechaCreacion,
             FechaActualizacion = post.FechaActualizacion,
-
-            Categoria = post.Categoria.ToDto(),
-            Usuario = post.Usuario.ToDto(),
-
+            Categoria = post.Categoria != null ? post.Categoria.ToDto() : null,
+            Usuario = post.Usuario != null ? post.Usuario.ToDto() : null,
             Comentarios = post.Comentarios.Select(c => c.ToDto()).ToList(),
             Tags = post.Tags.Select(t => t.ToDto()).ToList(),
+            ViewsCount = post.ViewsCount,
         };
 
     /// <summary>

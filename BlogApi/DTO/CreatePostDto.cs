@@ -23,7 +23,7 @@ public class CreatePostDto
     /// <summary>
     /// ID del usuario que crea el post
     /// </summary>
-    public int UsuarioId { get; set; }
+    //public int UsuarioId { get; set; }
 
     /// <summary>
     /// IDs de los tags asociados al post
