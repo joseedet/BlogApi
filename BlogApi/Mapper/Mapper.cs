@@ -47,9 +47,12 @@ public static class Mapper
             Id = comentario.Id,
             Contenido = comentario.Contenido,
             FechaCreacion = comentario.FechaCreacion,
+
             Estado = comentario.Estado.ToString(),
-            Usuario = comentario.Usuario != null ? comentario.Usuario.ToDto() : null,
-            Respuestas = comentario.Respuestas?.Select(r => r.ToDto()).ToList() ?? new(),
+            EstadoId = (int)comentario.Estado,
+
+            Usuario = comentario.Usuario?.ToDto(),
+            Respuestas = comentario.Respuestas.Select(r => r.ToDto()).ToList(),
         };
 
     /// <summary>
@@ -160,6 +163,7 @@ public static class Mapper
     {
         return posts.Select(p => p.ToDto()).ToList();
     }
+
     public static PageDto ToDto(this Page page) =>
         new PageDto
         {
