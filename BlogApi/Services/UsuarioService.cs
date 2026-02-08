@@ -55,8 +55,8 @@ public class UsuarioService : IUsuarioService
     /// </summary>
     public async Task<Usuario> CrearUsuarioAsync(Usuario usuario)
     {
-       /* if (usuario.Roles == 0)
-            usuario.Rol = RolUsuario.Suscriptor;*/
+        /* if (usuario.Roles == 0)
+             usuario.Rol = RolUsuario.Suscriptor;*/
         await _repo.AddAsync(usuario);
         await _repo.SaveChangesAsync();
         return usuario;
@@ -94,28 +94,28 @@ public class UsuarioService : IUsuarioService
     /// </summary>
     /// <param name="token"></param>
     /// <returns>Verdadero si se verificó correctamente, falso en caso contrario</returns>
-   /* public async Task<bool> VerificarEmailAsync(string token)
-    {
-        var usuario = await _context.Usuarios.FirstOrDefaultAsync(u =>
-            u.VerificacionToken == token
-        );
-
-        if (usuario == null)
-            return false;
-
-        if (
-            usuario.VerificacionTokenExpira == null
-            || usuario.VerificacionTokenExpira < DateTime.UtcNow
-        )
-            return false;
-
-        usuario.EmailVerificado = true;
-        usuario.VerificacionToken = null;
-        usuario.VerificacionTokenExpira = null;
-
-        await _context.SaveChangesAsync();
-        return true;
-    }*/
+    /* public async Task<bool> VerificarEmailAsync(string token)
+     {
+         var usuario = await _context.Usuarios.FirstOrDefaultAsync(u =>
+             u.VerificacionToken == token
+         );
+ 
+         if (usuario == null)
+             return false;
+ 
+         if (
+             usuario.VerificacionTokenExpira == null
+             || usuario.VerificacionTokenExpira < DateTime.UtcNow
+         )
+             return false;
+ 
+         usuario.EmailVerificado = true;
+         usuario.VerificacionToken = null;
+         usuario.VerificacionTokenExpira = null;
+ 
+         await _context.SaveChangesAsync();
+         return true;
+     }*/
 
     /// <summary>
     /// Inicia sesión con email y contraseña
@@ -127,6 +127,9 @@ public class UsuarioService : IUsuarioService
         var email = dto.Email.Trim().ToLower();
 
         var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
+
+        if (usuario.EstaBloqueado)
+            return LoginResult.Failed("El usuario está bloqueado.");
 
         if (usuario == null)
             return LoginResult.Failed("Credenciales inválidas.");
@@ -262,5 +265,25 @@ public class UsuarioService : IUsuarioService
         await _repo.SaveChangesAsync();
 
         return usuario.AvatarUrl;
+    }
+
+    /// <summary>
+    /// Bloquear usuario
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Verdadero si se bloqueó correctamente, falso en caso contrario</returns>
+    public async Task<bool> BloquearAsync(int id)
+    {
+        return await _repo.BloquearAsync(id);
+    }
+
+    /// <summary>
+    /// Desbloquear usuario
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Verdadero si se desbloqueó correctamente, falso en caso contrario</returns>
+    public async Task<bool> DesbloquearAsync(int id)
+    {
+        return await _repo.DesbloquearAsync(id);
     }
 }

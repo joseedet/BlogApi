@@ -57,6 +57,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login(LoginDto dto)
     {
         var result = await _usuarioService.LoginAsync(dto);
+        
         if (!result.Success)
             return Unauthorized(result.Error);
 

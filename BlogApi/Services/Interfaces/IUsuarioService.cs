@@ -67,4 +67,19 @@ public interface IUsuarioService
     /// <returns>string</returns>
     /// <exception cref="Exception"></exception>
     Task<string> SubirAvatarAsync(int userId, IFormFile avatar);
+
+    /// <summary>
+    /// Bloquear usuario
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Verdadero si se bloqueó correctamente, falso en caso contrario</returns>
+
+    Task<bool> BloquearAsync(int id);
+
+    /// <summary>
+    /// Desbloquear usuario
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Verdadero si se desbloqueó correctamente, falso en caso contrario</returns>
+    Task<bool> DesbloquearAsync(int id);
 }

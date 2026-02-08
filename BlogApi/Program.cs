@@ -91,9 +91,6 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddHttpContextAccessor();
 
-
-
-
 // Configuración de autenticación JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 builder
@@ -233,7 +230,13 @@ builder.Services.AddAuthorization(options =>
     // Media
     options.AddPolicy("Permiso:Media.Subir", p => p.RequireClaim("permiso", "Media.Subir"));
 
-    
+    // Usuarios
+    options.AddPolicy("Permiso:Usuarios.Ver", p => p.RequireClaim("permiso", "Usuarios.Ver"));
+    options.AddPolicy(
+        "Permiso:Usuarios.Bloquear",
+        p => p.RequireClaim("permiso", "Usuarios.Bloquear")
+    );
+    options.AddPolicy("Permiso:Usuarios.Ver", p => p.RequireClaim("permiso", "Usuarios.Ver"));
 });
 
 var app = builder.Build();

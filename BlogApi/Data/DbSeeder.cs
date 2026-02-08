@@ -125,6 +125,14 @@ public static class DbSeeder
                     Clave = "Usuarios.AsignarRoles",
                     Descripcion = "Asignar roles a usuarios",
                 },
+                new Permiso { Clave = "Usuarios.Ver", Descripcion = "Ver listado de usuarios" },
+                new Permiso
+                {
+                    Clave = "Usuarios.Bloquear",
+                    Descripcion = "Bloquear o desbloquear usuarios",
+                },
+                new Permiso { Clave = "Usuarios.Ver", Descripcion = "Ver listado de usuarios" },
+
                 // Comentarios
                 new Permiso
                 {

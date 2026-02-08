@@ -46,19 +46,18 @@ public class UsuariosController : ControllerBase
         return Ok(created.ToDto());
     }
 
-    /*  [HttpPost("login")]
-     public async Task<IActionResult> Login(LoginRequest request)
-     {
-         var usuario = await _service.GetByEmailAsync(request.Email);
-         if (usuario == null)
-             return Unauthorized("Usuario no encontrado");
- 
-         if (!BCrypt.Net.BCrypt.Verify(request.Password, usuario.PasswordHash))
-             return Unauthorized("Contraseña incorrecta");
-         var token = _tokenService.GenerateToken(usuario);
- 
-         return Ok(new { token });
-     } */
+    /// <summary>
+    /// Login de usuario
+    /// </summary>
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDto dto)
+    {
+        var result = await _service.LoginAsync(dto);
+        if (!result.Success)
+            return Unauthorized(result.Error);
+        var token = _tokenService.GenerateToken(result.Usuario);
+        return Ok(new { token });
+    }
 
     // El login lo haremos cuando implementemos JWT
 
@@ -103,5 +102,26 @@ public class UsuariosController : ControllerBase
     private int GetUserId()
     {
         return int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+    }
+    /// <summary>
+    /// Bloquea un usuario
+    /// </summary>
+    [Authorize(Policy = "Permiso:Usuarios.Bloquear")]
+    [HttpPost("{id:int}/bloquear")]
+    public async Task<IActionResult> Bloquear(int id)
+    {
+        var ok = await _service.BloquearAsync(id);
+        return ok ? Ok("Usuario bloqueado") : NotFound("Usuario no encontrado");
+    }
+
+    /// <summary>
+    /// Desbloquea un usuario
+    /// </summary>
+    [Authorize(Policy = "Permiso:Usuarios.Bloquear")]
+    [HttpPost("{id:int}/desbloquear")]
+    public async Task<IActionResult> Desbloquear(int id)
+    {
+        var ok = await _service.DesbloquearAsync(id);
+        return ok ? Ok("Usuario desbloqueado") : NotFound("Usuario no encontrado");
     }
 }
