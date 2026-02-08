@@ -152,50 +152,49 @@ public class PostService : IPostService
     /// <param name="id"></param>
     /// <param name="post"></param>
     /// <param name="tagIds"></param>
-    /// <param name="puedeEditarTodo"></param>
     /// <param name="usuarioId"></param>
     /// <returns>bool</returns>
     public async Task<bool> UpdateAsync(int id, Post post, List<int> tagIds, int usuarioId)
     {
-        // Validar usuario
-        var usuario = await _usuarioService.BuscarUsuarioPorIdAsync(usuarioId);
-        if (usuario == null || usuario.EstaBloqueado)
-            throw new UnauthorizedAccessException("El usuario no está autorizado.");
+        {
+            var usuario = await _usuarioService.BuscarUsuarioPorIdAsync(usuarioId);
+            if (usuario == null || usuario.EstaBloqueado)
+                throw new UnauthorizedAccessException("El usuario no está autorizado.");
 
-        ValidarEntrada(post, tagIds);
-        await ValidarCategoriaAsync(post.CategoriaId);
-        await ValidarTagsAsync(tagIds);
+            ValidarEntrada(post, tagIds);
+            await ValidarCategoriaAsync(post.CategoriaId);
+            await ValidarTagsAsync(tagIds);
 
-        var existing = await _repo
-            .Query()
-            .Include(p => p.Tags)
-            .FirstOrDefaultAsync(p => p.Id == id);
+            var existing = await _repo
+                .Query()
+                .Include(p => p.Tags)
+                .FirstOrDefaultAsync(p => p.Id == id);
 
-        if (existing == null)
-            return false;
+            if (existing == null)
+                return false;
 
-        // Validar autoría (el permiso global lo controla la policy del controlador)
-        if (existing.UsuarioId != usuarioId)
-            throw new UnauthorizedAccessException("No puedes editar posts de otros usuarios.");
+            // Validar autoría
+            if (existing.UsuarioId != usuarioId)
+                throw new UnauthorizedAccessException("No puedes editar posts de otros usuarios.");
 
-        SanitizarPost(post);
+            SanitizarPost(post);
 
-        existing.Titulo = post.Titulo;
-        existing.Contenido = post.Contenido;
-        existing.CategoriaId = post.CategoriaId;
-        existing.FechaActualizacion = DateTime.UtcNow;
+            existing.Titulo = post.Titulo;
+            existing.Contenido = post.Contenido;
+            existing.CategoriaId = post.CategoriaId;
+            existing.FechaActualizacion = DateTime.UtcNow;
 
-        // Actualizar tags
-        var tags = await _tagRepo.Query().Where(t => tagIds.Contains(t.Id)).ToListAsync();
+            var tags = await _tagRepo.Query().Where(t => tagIds.Contains(t.Id)).ToListAsync();
 
-        existing.Tags.Clear();
-        foreach (var tag in tags)
-            existing.Tags.Add(tag);
+            existing.Tags.Clear();
+            foreach (var tag in tags)
+                existing.Tags.Add(tag);
 
-        _repo.Update(existing);
-        await _repo.SaveChangesAsync();
+            _repo.Update(existing);
+            await _repo.SaveChangesAsync();
 
-        return true;
+            return true;
+        }
     }
 
     /// <summary>

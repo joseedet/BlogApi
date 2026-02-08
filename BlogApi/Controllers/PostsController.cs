@@ -62,7 +62,6 @@ public class PostsController : ControllerBase
         var post = await _service.GetByIdAsync(id);
         if (post == null)
             return NotFound();
-
         return Ok(post.ToDto());
     }
 
@@ -81,41 +80,23 @@ public class PostsController : ControllerBase
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-
-        try
+        int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var post = new Post
         {
-            int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
-            var post = new Post
-            {
-                Titulo = dto.Titulo,
-                Contenido = dto.Contenido,
-                CategoriaId = dto.CategoriaId,
-                UsuarioId = usuarioId,
-            };
-
-            var created = await _service.CreateAsync(post, dto.TagIds, usuarioId);
-
-            if (created == null)
-                return BadRequest("No se pudo crear el post");
-
-            var notificacion = NotificacionFactory.NuevoPost(
-                usuarioDestinoId: created.UsuarioId,
-                // el dueño del post
-                usuarioOrigenId: usuarioId,
-                // el que lo creó
-                postId: created.Id,
-                titulo: created.Titulo
-            );
-
-            await _notificaciones.CrearAsync(notificacion);
-
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created.ToDto());
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
+            Titulo = dto.Titulo,
+            Contenido = dto.Contenido,
+            CategoriaId = dto.CategoriaId,
+        };
+        var created = await _service.CreateAsync(post, dto.TagIds, usuarioId);
+        // Notificación al autor (él mismo)
+        var notificacion = NotificacionFactory.NuevoPost(
+            usuarioDestinoId: created.UsuarioId,
+            usuarioOrigenId: usuarioId,
+            postId: created.Id,
+            titulo: created.Titulo
+        );
+        await _notificaciones.CrearAsync(notificacion);
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created.ToDto());
     }
 
     /// <summary>
@@ -134,40 +115,18 @@ public class PostsController : ControllerBase
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-
-        try
+        int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var post = new Post
         {
-            int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-
-            bool esAdmin = User.IsInRole("Administrador");
-            bool esEditor = User.IsInRole("Editor");
-
-            var post = new Post
-            {
-                Titulo = dto.Titulo,
-                Contenido = dto.Contenido,
-                CategoriaId = dto.CategoriaId,
-                UsuarioId = usuarioId,
-            };
-
-            var ok = await _service.UpdateAsync(
-                id,
-                post,
-                dto.TagIds ?? new List<int>(),
-                usuarioId,
-                esAdmin || esEditor
-            );
-
-            if (!ok)
-                return NotFound();
-
-            var updated = await _service.GetByIdAsync(id);
-            return Ok(updated!.ToDto());
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
+            Titulo = dto.Titulo,
+            Contenido = dto.Contenido,
+            CategoriaId = dto.CategoriaId,
+        };
+        var ok = await _service.UpdateAsync(id, post, dto.TagIds, usuarioId);
+        if (!ok)
+            return Forbid();
+        var updated = await _service.GetByIdAsync(id);
+        return Ok(updated!.ToDto());
     }
 
     /// <summary>
@@ -184,11 +143,9 @@ public class PostsController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        bool esAdmin = User.IsInRole("Administrador");
-        bool esEditor = User.IsInRole("Editor");
-        var ok = await _service.DeleteAsync(id, usuarioId, esAdmin || esEditor);
+        var ok = await _service.DeleteAsync(id, usuarioId);
         if (!ok)
-            return NotFound();
+            return Forbid();
         return NoContent();
     }
 
@@ -369,9 +326,7 @@ public class PostsController : ControllerBase
         var post = await _service.GetByIdAsync(id);
         if (post == null)
             return NotFound();
-
         await _service.IncrementViewCountAsync(id);
-
         return Ok(post.ToDto());
     }
 
@@ -432,10 +387,11 @@ public class PostsController : ControllerBase
     /// <returns></returns>
     [Authorize(Policy = "Permiso:Posts.Publicar")]
     [HttpPost("{id:int}/publicar")]
-    public async Task<IActionResult> Publicar(int id, [FromBody] PublicarPostDto dto)
+    public async Task<IActionResult> Publicar(int id)
     {
-        var result = await _service.PublicarAsync(id);
-        return Ok(result);
+        int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var result = await _service.PublicarAsync(id, usuarioId);
+        return Ok(result.ToDto());
     }
 
     /// <summary>
@@ -446,9 +402,9 @@ public class PostsController : ControllerBase
     /// <returns></returns>
     [Authorize(Policy = "Permiso:Posts.Destacar")]
     [HttpPost("{id:int}/destacar")]
-    public async Task<IActionResult> Destacar(int id, [FromBody] DestacarPostDto dto)
+    public async Task<IActionResult> Destacar(int id)
     {
-        var result = await _service.DestacarAsync(id);
-        return Ok(result);
+        int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var result = await _service.DestacarAsync(id, usuarioId); return Ok(result.ToDto());
     }
 }
