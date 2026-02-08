@@ -56,4 +56,19 @@ public interface IUsuarioRepository : IGenericRepository<Usuario>
     /// <param name="tokenHash"></param>
     /// <returns>Usuario?</returns>
     Task<Usuario?> ObtenerPorTokenHashAsync(string tokenHash);
+
+    /// <summary>
+    /// Bloquear usuario
+    /// </summary>
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Verdadero si se bloqueó correctamente, falso en caso contrario</returns>
+    Task<bool> BloquearAsync(int id);
+    
+    /// <summary>
+    /// Desbloquear usuario
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns>Verdadero si se desbloqueó correctamente, falso en caso contrario</returns>
+    Task<bool> DesbloquearAsync(int id);
 }
