@@ -37,8 +37,9 @@ public class PostsController : ControllerBase
     // ------------------------------------------------------------
     // GET ALL
     // ------------------------------------------------------------
+    [Authorize(Policy = "Permiso:Posts.Ver")]
     [HttpGet]
-    [Authorize(Roles = "Administrador,Editor,Autor")]
+    //[Authorize(Roles = "Administrador,Editor,Autor")]
     public async Task<IActionResult> GetAll()
     {
         var posts = await _service.GetAllAsync();

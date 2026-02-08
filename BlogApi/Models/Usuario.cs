@@ -85,12 +85,11 @@ public class Usuario
     /// </summary>
     public string? EmailVerificationSalt { get; set; }
 
-    /// <summary>
-    /// Rol del usuario en el sistema.
-    /// </summary>
-    /// Protección fuerza bruta   
+/// <summary>
+/// Indica si el usuario está bloqueado debido a intentos fallidos de inicio de sesión o por otras razones administrativas.
+/// </summary>
+    public bool EstaBloqueado { get; set; }
 
-    //public RolUsuario Rol { get; set; } = RolUsuario.Suscriptor;
 
     /// <summary>
     /// Lista de tokens refrescados
