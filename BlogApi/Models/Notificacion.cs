@@ -57,14 +57,20 @@ public class Notificacion
     /// </summary>
     public int UsuarioDestinoId { get; set; }
 
+    /// <summary>
+    /// Usuario destino de la notificación
+    /// </summary>
     public Usuario UsuarioDestino { get; set; }
 
     /// <summary>
     /// ID del usuario origen de la notificación
     /// </summary>
-    public int UsuarioOrigenId { get; set; }
+    public int? UsuarioOrigenId { get; set; }
 
-    public Usuario UsuarioOrigen { get; set; }
+    /// <summary>
+    /// Usuario origen de la notificación (puede ser null para notificaciones del sistema)
+    /// </summary>
+    public Usuario? UsuarioOrigen { get; set; }
 
     /// <summary>
     /// ID del post asociado a la notificación

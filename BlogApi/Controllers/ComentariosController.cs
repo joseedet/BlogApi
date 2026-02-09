@@ -57,40 +57,42 @@ public class ComentariosController : ControllerBase
         if (post == null)
             return NotFound("El post no existe.");
         // Usuario autenticado
-        var userId = int.Parse(User.FindFirst("id")!.Value);
+        int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
+        // Validar comentario padre
+        if (dto.ComentarioPadreId.HasValue)
+        {
+            var padre = await _service.GetByIdAsync(dto.ComentarioPadreId.Value);
+            if (padre == null)
+                return BadRequest("El comentario padre no existe.");
+            if (padre.PostId != dto.PostId)
+                return BadRequest("El comentario padre no pertenece a este post.");
+        }
         var comentario = new Comentario
         {
             Contenido = dto.Contenido,
             PostId = dto.PostId,
-            UsuarioId = userId, // ← Seguridad corregida
+            UsuarioId = usuarioId,
             ComentarioPadreId = dto.ComentarioPadreId,
         };
-
         var created = await _service.CrearComentarioAsync(comentario);
-
-        // Notificación si es respuesta a un comentario
-        if (dto.ComentarioPadreId != null)
+        // Notificación si es respuesta
+        if (dto.ComentarioPadreId.HasValue)
         {
-            var comentarioPadre = await _service.GetByIdAsync(dto.ComentarioPadreId.Value);
-            var autorComentario = User.FindFirstValue(ClaimTypes.Name);
-            var postId = dto.PostId;
-
-            if (comentarioPadre != null && comentarioPadre.UsuarioId != null)
+            var padre = await _service.GetByIdAsync(dto.ComentarioPadreId.Value);
+            if (padre != null && padre.UsuarioId != usuarioId)
             {
                 var notificacion = NotificacionFactory.RespuestaComentario(
-                    usuarioDestinoId: comentario.UsuarioId.Value,
-                    usuarioOrigenId: comentarioPadre.UsuarioId.Value,
-                    postId: postId,
-                    comentarioId: comentarioPadre.Id,
+                    usuarioDestinoId: padre.UsuarioId!.Value,
+                    usuarioOrigenId: usuarioId,
+                    postId: dto.PostId,
+                    comentarioId: padre.Id,
                     contenido: created.Contenido,
-                    autorComentario: autorComentario
+                    autorComentario: User.FindFirstValue(ClaimTypes.Name)
                 );
-
                 await _notificaciones.CrearAsync(notificacion);
             }
         }
-
         return Ok(created.ToDto());
     }
 
@@ -99,9 +101,10 @@ public class ComentariosController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var usuarioId))
-            return Unauthorized();
+        int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var comentario = await _service.GetByIdAsync(id);
+        if (comentario == null)
+            return NotFound();
         var ok = await _service.EliminarComentarioAsync(id, usuarioId);
         if (!ok)
             return Forbid();
@@ -114,8 +117,8 @@ public class ComentariosController : ControllerBase
     [HttpPatch("{id}/estado")]
     public async Task<IActionResult> CambiarEstado(int id, [FromBody] CambiarEstadoDto dto)
     {
-        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        var ok = await _service.CambiarEstadoAsync(id, userId, dto.Estado);
+        int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var ok = await _service.CambiarEstadoAsync(id, usuarioId, dto.Estado);
         if (!ok)
             return NotFound();
         return NoContent();
@@ -136,8 +139,9 @@ public class ComentariosController : ControllerBase
     [HttpPatch("{id}/aprobar")]
     public async Task<IActionResult> Aprobar(int id)
     {
-        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        var ok = await _service.CambiarEstadoAsync(id, userId, ComentarioEstado.Aprobado);
+        int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        ;
+        var ok = await _service.CambiarEstadoAsync(id, usuarioId, ComentarioEstado.Aprobado);
         if (!ok)
             return NotFound();
         return NoContent();
@@ -148,8 +152,8 @@ public class ComentariosController : ControllerBase
     [HttpPatch("{id}/rechazar")]
     public async Task<IActionResult> Rechazar(int id)
     {
-        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
-        var ok = await _service.CambiarEstadoAsync(id, userId, ComentarioEstado.Rechazado);
+        int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var ok = await _service.CambiarEstadoAsync(id, usuarioId, ComentarioEstado.Rechazado);
         if (!ok)
             return NotFound();
         return NoContent();

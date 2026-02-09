@@ -54,4 +54,14 @@ public enum TipoNotificacion
     /// Nuevo comentario en tu post
     /// </summary>
     NuevoComentario,
+
+    /// <summary>
+    /// Comentario rechazado
+    /// </summary>
+    ComentarioRechazado,
+
+    /// <summary>
+    /// Comentario aprobado
+    /// </summary>
+    ComentarioAprobado,
 }

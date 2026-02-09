@@ -96,7 +96,7 @@ public class NotificacionRepository : INotificacionRepository
             {
                 Id = n.Id,
                 UsuarioDestinoId = n.UsuarioDestinoId,
-                UsuarioOrigenId = n.UsuarioOrigenId,
+                UsuarioOrigenId = (int)n.UsuarioOrigenId,
                 Tipo = n.Tipo,
                 PostId = n.PostId,
                 ComentarioId = n.ComentarioId,

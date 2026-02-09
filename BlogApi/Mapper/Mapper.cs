@@ -95,7 +95,7 @@ public static class Mapper
         {
             Id = n.Id,
             UsuarioDestinoId = n.UsuarioDestinoId,
-            UsuarioOrigenId = n.UsuarioOrigenId,
+            UsuarioOrigenId = (int)n.UsuarioOrigenId,
             Tipo = n.Tipo,
             Mensaje = n.Mensaje,
             FechaCreacion = n.FechaCreacion,
