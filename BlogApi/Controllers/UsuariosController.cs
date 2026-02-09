@@ -188,4 +188,63 @@ public class UsuariosController : ControllerBase
 
         return Ok(usuario.ToDto());
     }
+    /// <summary>
+    /// Edita un usuario (solo admin/panel)
+    /// </summary>
+    [Authorize(Policy = "Permiso:Usuarios.Editar")]
+    [HttpPut("admin/{id:int}")]
+    public async Task<IActionResult> EditarUsuarioAdmin(
+        int id,
+        [FromBody] EditarUsuarioAdminDto dto
+    )
+    {
+        var usuario = await _service.BuscarUsuarioPorIdAsync(id);
+
+        if (usuario == null)
+            return NotFound("Usuario no encontrado");
+
+        var ok = await _service.EditarUsuarioAdminAsync(id, dto);
+
+        if (!ok)
+            return BadRequest("No se pudo actualizar el usuario");
+
+        // Registrar log administrativo
+        await _logService.RegistrarAsync(GetUserId(), "EditarUsuario", id);
+
+        return Ok("Usuario actualizado correctamente");
+    }
+    /// <summary>
+    /// Asigna un rol a un usuario (solo admin/panel)
+    /// </summary>
+    [Authorize(Policy = "Permiso:Usuarios.Editar")]
+    [HttpPost("admin/{id:int}/roles")]
+    public async Task<IActionResult> AsignarRol(int id, [FromBody] AsignarRolDto dto)
+    {
+        var ok = await _service.AsignarRolAsync(id, dto.RolId);
+
+        if (!ok)
+            return BadRequest(
+                "No se pudo asignar el rol. Verifica que el usuario y el rol existan."
+            );
+
+        await _logService.RegistrarAsync(GetUserId(), "AsignarRol", id, $"RolId: {dto.RolId}");
+
+        return Ok("Rol asignado correctamente");
+    }
+    /// <summary>
+    /// Quita un rol a un usuario (solo admin/panel)
+    /// </summary>
+    [Authorize(Policy = "Permiso:Usuarios.Editar")]
+    [HttpDelete("admin/{id:int}/roles/{rolId:int}")]
+    public async Task<IActionResult> QuitarRol(int id, int rolId)
+    {
+        var ok = await _service.QuitarRolAsync(id, rolId);
+
+        if (!ok)
+            return BadRequest("No se pudo quitar el rol. Verifica que el usuario tenga ese rol.");
+
+        await _logService.RegistrarAsync(GetUserId(), "QuitarRol", id, $"RolId: {rolId}");
+
+        return Ok("Rol eliminado correctamente");
+    }
 }

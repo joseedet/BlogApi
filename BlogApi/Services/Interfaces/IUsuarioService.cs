@@ -101,4 +101,28 @@ public interface IUsuarioService
     /// <param name="filtro"></param>
     /// <returns></returns>
     Task<PaginacionResultado<Usuario>> FiltrarAsync(UsuarioFiltroDto filtro);
+
+    /// <summary>
+    /// Edita un usuario desde el panel de administración, permitiendo modificar su nombre, apellidos, email, estado de bloqueo y roles asignados
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="dto"></param>
+    /// <returns>Verdadero si se editó correctamente, falso en caso contrario</returns>
+    Task<bool> EditarUsuarioAdminAsync(int id, EditarUsuarioAdminDto dto);
+
+    /// <summary>
+    /// Asigna un rol a un usuario desde el panel de administración
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <param name="rolId"></param>
+    /// <returns>Verdadero si se asignó correctamente, falso en caso contrario</returns>
+    Task<bool> AsignarRolAsync(int usuarioId, int rolId);
+
+    /// <summary>
+    /// Quita un rol a un usuario desde el panel de administración
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <param name="rolId"></param>
+    /// <returns>Verdadero si se quitó correctamente, falso en caso contrario</returns>
+    Task<bool> QuitarRolAsync(int usuarioId, int rolId);
 }

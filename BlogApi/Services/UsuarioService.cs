@@ -87,8 +87,7 @@ public class UsuarioService : IUsuarioService
 
         //Asignar rol por defecto
         var rolPorDefecto = await _context.Roles.FirstOrDefaultAsync(r => r.Nombre == "Lector"); // o "Suscriptor"
-        
-       
+
         if (rolPorDefecto != null)
         {
             var usuarioRol = new UsuarioRol { UsuarioId = usuario.Id, RolId = rolPorDefecto.Id };
@@ -346,5 +345,74 @@ public class UsuarioService : IUsuarioService
             TotalPaginas = (int)Math.Ceiling(total / (double)filtro.PageSize),
             TotalRegistros = total,
         };
+    }
+
+    /// <summary>
+    /// Edita un usuario desde el panel de administración, permitiendo modificar su nombre, apellidos, email, estado de bloqueo y roles asignados
+    /// </summary>
+    public async Task<bool> EditarUsuarioAdminAsync(int id, EditarUsuarioAdminDto dto)
+    {
+        var usuario = await _context
+            .Usuarios.Include(u => u.UsuarioRoles)
+            .FirstOrDefaultAsync(u => u.Id == id);
+
+        if (usuario == null)
+            return false;
+
+        // Actualizar datos básicos
+        usuario.Nombre = dto.Nombre;
+        usuario.Apellidos = dto.Apellidos;
+        usuario.Email = dto.Email.ToLower().Trim();
+        usuario.EstaBloqueado = dto.EstaBloqueado;
+
+        // Actualizar roles
+        // 1. Eliminar roles actuales
+        _context.UsuarioRoles.RemoveRange(usuario.UsuarioRoles);
+
+        // 2. Asignar roles nuevos
+        foreach (var rolId in dto.RolesIds)
+        {
+            usuario.UsuarioRoles.Add(new UsuarioRol { UsuarioId = usuario.Id, RolId = rolId });
+        }
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
+    public async Task<bool> AsignarRolAsync(int usuarioId, int rolId)
+    {
+        var usuario = await _context
+            .Usuarios.Include(u => u.UsuarioRoles)
+            .FirstOrDefaultAsync(u => u.Id == usuarioId);
+
+        if (usuario == null)
+            return false;
+
+        // Verificar que el rol exista
+        var rolExiste = await _context.Roles.AnyAsync(r => r.Id == rolId);
+        if (!rolExiste)
+            return false;
+
+        // Verificar si ya tiene el rol
+        if (usuario.UsuarioRoles.Any(ur => ur.RolId == rolId))
+            return true; // ya lo tiene, no es error
+
+        usuario.UsuarioRoles.Add(new UsuarioRol { UsuarioId = usuarioId, RolId = rolId });
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
+    public async Task<bool> QuitarRolAsync(int usuarioId, int rolId)
+    {
+        var usuarioRol = await _context.UsuarioRoles.FirstOrDefaultAsync(ur =>
+            ur.UsuarioId == usuarioId && ur.RolId == rolId
+        );
+
+        if (usuarioRol == null)
+            return false;
+
+        _context.UsuarioRoles.Remove(usuarioRol);
+        await _context.SaveChangesAsync();
+
+        return true;
     }
 }
