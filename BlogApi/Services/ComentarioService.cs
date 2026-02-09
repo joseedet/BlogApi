@@ -48,6 +48,8 @@ public class ComentarioService : IComentarioService
     /// </summary>
     private readonly IHubContext<NotificacionesHub> _hub;
 
+    private readonly IUsuarioService _usuarioService;
+
     /// <summary>
     /// Constructor de ComentarioService
     /// </summary>
@@ -63,7 +65,8 @@ public class ComentarioService : IComentarioService
         INotificacionesService notificacionService,
         IEmailService emailService,
         IHubContext<NotificacionesHub> hub,
-        IEmailTemplateService emailTemplateService
+        IEmailTemplateService emailTemplateService,
+        IUsuarioService usuarioService
     )
     {
         _repo = repo;
@@ -72,6 +75,7 @@ public class ComentarioService : IComentarioService
         _emailService = emailService;
         _hub = hub;
         _emailTemplateService = emailTemplateService;
+        _usuarioService = usuarioService;
     }
 
     /// <summary>
@@ -103,15 +107,9 @@ public class ComentarioService : IComentarioService
     public async Task<Comentario> CrearComentarioAsync(Comentario comentario)
     {
         // 1. Validar usuario
-        var usuario = await _context.Usuarios.FirstOrDefaultAsync(u =>
-            u.Id == comentario.UsuarioId!.Value
-        );
-
+        var usuario = await _usuarioService.BuscarUsuarioPorIdAsync(comentario.UsuarioId!.Value);
         if (usuario == null)
             throw new UnauthorizedAccessException("El usuario no existe.");
-
-        if (usuario.EstaBloqueado)
-            throw new UnauthorizedAccessException("El usuario está bloqueado.");
 
         if (usuario.EstaBloqueado)
             throw new UnauthorizedAccessException("El usuario está bloqueado.");
@@ -200,13 +198,27 @@ public class ComentarioService : IComentarioService
         ComentarioEstado nuevoEstado
     )
     {
-        var usuario = await _context.Usuarios.FirstOrDefaultAsync(u => u.Id == usuarioId); // ✔ BIEN
+        // Validar usuario
+        var usuario = await _usuarioService.BuscarUsuarioPorIdAsync(usuarioId); // ✔ BIEN
+
         if (usuario == null || usuario.EstaBloqueado)
             throw new UnauthorizedAccessException("El usuario no está autorizado.");
-        var comentario = await _repo.GetByIdAsync(comentarioId);
+
+        var comentario = await _repo
+            .Query()
+            .Include(c => c.Usuario)
+            .FirstOrDefaultAsync(c => c.Id == comentarioId);
+        // El autor NO puede moderar su propio comentario
+        if (comentario.UsuarioId == usuarioId)
+            throw new UnauthorizedAccessException("No puedes moderar tu propio comentario.");
+
         if (comentario == null)
             return false;
+
+        //Cambiar el estado de las respuestas si el comentario es rechazado
+
         comentario.Estado = nuevoEstado;
+
         _repo.Update(comentario);
         await _repo.SaveChangesAsync();
         return true;
@@ -220,32 +232,27 @@ public class ComentarioService : IComentarioService
     /// <returns>true si se eliminó correctamente</returns>
     public async Task<bool> EliminarComentarioAsync(int comentarioId, int usuarioId)
     {
+        var usuario = await _usuarioService.BuscarUsuarioPorIdAsync(usuarioId);
+        if (usuario == null || usuario.EstaBloqueado)
+            throw new UnauthorizedAccessException("El usuario no está autorizado.");
+
         var comentario = await _repo
             .Query()
             .Include(c => c.Respuestas)
             .FirstOrDefaultAsync(c => c.Id == comentarioId);
+
         if (comentario == null)
             return false;
 
         // 1. Si el usuario es el autor → puede borrar su comentario
         if (comentario.UsuarioId == usuarioId)
-        {
-            // Borrar respuestas si existen
-            if (comentario.Respuestas.Any())
-            {
-                foreach (var respuesta in comentario.Respuestas)
-                    _repo.Remove(respuesta);
-            }
-            _repo.Remove(comentario);
-            await _repo.SaveChangesAsync();
-            return true;
-        }
+            throw new UnauthorizedAccessException(
+                "No puedes eliminar comentarios de otros usuarios."
+            );
 
-        if (comentario.Respuestas.Any())
-        {
-            foreach (var respuesta in comentario.Respuestas)
-                _repo.Remove(respuesta);
-        }
+        // Borrar respuestas
+        foreach (var respuesta in comentario.Respuestas)
+            _repo.Remove(respuesta);
         _repo.Remove(comentario);
         await _repo.SaveChangesAsync();
         return true;
@@ -258,9 +265,12 @@ public class ComentarioService : IComentarioService
     /// <returns>IEnumerable&lt;Comentario&gt;</returns>
     public async Task<IEnumerable<Comentario>> GetByEstadoAsync(string estado)
     {
+        if (!Enum.TryParse<ComentarioEstado>(estado, true, out var estadoEnum))
+            throw new ArgumentException("Estado inválido.");
+
         return await _repo
             .Query()
-            .Where(c => c.Estado == ComentarioEstado.Pendiente)
+            .Where(c => c.Estado == estadoEnum)
             .Include(c => c.Usuario)
             .Include(c => c.Respuestas)
             .ToListAsync();
@@ -275,7 +285,12 @@ public class ComentarioService : IComentarioService
     {
         //return await _context.Comentarios.FindAsync(id);
         // o con Include si necesitas navegación:
-        return await _repo.Query().FirstOrDefaultAsync(c => c.Id == id);
+        //return await _repo.Query().FirstOrDefaultAsync(c => c.Id == id);
+        return await _repo
+            .Query()
+            .Include(c => c.Usuario)
+            .Include(c => c.Respuestas)
+            .FirstOrDefaultAsync(c => c.Id == id);
     }
 
     /// <summary>
