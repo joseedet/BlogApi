@@ -24,7 +24,7 @@ public class NotificacionDto
     /// <summary>
     /// Identificador del usuario origen de la notificación
     /// </summary>
-    public int UsuarioOrigenId { get; set; }
+    public int? UsuarioOrigenId { get; set; }
 
     /// <summary>
     /// Tipo de notificación

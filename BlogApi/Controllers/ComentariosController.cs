@@ -45,6 +45,11 @@ public class ComentariosController : ControllerBase
         return Ok(comentarios.Select(c => c.ToDto()));
     }
 
+    /// <summary>
+    ///     Crea un nuevo comentario o respuesta. El usuario debe estar autenticado y tener permiso para crear comentarios. Si se especifica un comentario padre, se valida que exista y que pertenezca al mismo post. Si el comentario es una respuesta, se crea una notificación para el autor del comentario padre (si no es el mismo usuario que crea la respuesta).
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
     // Crear comentario o respuesta
     //[Authorize(Roles = "Administrador,Editor,Autor,Suscriptor")]
     [Authorize(Policy = "Permiso:Comentarios.Crear")]
@@ -96,6 +101,11 @@ public class ComentariosController : ControllerBase
         return Ok(created.ToDto());
     }
 
+    /// <summary>
+    /// Elimina un comentario por su ID. Solo el autor del comentario o usuarios con permiso de eliminar comentarios pueden eliminarlo. Si el comentario tiene respuestas, se puede optar por eliminar solo el comentario o toda la rama de respuestas.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     // Eliminar comentario
     [Authorize(Policy = "Permiso:Comentarios.Eliminar")]
     [HttpDelete("{id}")]
@@ -112,6 +122,12 @@ public class ComentariosController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Cambia el estado de un comentario (Aprobado, Rechazado, Pendiente). Solo accesible para usuarios con permiso de moderar comentarios.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
     // Cambiar estado (solo Admin/Editor)
     [Authorize(Policy = "Permiso:Comentarios.Moderar")]
     [HttpPatch("{id}/estado")]
@@ -124,6 +140,12 @@ public class ComentariosController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Obtiene comentarios por estado. Solo accesible para usuarios con permiso de moderar comentarios.
+    ///
+    /// </summary>
+    /// <param name="estado"></param>
+    /// <returns></returns>
     // Obtener comentarios por estado
     //[Authorize(Roles = "Administrador,Editor")]
     [Authorize(Policy = "Permiso:Comentarios.Moderar")]
@@ -134,6 +156,11 @@ public class ComentariosController : ControllerBase
         return Ok(comentarios.Select(c => c.ToDto()));
     }
 
+    /// <summary>
+    ///  Aprobar comentario. Cambia el estado del comentario a "Aprobado". Solo accesible para usuarios con permiso de moderar comentarios.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     // Aprobar comentario
     [Authorize(Policy = "Permiso:Comentarios.Moderar")]
     [HttpPatch("{id}/aprobar")]
@@ -147,6 +174,12 @@ public class ComentariosController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Rechazar comentario. Cambia el estado del comentario a "Rechazado". Solo accesible para usuarios con permiso de moderar comentarios.
+    ///
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     // Rechazar comentario
     [Authorize(Policy = "Permiso:Comentarios.Moderar")]
     [HttpPatch("{id}/rechazar")]
@@ -159,6 +192,13 @@ public class ComentariosController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    ///     Obtiene comentarios pendientes paginados. Solo accesible para usuarios con permiso de moderar comentarios.
+    ///
+    /// </summary>
+    /// <param name="page"></param>
+    /// <param name="pageSize"></param>
+    /// <returns></returns>
     // Comentarios pendientes paginados
     [Authorize(Policy = "Permiso:Comentarios.Moderar")]
     [HttpGet("pendientes")]
@@ -169,5 +209,27 @@ public class ComentariosController : ControllerBase
     {
         var result = await _service.GetPendientesPaginadoAsync(page, pageSize);
         return Ok(result);
+    }
+
+    /// <summary>
+    /// Filtra comentarios según los criterios especificados en el DTO de filtro. Permite filtrar por ID de post, ID de usuario y estado del comentario, así como paginar los resultados.
+    /// </summary>
+    /// <param name="filtro"></param>
+    /// <returns></returns>
+    [Authorize(Policy = "Permiso:Comentarios.Moderar")]
+    [HttpGet("filtrar")]
+    public async Task<IActionResult> Filtrar([FromQuery] ComentarioFiltroDto filtro)
+    {
+        var result = await _service.FiltrarAsync(filtro);
+
+        return Ok(
+            new
+            {
+                result.PaginaActual,
+                result.TotalPaginas,
+                result.TotalRegistros,
+                Comentarios = result.Items.Select(c => c.ToDto()),
+            }
+        );
     }
 }

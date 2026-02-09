@@ -321,4 +321,50 @@ public class ComentarioService : IComentarioService
             TotalRegistros = total,
         };
     }
+    /// <summary>
+    /// Filtra comentarios según los criterios especificados en el DTO de filtro. Permite filtrar por ID de post, ID de usuario y estado del comentario, así como paginar los resultados.
+    /// </summary>
+    /// <param name="filtro"></param>
+    /// <returns>PaginadoResultado&lt;Comentario&gt;</returns>
+    /// <exception cref="ArgumentException"></exception>
+    public async Task<PaginacionResultado<Comentario>> FiltrarAsync(ComentarioFiltroDto filtro)
+    {
+        var query = _repo.Query().Include(c => c.Usuario).Include(c => c.Respuestas).AsQueryable();
+
+        // Filtrar por post
+        if (filtro.PostId.HasValue)
+            query = query.Where(c => c.PostId == filtro.PostId.Value);
+
+        // Filtrar por usuario
+        if (filtro.UsuarioId.HasValue)
+            query = query.Where(c => c.UsuarioId == filtro.UsuarioId.Value);
+
+        // Filtrar por estado
+        if (!string.IsNullOrWhiteSpace(filtro.Estado))
+        {
+            if (Enum.TryParse<ComentarioEstado>(filtro.Estado, true, out var estadoEnum))
+                query = query.Where(c => c.Estado == estadoEnum);
+            else
+                throw new ArgumentException("Estado inválido.");
+        }
+
+        // Ordenar por fecha
+        query = query.OrderByDescending(c => c.FechaCreacion);
+
+        // Paginación
+        var total = await query.CountAsync();
+
+        var items = await query
+            .Skip((filtro.Page - 1) * filtro.PageSize)
+            .Take(filtro.PageSize)
+            .ToListAsync();
+
+        return new PaginacionResultado<Comentario>
+        {
+            Items = items,
+            PaginaActual = filtro.Page,
+            TotalPaginas = (int)Math.Ceiling(total / (double)filtro.PageSize),
+            TotalRegistros = total,
+        };
+    }
 }

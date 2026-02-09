@@ -66,4 +66,11 @@ public interface IComentarioService
     /// <param name="pageSize"></param>
     /// <returns>PaginadoResultado&lt;Comentario&gt;</returns>
     Task<PaginacionResultado<Comentario>> GetPendientesPaginadoAsync(int page, int pageSize);
+
+    /// <summary>
+    /// Filtra comentarios según los criterios especificados en el DTO de filtro. Permite filtrar por ID de post, ID de usuario y estado del comentario, así como paginar los resultados.
+    /// </summary>
+    /// <param name="filtro"></param>
+    /// <returns>PaginadoResultado&lt;Comentario&gt;</returns>
+    Task<PaginacionResultado<Comentario>> FiltrarAsync(ComentarioFiltroDto filtro);
 }
