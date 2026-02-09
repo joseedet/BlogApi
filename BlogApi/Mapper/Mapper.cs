@@ -26,14 +26,20 @@ public static class Mapper
     /// <param name="usuario"></param>
     /// <returns>UsuarioDto</returns>
     /// </summary>
-    public static UsuarioDto ToDto(this Usuario usuario) =>
-        new UsuarioDto
+    public static UsuarioDto ToDto(this Usuario u)
+    {
+        return new UsuarioDto
         {
-            Id = usuario.Id,
-            Nombre = usuario.Nombre,
-            Email = usuario.Email,
-            //Rol = usuario.Rol,
+            Id = u.Id,
+            Nombre = u.Nombre,
+            Apellidos = u.Apellidos,
+            Email = u.Email,
+            EstaBloqueado = u.EstaBloqueado,
+            EmailVerificado = u.EmailVerificado,
+            AvatarUrl = u.AvatarUrl,
+            Roles = u.UsuarioRoles.Select(ur => ur.Rol.Nombre).ToList(),
         };
+    }
 
     /// <summary>
     ///   Convierte una entidad Comentario a su DTO correspondiente.

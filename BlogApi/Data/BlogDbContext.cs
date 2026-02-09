@@ -136,6 +136,11 @@ public class BlogDbContext : DbContext
     public DbSet<AccessLog> AccessLogs { get; set; }
 
     /// <summary>
+    /// Log administrativo para acciones como bloqueos de usuarios, eliminación de contenido, etc.
+    /// </summary>
+    public DbSet<LogAdmin> LogAdmins { get; set; }    
+
+    /// <summary>
     ///  Configuración de las relaciones entre entidades
     /// </summary>
     /// <param name="modelBuilder"></param>

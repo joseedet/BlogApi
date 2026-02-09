@@ -85,9 +85,9 @@ public class Usuario
     /// </summary>
     public string? EmailVerificationSalt { get; set; }
 
-/// <summary>
-/// Indica si el usuario está bloqueado debido a intentos fallidos de inicio de sesión o por otras razones administrativas.
-/// </summary>
+    /// <summary>
+    /// Indica si el usuario está bloqueado debido a intentos fallidos de inicio de sesión o por otras razones administrativas.
+    /// </summary>
     public bool EstaBloqueado { get; set; }
 
 

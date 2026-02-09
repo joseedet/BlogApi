@@ -18,16 +18,23 @@ public class UsuariosController : ControllerBase
 {
     private readonly IUsuarioService _service;
     private readonly ITokenService _tokenService;
+    private readonly ILogService _logService;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="service"></param>
     /// <param name="tokenService"></param>
-    public UsuariosController(IUsuarioService service, ITokenService tokenService)
+    /// <param name="logService"></param>
+    public UsuariosController(
+        IUsuarioService service,
+        ITokenService tokenService,
+        ILogService logService
+    )
     {
         _service = service;
         _tokenService = tokenService;
+        _logService = logService;
     }
 
     /// <summary>
@@ -112,7 +119,11 @@ public class UsuariosController : ControllerBase
     public async Task<IActionResult> Bloquear(int id)
     {
         var ok = await _service.BloquearAsync(id);
-        return ok ? Ok("Usuario bloqueado") : NotFound("Usuario no encontrado");
+        if (!ok)
+            return NotFound("Usuario no encontrado");
+        // Aquí podrías registrar un log administrativo
+        await _logService.RegistrarAsync(GetUserId(), "BloquearUsuario", id);
+        return Ok("Usuario bloqueado");
     }
 
     /// <summary>
@@ -123,7 +134,11 @@ public class UsuariosController : ControllerBase
     public async Task<IActionResult> Desbloquear(int id)
     {
         var ok = await _service.DesbloquearAsync(id);
-        return ok ? Ok("Usuario desbloqueado") : NotFound("Usuario no encontrado");
+        if (!ok)
+            return NotFound("Usuario no encontrado");
+        // Aquí podrías registrar un log administrativo
+        // await _logService.RegistrarAsync(GetUserId(), "DesbloquearUsuario", id);
+        return Ok("Usuario desbloqueado");
     }
 
     /// <summary>
@@ -135,5 +150,42 @@ public class UsuariosController : ControllerBase
     {
         var usuarios = await _service.GetAllAsync();
         return Ok(usuarios.Select(u => u.ToDto()));
+    }
+
+    /// <summary>
+    /// Filtra usuarios por rol, estado de bloqueo y búsqueda por nombre o email, con paginación (solo admin/panel)
+    /// </summary>
+    /// <param name="filtro"></param>
+    /// <returns></returns>
+    [Authorize(Policy = "Permiso:Usuarios.Ver")]
+    [HttpGet("admin/filtrar")]
+    public async Task<IActionResult> Filtrar([FromQuery] UsuarioFiltroDto filtro)
+    {
+        var result = await _service.FiltrarAsync(filtro);
+
+        return Ok(
+            new
+            {
+                result.PaginaActual,
+                result.TotalPaginas,
+                result.TotalRegistros,
+                Usuarios = result.Items.Select(u => u.ToDto()),
+            }
+        );
+    }
+
+    /// <summary>
+    /// Obtiene un usuario por ID (solo admin/panel)
+    /// </summary>
+    [Authorize(Policy = "Permiso:Usuarios.Ver")]
+    [HttpGet("admin/{id:int}")]
+    public async Task<IActionResult> GetByIdAdmin(int id)
+    {
+        var usuario = await _service.BuscarUsuarioPorIdAsync(id);
+
+        if (usuario == null)
+            return NotFound("Usuario no encontrado");
+
+        return Ok(usuario.ToDto());
     }
 }

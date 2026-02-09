@@ -70,8 +70,10 @@ public class UsuarioService : IUsuarioService
     public async Task<Usuario> RegistrarUsuarioAsync(RegistroDto dto)
     {
         var email = dto.Email.Trim().ToLower();
+
         if (await _context.Usuarios.AnyAsync(u => u.Email == email))
             return null;
+
         var usuario = new Usuario
         {
             Nombre = dto.Nombre,
@@ -79,43 +81,22 @@ public class UsuarioService : IUsuarioService
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
             FechaRegistro = DateTime.UtcNow,
             EmailVerificado = false,
-            /*VerificacionToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)),
-            VerificacionTokenExpira = DateTime.UtcNow.AddHours(24),*/
-
-            //Rol = RolUsuario.Suscriptor,
         };
         _context.Usuarios.Add(usuario);
         await _context.SaveChangesAsync();
+
+        //Asignar rol por defecto
+        var rolPorDefecto = await _context.Roles.FirstOrDefaultAsync(r => r.Nombre == "Lector"); // o "Suscriptor"
+        
+       
+        if (rolPorDefecto != null)
+        {
+            var usuarioRol = new UsuarioRol { UsuarioId = usuario.Id, RolId = rolPorDefecto.Id };
+            _context.UsuarioRoles.Add(usuarioRol);
+            await _context.SaveChangesAsync();
+        }
         return usuario;
     }
-
-    /// <summary>
-    /// Verifica el email del usuario
-    /// </summary>
-    /// <param name="token"></param>
-    /// <returns>Verdadero si se verificó correctamente, falso en caso contrario</returns>
-    /* public async Task<bool> VerificarEmailAsync(string token)
-     {
-         var usuario = await _context.Usuarios.FirstOrDefaultAsync(u =>
-             u.VerificacionToken == token
-         );
- 
-         if (usuario == null)
-             return false;
- 
-         if (
-             usuario.VerificacionTokenExpira == null
-             || usuario.VerificacionTokenExpira < DateTime.UtcNow
-         )
-             return false;
- 
-         usuario.EmailVerificado = true;
-         usuario.VerificacionToken = null;
-         usuario.VerificacionTokenExpira = null;
- 
-         await _context.SaveChangesAsync();
-         return true;
-     }*/
 
     /// <summary>
     /// Inicia sesión con email y contraseña
@@ -274,7 +255,12 @@ public class UsuarioService : IUsuarioService
     /// <returns>Verdadero si se bloqueó correctamente, falso en caso contrario</returns>
     public async Task<bool> BloquearAsync(int id)
     {
-        return await _repo.BloquearAsync(id);
+        var usuario = await _context.Usuarios.FindAsync(id);
+        if (usuario == null)
+            return false;
+        usuario.EstaBloqueado = true;
+        await _context.SaveChangesAsync();
+        return true;
     }
 
     /// <summary>
@@ -284,8 +270,14 @@ public class UsuarioService : IUsuarioService
     /// <returns>Verdadero si se desbloqueó correctamente, falso en caso contrario</returns>
     public async Task<bool> DesbloquearAsync(int id)
     {
-        return await _repo.DesbloquearAsync(id);
+        var usuario = await _context.Usuarios.FindAsync(id);
+        if (usuario == null)
+            return false;
+        usuario.EstaBloqueado = false;
+        await _context.SaveChangesAsync();
+        return true;
     }
+
     /// <summary>
     /// Obtiene todos los usuarios
     /// </summary>
@@ -294,6 +286,7 @@ public class UsuarioService : IUsuarioService
     {
         return await _context.Usuarios.ToListAsync();
     }
+
     /// <summary>
     /// Busca un usuario por su ID
     /// </summary>
@@ -302,5 +295,56 @@ public class UsuarioService : IUsuarioService
     public Task<Usuario?> BuscarUsuarioPorIdAsync(int id)
     {
         return _repo.GetByIdAsync(id);
+    }
+
+    /// <summary>
+    /// Filtrar usuarios por rol, estado de bloqueo y búsqueda por nombre o email, con paginación. --- IGNORE ---
+    /// </summary>
+    /// <param name="filtro"></param>
+    /// <returns></returns>
+    public async Task<PaginacionResultado<Usuario>> FiltrarAsync(UsuarioFiltroDto filtro)
+    {
+        var query = _context
+            .Usuarios.Include(u => u.UsuarioRoles)
+                .ThenInclude(ur => ur.Rol)
+            .AsQueryable();
+
+        // Filtrar por Rol
+        if (!string.IsNullOrWhiteSpace(filtro.Rol))
+        {
+            var rolLower = filtro.Rol.ToLower();
+
+            query = query.Where(u => u.UsuarioRoles.Any(ur => ur.Rol.Nombre.ToLower() == rolLower));
+        }
+
+        // Filtrar por estado (bloqueado / activo)
+        if (filtro.Bloqueado.HasValue)
+            query = query.Where(u => u.EstaBloqueado == filtro.Bloqueado.Value);
+
+        // Búsqueda por nombre o email
+        if (!string.IsNullOrWhiteSpace(filtro.Buscar))
+        {
+            var term = filtro.Buscar.ToLower();
+            query = query.Where(u =>
+                u.Nombre.ToLower().Contains(term) || u.Email.ToLower().Contains(term)
+            );
+        }
+
+        query = query.OrderBy(u => u.Nombre);
+
+        var total = await query.CountAsync();
+
+        var items = await query
+            .Skip((filtro.Page - 1) * filtro.PageSize)
+            .Take(filtro.PageSize)
+            .ToListAsync();
+
+        return new PaginacionResultado<Usuario>
+        {
+            Items = items,
+            PaginaActual = filtro.Page,
+            TotalPaginas = (int)Math.Ceiling(total / (double)filtro.PageSize),
+            TotalRegistros = total,
+        };
     }
 }
