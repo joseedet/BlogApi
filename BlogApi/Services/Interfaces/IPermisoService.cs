@@ -20,4 +20,13 @@ public interface IPermisoService
     /// </summary>
     Task<Permiso?> CrearPermisoAsync(CrearPermisoDto dto);
 
+    /// <summary>
+    /// Edita un permiso existente en la base de datos utilizando los datos proporcionados en el DTO EditarPermisoDto, devuelve un booleano indicando si la operación fue exitosa o no, este método se utiliza para actualizar los permisos existentes en el sistema desde la interfaz de administración o panel de control (solo accesible para usuarios con permisos de administración)
+    /// </summary>
+    /// <param name="permisoId"></param>
+    /// <param name="dto"></param>
+    /// <returns>Booleano indicando si la operación fue exitosa o no</returns>
+    Task<bool> EditarPermisoAsync(int permisoId, EditarPermisoDto dto);
+
+
 }

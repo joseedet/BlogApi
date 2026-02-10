@@ -56,4 +56,32 @@ public class PermisoService : IPermisoService
 
         return permiso;
     }
+
+    /// <summary>
+    /// Edita un permiso existente en la base de datos utilizando los datos proporcionados en el DTO EditarPermisoDto, devuelve un booleano indicando si la operación fue exitosa o no, este método se utiliza para actualizar los permisos existentes en el sistema desde la interfaz de administración o panel de control (solo accesible para usuarios con permisos de administración)
+    /// </summary>
+    /// <param name="permisoId"></param>
+    /// <param name="dto"></param>
+    /// <returns>Booleano indicando si la operación fue exitosa o no</returns>
+    public async Task<bool> EditarPermisoAsync(int permisoId, EditarPermisoDto dto)
+    {
+        var permiso = await _context.Permisos.FirstOrDefaultAsync(p => p.Id == permisoId);
+
+        if (permiso == null)
+            return false;
+
+        // Validar que no exista otro permiso con la misma clave
+        var claveExiste = await _context.Permisos.AnyAsync(p =>
+            p.Id != permisoId && p.Clave.ToLower() == dto.Clave.ToLower()
+        );
+
+        if (claveExiste)
+            return false;
+
+        permiso.Clave = dto.Clave.Trim();
+        permiso.Descripcion = dto.Descripcion.Trim();
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }

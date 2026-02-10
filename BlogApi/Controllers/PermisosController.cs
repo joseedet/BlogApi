@@ -62,5 +62,29 @@ namespace BlogApi.Controllers
                 User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value
             );
         }
+        /// <summary>
+        /// Edita un permiso existente en la base de datos utilizando los datos proporcionados en el DTO EditarPermisoDto, devuelve un booleano indicando si la operación fue exitosa o no, este método se utiliza para actualizar los permisos existentes en el sistema desde la interfaz de administración o panel de control (solo accesible para usuarios con permisos de administración)
+        /// </summary>
+        /// <param name="permisoId"></param>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "Permiso:Usuarios.Editar")]
+        [HttpPut("{permisoId:int}")]
+        public async Task<IActionResult> EditarPermiso(
+            int permisoId,
+            [FromBody] EditarPermisoDto dto
+        )
+        {
+            var ok = await _service.EditarPermisoAsync(permisoId, dto);
+
+            if (!ok)
+                return BadRequest(
+                    "No se pudo editar el permiso. Verifica que exista o que la clave no esté repetida."
+                );
+
+            await _logService.RegistrarAsync(GetUserId(), "EditarPermiso", permisoId);
+
+            return Ok("Permiso actualizado correctamente");
+        }
     }
 }
