@@ -2,7 +2,6 @@ using System;
 
 namespace BlogApi.DTO;
 
-
 public class DashboardDto
 {
     public int TotalUsuarios { get; set; }

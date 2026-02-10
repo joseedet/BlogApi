@@ -25,4 +25,11 @@ public class ActividadRecienteDto
 
 
     public IEnumerable<Usuario> UltimosUsuarios { get; set; }
+
+    /// <summary>
+    /// Ultimos logs.
+    /// </summary>
+    public IEnumerable<LogAdmin> UltimosLogs { get; set; }  
+
+    
 }
