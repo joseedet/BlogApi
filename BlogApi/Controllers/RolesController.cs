@@ -67,6 +67,11 @@ namespace BlogApi.Controllers
             );
         }
 
+        /// <summary>
+        /// Crea un nuevo rol en la base de datos utilizando los datos proporcionados en el DTO CrearRolDto, devuelve el rol creado con su ID asignado, este método se utiliza para agregar nuevos roles al sistema desde la interfaz de administración o panel de control (solo accesible para usuarios con permisos de administración)
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
         [Authorize(Policy = "Permiso:Usuarios.Editar")]
         [HttpPost]
         public async Task<IActionResult> CrearRol([FromBody] CrearRolDto dto)
@@ -81,6 +86,44 @@ namespace BlogApi.Controllers
             await _logService.RegistrarAsync(GetUserId(), "CrearRol", rol.Id);
 
             return Ok(new { mensaje = "Rol creado correctamente", rolId = rol.Id });
+        }
+
+        /// <summary>
+        /// Elimina un rol específico de la base de datos, verifica que el rol exista y que no sea un rol protegido antes de eliminarlo, devuelve un mensaje de éxito o error según corresponda, este método se utiliza para eliminar roles del sistema desde la interfaz de administración o panel de control (solo accesible para usuarios con permisos de administración)
+        /// </summary>
+        /// <param name="rolId"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "Permiso:Usuarios.Editar")]
+        [HttpDelete("{rolId:int}")]
+        public async Task<IActionResult> EliminarRol(int rolId)
+        {
+            var ok = await _service.EliminarRolAsync(rolId);
+
+            if (!ok)
+                return BadRequest(
+                    "No se pudo eliminar el rol. Verifica que exista y que no sea un rol protegido."
+                );
+
+            await _logService.RegistrarAsync(GetUserId(), "EliminarRol", rolId);
+
+            return Ok("Rol eliminado correctamente");
+        }
+
+        /// <summary>
+        /// Obtiene los detalles de un rol específico, incluyendo su nombre y los permisos asignados, devuelve un objeto con la información del rol o un mensaje de error si el rol no existe, este método se utiliza para mostrar la información de un rol en la interfaz de administración o panel de control (solo accesible para usuarios con permisos de administración)
+        /// </summary>
+        /// <param name="rolId"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "Permiso:Usuarios.Editar")]
+        [HttpGet("{rolId:int}")]
+        public async Task<IActionResult> ObtenerDetalleRol(int rolId)
+        {
+            var rol = await _service.ObtenerDetalleRolAsync(rolId);
+
+            if (rol == null)
+                return NotFound("El rol no existe.");
+
+            return Ok(rol);
         }
     }
 }

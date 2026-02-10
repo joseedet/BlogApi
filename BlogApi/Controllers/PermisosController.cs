@@ -1,3 +1,4 @@
+using BlogApi.DTO;
 using BlogApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -13,14 +14,17 @@ namespace BlogApi.Controllers
     public class PermisosController : ControllerBase
     {
         private readonly IPermisoService _service;
+        private readonly ILogService _logService;
 
         /// <summary>
         /// Constructor que recibe el servicio de permisos a través de inyección de dependencias
         /// </summary>
         /// <param name="service"></param>/
-        public PermisosController(IPermisoService service)
+        /// <param name="logService"></param>
+        public PermisosController(IPermisoService service, ILogService logService)
         {
             _service = service;
+            _logService = logService;
         }
 
         /// <summary>
@@ -32,6 +36,31 @@ namespace BlogApi.Controllers
         {
             var permisos = await _service.GetAllAsync();
             return Ok(permisos);
+        }
+        /// <summary>
+        /// Crea un nuevo permiso en la base de datos utilizando los datos proporcionados en el DTO CrearPermisoDto, devuelve el permiso creado con su ID asignado, este método se utiliza para agregar nuevos permisos al sistema desde la interfaz de administración o panel de control (solo accesible para usuarios con permisos de administración)
+        /// </summary> <param name="dto"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "Permiso:Usuarios.Editar")]
+        [HttpPost]
+        public async Task<IActionResult> CrearPermiso([FromBody] CrearPermisoDto dto)
+        {
+            var permiso = await _service.CrearPermisoAsync(dto);
+
+            if (permiso == null)
+                return BadRequest(
+                    "No se pudo crear el permiso. Verifica que la clave no esté repetida."
+                );
+
+            await _logService.RegistrarAsync(GetUserId(), "CrearPermiso", permiso.Id);
+
+            return Ok(new { mensaje = "Permiso creado correctamente", permisoId = permiso.Id });
+        }
+        private int GetUserId()
+        {
+            return int.Parse(
+                User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value
+            );
         }
     }
 }

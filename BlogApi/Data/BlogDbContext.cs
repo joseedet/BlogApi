@@ -21,44 +21,9 @@ public class BlogDbContext : DbContext
         : base(options) { }
 
     /// <summary>
-    ///     Posts del blog
+    /// Log de Acceso
     /// </summary>
-    public DbSet<Post> Posts { get; set; }
-
-    /// <summary>
-    ///    Tags del blog
-    /// </summary>
-    public DbSet<Categoria> Categorias { get; set; }
-
-    /// <summary>
-    ///   Usuarios del blog
-    /// </summary>
-    public DbSet<Usuario> Usuarios { get; set; }
-
-    /// <summary>
-    ///   Comentarios del blog
-    /// /// </summary>
-    public DbSet<Comentario> Comentarios { get; set; }
-
-    /// <summary>
-    ///  Notificaciones del blog
-    /// </summary>
-    public DbSet<Notificacion> Notificaciones { get; set; }
-
-    /// <summary>
-    ///   Tags del blog
-    /// </summary>
-    public DbSet<Tag> Tags { get; set; }
-
-    /// <summary>
-    ///  Likes en publicaciones del blog
-    /// </summary>
-    public DbSet<LikePost> LikesPost { get; set; }
-
-    /// <summary>
-    ///  Likes en comentarios del blog
-    /// </summary>
-    public DbSet<LikeComentario> LikesComentario { get; set; }
+    public DbSet<AccessLog> AccessLogs { get; set; }
 
     /// <summary>
     /// Banner
@@ -66,9 +31,14 @@ public class BlogDbContext : DbContext
     public DbSet<Banner> Banners { get; set; }
 
     /// <summary>
-    /// EmailSettings
+    /// Tags del blog
     /// </summary>
-    public DbSet<EmailSettings> EmailSettings { get; set; }
+    public DbSet<Categoria> Categorias { get; set; }
+
+    /// <summary>
+    /// Comentarios del blog
+    /// </summary>
+    public DbSet<Comentario> Comentarios { get; set; }
 
     /// <summary>
     /// Log de Email
@@ -76,24 +46,39 @@ public class BlogDbContext : DbContext
     public DbSet<EmailLog> EmailLogs { get; set; }
 
     /// <summary>
-    /// Refresco del token
+    /// EmailSettings
     /// </summary>
-    public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<EmailSettings> EmailSettings { get; set; }
+
+    /// <summary>
+    /// Verificación de Email por tokens
+    /// </summary>
+    public DbSet<EmailVerificationToken> EmailVerificationTokens { get; set; }
+
+    /// <summary>
+    ///  Likes en comentarios del blog
+    /// </summary>
+    public DbSet<LikeComentario> LikesComentario { get; set; }
+
+    /// <summary>
+    ///  Likes en publicaciones del blog
+    /// </summary>
+    public DbSet<LikePost> LikesPost { get; set; }
+
+    /// <summary>
+    /// Log administrativo para acciones como bloqueos de usuarios, eliminación de contenido, etc.
+    /// </summary>
+    public DbSet<LogAdmin> LogAdmins { get; set; }
+
+    /// <summary>
+    ///  Notificaciones del blog
+    /// </summary>
+    public DbSet<Notificacion> Notificaciones { get; set; }
 
     /// <summary>
     /// Ajustes de notificación
     /// </summary>
     public DbSet<NotificationSettings> NotificationSettings { get; set; }
-
-    /// <summary>
-    /// Preferencias del usuarios sobre notificaciones
-    /// </summary>
-    public DbSet<UserNotificationPreferences> UserNotificationPreferences { get; set; }
-
-    /// <summary>
-    /// Token para resetear la contraseña.
-    /// </summary>
-    public DbSet<PasswordResetToken> PasswordResetTokens { get; set; } = null!;
 
     /// <summary>
     /// Pagina
@@ -106,14 +91,9 @@ public class BlogDbContext : DbContext
     public DbSet<PageVersion> PageVersions { get; set; }
 
     /// <summary>
-    /// Verificación de Email por tokens
+    /// Token para resetear la contraseña.
     /// </summary>
-    public DbSet<EmailVerificationToken> EmailVerificationTokens { get; set; }
-
-    /// <summary>
-    /// Roles
-    /// </summary>
-    public DbSet<Rol> Roles { get; set; }
+    public DbSet<PasswordResetToken> PasswordResetTokens { get; set; } = null!;
 
     /// <summary>
     /// Permisos
@@ -121,24 +101,44 @@ public class BlogDbContext : DbContext
     public DbSet<Permiso> Permisos { get; set; }
 
     /// <summary>
+    /// Posts del blog
+    /// </summary>
+    public DbSet<Post> Posts { get; set; }
+
+    /// <summary>
+    /// Refresco del token
+    /// </summary>
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+
+    /// <summary>
+    /// Roles
+    /// </summary>
+    public DbSet<Rol> Roles { get; set; }
+
+    /// <summary>
     /// Rol Permisos
     /// </summary>
     public DbSet<RolPermiso> RolPermisos { get; set; }
 
     /// <summary>
+    ///   Tags del blog
+    /// </summary>
+    public DbSet<Tag> Tags { get; set; }
+
+    /// <summary>
+    /// Preferencias del usuarios sobre notificaciones
+    /// </summary>
+    public DbSet<UserNotificationPreferences> UserNotificationPreferences { get; set; }
+
+    /// <summary>
+    ///   Usuarios del blog
+    /// </summary>
+    public DbSet<Usuario> Usuarios { get; set; }
+
+    /// <summary>
     /// Usuario Roles
     /// </summary>
     public DbSet<UsuarioRol> UsuarioRoles { get; set; }
-
-    /// <summary>
-    /// Log de Acceso
-    /// </summary>
-    public DbSet<AccessLog> AccessLogs { get; set; }
-
-    /// <summary>
-    /// Log administrativo para acciones como bloqueos de usuarios, eliminación de contenido, etc.
-    /// </summary>
-    public DbSet<LogAdmin> LogAdmins { get; set; }    
 
     /// <summary>
     ///  Configuración de las relaciones entre entidades
@@ -222,7 +222,7 @@ public class BlogDbContext : DbContext
             .WithMany()
             .HasForeignKey(v => v.PageId)
             .OnDelete(DeleteBehavior.Cascade);
-            
+
         //Permisos
 
         modelBuilder.Entity<UsuarioRol>().HasKey(ur => new { ur.UsuarioId, ur.RolId });
@@ -259,9 +259,6 @@ public class BlogDbContext : DbContext
             .WithMany()
             .HasForeignKey(a => a.UsuarioId)
             .OnDelete(DeleteBehavior.SetNull);
-        
-
-            
 
         base.OnModelCreating(modelBuilder);
     }

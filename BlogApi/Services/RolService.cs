@@ -158,4 +158,51 @@ public class RolService : IRolService
         await _context.SaveChangesAsync();
         return true;
     }
+    /// <summary>
+    /// Obtiene el detalle de un rol específico, busca el rol por su ID y devuelve un objeto RolDetalleDto que contiene la información del rol, sus permisos asignados y los usuarios que tienen ese rol, este método se utiliza para mostrar el detalle de un rol en la interfaz de administración o panel de control (solo accesible para usuarios con permisos de administración)
+    /// </summary>
+    /// <param name="rolId"></param>
+    /// <returns>RolDetalleDto si se encontró, null en caso contrario</returns>
+    public async Task<RolDetalleDto?> ObtenerDetalleRolAsync(int rolId)
+    {
+        var rol = await _context
+            .Roles.Include(r => r.RolPermisos)
+                .ThenInclude(rp => rp.Permiso)
+            .Include(r => r.UsuarioRoles)
+                .ThenInclude(ur => ur.Usuario)
+            .FirstOrDefaultAsync(r => r.Id == rolId);
+
+        if (rol == null)
+            return null;
+
+        return new RolDetalleDto
+        {
+            Id = rol.Id,
+            Nombre = rol.Nombre,
+            Descripcion = rol.Descripcion,
+
+            Permisos = rol
+                .RolPermisos.Select(rp => new PermisoDto
+                {
+                    Id = rp.Permiso.Id,
+                    Clave = rp.Permiso.Clave,
+                    Descripcion = rp.Permiso.Descripcion,
+                })
+                .ToList(),
+
+            Usuarios = rol
+                .UsuarioRoles.Select(ur => new UsuarioDto
+                {
+                    Id = ur.Usuario.Id,
+                    Nombre = ur.Usuario.Nombre,
+                    Apellidos = ur.Usuario.Apellidos,
+                    Email = ur.Usuario.Email,
+                    EstaBloqueado = ur.Usuario.EstaBloqueado,
+                    EmailVerificado = ur.Usuario.EmailVerificado,
+                    AvatarUrl = ur.Usuario.AvatarUrl,
+                    Roles = ur.Usuario.UsuarioRoles.Select(ur2 => ur2.Rol.Nombre).ToList(),
+                })
+                .ToList(),
+        };
+    }
 }

@@ -51,7 +51,11 @@ public interface IRolService
     /// <param name="rolId"></param>
     /// <returns>True si se eliminó correctamente, false en caso contrario</returns>
     Task<bool> EliminarRolAsync(int rolId);
-    
 
-
+    /// <summary>
+    /// Obtiene el detalle de un rol específico, busca el rol por su ID y devuelve un objeto RolDetalleDto que contiene la información del rol, sus permisos asignados y los usuarios que tienen ese rol, este método se utiliza para mostrar el detalle de un rol en la interfaz de administración o panel de control (solo accesible para usuarios con permisos de administración)
+    /// </summary>
+    /// <param name="rolId"></param>
+    /// <returns>RolDetalleDto si se encontró, null en caso contrario</returns>
+    Task<RolDetalleDto?> ObtenerDetalleRolAsync(int rolId);
 }
