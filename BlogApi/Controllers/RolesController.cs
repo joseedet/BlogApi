@@ -66,5 +66,21 @@ namespace BlogApi.Controllers
                 User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value
             );
         }
+
+        [Authorize(Policy = "Permiso:Usuarios.Editar")]
+        [HttpPost]
+        public async Task<IActionResult> CrearRol([FromBody] CrearRolDto dto)
+        {
+            var rol = await _service.CrearRolAsync(dto);
+
+            if (rol == null)
+                return BadRequest(
+                    "No se pudo crear el rol. Verifica que el nombre no esté repetido."
+                );
+
+            await _logService.RegistrarAsync(GetUserId(), "CrearRol", rol.Id);
+
+            return Ok(new { mensaje = "Rol creado correctamente", rolId = rol.Id });
+        }
     }
 }

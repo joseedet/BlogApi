@@ -1,5 +1,6 @@
 using System;
 using BlogApi.Data;
+using BlogApi.DTO;
 using BlogApi.Models;
 using BlogApi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,7 @@ namespace BlogApi.Services;
 public class PermisoService : IPermisoService
 {
     private readonly BlogDbContext _context;
+
     /// <summary>
     /// Constructor que recibe el contexto de la base de datos a través de inyección de dependencias
     /// </summary>
@@ -20,6 +22,7 @@ public class PermisoService : IPermisoService
     {
         _context = context;
     }
+
     /// <summary>
     /// Obtiene todos los permisos disponibles en la base de datos, ordenados por nombre
     /// </summary>
@@ -27,5 +30,30 @@ public class PermisoService : IPermisoService
     public async Task<List<Permiso>> GetAllAsync()
     {
         return await _context.Permisos.OrderBy(p => p.Clave).AsAsyncEnumerable().ToListAsync();
+    }
+
+    /// <summary>
+    /// Crea un nuevo permiso en la base de datos utilizando los datos proporcionados en el DTO CrearPermisoDto, devuelve el permiso creado con su ID asignado, este método se utiliza para agregar nuevos permisos al sistema desde la interfaz de administración o panel de control (solo accesible para usuarios con permisos de administración)
+    /// </summary>
+    public async Task<Permiso?> CrearPermisoAsync(CrearPermisoDto dto)
+    {
+        // Validar que no exista un permiso con la misma clave
+        var existe = await _context.Permisos.AnyAsync(p =>
+            p.Clave.ToLower() == dto.Clave.ToLower()
+        );
+
+        if (existe)
+            return null;
+
+        var permiso = new Permiso
+        {
+            Clave = dto.Clave.Trim(),
+            Descripcion = dto.Descripcion.Trim(),
+        };
+
+        _context.Permisos.Add(permiso);
+        await _context.SaveChangesAsync();
+
+        return permiso;
     }
 }

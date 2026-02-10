@@ -1,4 +1,5 @@
 using System;
+using BlogApi.DTO;
 using BlogApi.Models;
 
 namespace BlogApi.Services.Interfaces;
@@ -37,4 +38,20 @@ public interface IRolService
     /// </summary>
     /// <returns>IEnumerable&lt;Rol&gt;</returns>
     Task<IEnumerable<Rol>> GetAllAsync();
+
+    /// <summary>
+    /// Crea un nuevo rol con los datos proporcionados en el DTO CrearRolDto, devuelve el rol creado con su ID asignado, este método se utiliza para agregar nuevos roles al sistema desde la interfaz de administración o panel de control (solo accesible para usuarios con permisos de administración)
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    Task<Rol?> CrearRolAsync(CrearRolDto dto);
+
+    /// <summary>
+    /// Elimina un rol específico del sistema, busca el rol por su ID y si existe lo elimina de la base de datos, este método se utiliza para eliminar roles que ya no son necesarios en el sistema desde la interfaz de administración o panel de control (solo accesible para usuarios con permisos de administración)
+    /// </summary>
+    /// <param name="rolId"></param>
+    /// <returns>True si se eliminó correctamente, false en caso contrario</returns>
+    Task<bool> EliminarRolAsync(int rolId);
+    
+
+
 }
