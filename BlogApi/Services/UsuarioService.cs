@@ -350,6 +350,9 @@ public class UsuarioService : IUsuarioService
     /// <summary>
     /// Edita un usuario desde el panel de administración, permitiendo modificar su nombre, apellidos, email, estado de bloqueo y roles asignados
     /// </summary>
+    /// <param name="id"></param>
+    /// <param name="dto"></param>
+    /// <returns>True si se editó correctamente, false en caso contrario</returns>
     public async Task<bool> EditarUsuarioAdminAsync(int id, EditarUsuarioAdminDto dto)
     {
         var usuario = await _context
@@ -378,6 +381,12 @@ public class UsuarioService : IUsuarioService
         await _context.SaveChangesAsync();
         return true;
     }
+    /// <summary>
+    ///  Asigna un rol específico a un usuario, verificando que el usuario y el rol existan, luego se crea una nueva entrada en la tabla de relación entre usuarios y roles para asignar ese rol al usuario, este método se utiliza para gestionar los roles de los usuarios desde el panel de administración (solo accesible para administradores con permisos de gestión de usuarios)
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <param name="rolId"></param>
+    /// <returns>True si se asignó correctamente, false en caso contrario</returns>
     public async Task<bool> AsignarRolAsync(int usuarioId, int rolId)
     {
         var usuario = await _context
@@ -401,6 +410,13 @@ public class UsuarioService : IUsuarioService
         await _context.SaveChangesAsync();
         return true;
     }
+
+    /// <summary>
+    /// Quita un rol específico de un usuario, buscando la relación entre el usuario y el rol en la tabla de relación, si existe se elimina esa entrada para quitar el rol del usuario
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <param name="rolId"></param>
+    /// <returns>True si se quitó correctamente, false en caso contrario</returns>
     public async Task<bool> QuitarRolAsync(int usuarioId, int rolId)
     {
         var usuarioRol = await _context.UsuarioRoles.FirstOrDefaultAsync(ur =>
