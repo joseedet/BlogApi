@@ -1,4 +1,5 @@
 using BlogApi.DTO;
+using BlogApi.Services;
 using BlogApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -124,6 +125,27 @@ namespace BlogApi.Controllers
                 return NotFound("El rol no existe.");
 
             return Ok(rol);
+        }
+        /// <summary>
+        /// Clona un rol existente, creando un nuevo rol con el mismo conjunto de permisos pero con un nuevo nombre y descripción proporcionados en el DTO ClonarRolDto, devuelve el nuevo rol creado o un mensaje de error si el rol original no existe o si el nuevo nombre ya está en uso, este método se utiliza para facilitar la creación de roles similares al permitir clonar un rol existente y luego modificar su nombre y descripción según sea necesario, solo accesible para usuarios con el permiso "Usuarios.Editar"
+        /// </summary>
+        /// <param name="rolId"></param>
+        /// <param name="dto"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "Permiso:Usuarios.Editar")]
+        [HttpPost("{rolId:int}/clonar")]
+        public async Task<IActionResult> ClonarRol(int rolId, [FromBody] ClonarRolDto dto)
+        {
+            var nuevoRol = await _service.ClonarRolAsync(rolId, dto);
+
+            if (nuevoRol == null)
+                return BadRequest(
+                    "No se pudo clonar el rol. Verifica que exista o que el nuevo nombre no esté repetido."
+                );
+
+            await _logService.RegistrarAsync(GetUserId(), "ClonarRol", nuevoRol.Id);
+
+            return Ok(new { mensaje = "Rol clonado correctamente", rolId = nuevoRol.Id });
         }
     }
 }

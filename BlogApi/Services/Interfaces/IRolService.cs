@@ -58,4 +58,12 @@ public interface IRolService
     /// <param name="rolId"></param>
     /// <returns>RolDetalleDto si se encontró, null en caso contrario</returns>
     Task<RolDetalleDto?> ObtenerDetalleRolAsync(int rolId);
+    /// <summary>
+    /// Clona un rol existente, creando un nuevo rol con el mismo conjunto de permisos y asignaciones de usuarios que el rol original, recibe el ID del rol a clonar y un DTO con el nuevo nombre y descripción del rol a crear, devuelve el nuevo rol creado con su ID asignado, este método se utiliza para crear rápidamente un nuevo rol basado en un rol existente sin tener que configurar manualmente los permisos y asignaciones de usuarios desde la interfaz de administración o panel de control (solo accesible para usuarios con permisos de administración)
+    /// </summary>
+    /// <param name="rolId"></param>
+    /// <param name="dto"></param>
+    /// <returns>Rol clonado si se creó correctamente, null en caso contrario</returns>
+    Task<Rol?> ClonarRolAsync(int rolId, ClonarRolDto dto);
+
 }

@@ -205,4 +205,45 @@ public class RolService : IRolService
                 .ToList(),
         };
     }
+    /// <summary>
+    /// Clona un rol existente, creando un nuevo rol con el mismo conjunto de permisos pero con un nuevo nombre y descripción proporcionados en el DTO ClonarRolDto, este método se utiliza para facilitar la creación de nuevos roles basados en roles existentes, permitiendo copiar rápidamente los permisos asignados a un rol sin tener que configurarlos manualmente desde cero, el nuevo rol creado tendrá un ID único asignado automáticamente por la base de datos, este método es útil para la administración de roles en la interfaz de administración o panel de control (solo accesible para usuarios con permisos de administración)
+    /// </summary>
+    /// <param name="rolId"></param>
+    /// <param name="dto"></param>
+    /// <returns>Rol clonado si se creó correctamente, null en caso contrario</returns>
+    public async Task<Rol?> ClonarRolAsync(int rolId, ClonarRolDto dto)
+    {
+        var rolOriginal = await _context
+            .Roles.Include(r => r.RolPermisos)
+            .FirstOrDefaultAsync(r => r.Id == rolId);
+
+        if (rolOriginal == null)
+            return null;
+
+        // Validar que el nuevo nombre no exista
+        var existe = await _context.Roles.AnyAsync(r =>
+            r.Nombre.ToLower() == dto.NuevoNombre.ToLower()
+        );
+
+        if (existe)
+            return null;
+
+        // Crear el nuevo rol
+        var nuevoRol = new Rol
+        {
+            Nombre = dto.NuevoNombre.Trim(),
+            Descripcion = dto.NuevaDescripcion.Trim(),
+        };
+
+        // Copiar permisos
+        foreach (var rp in rolOriginal.RolPermisos)
+        {
+            nuevoRol.RolPermisos.Add(new RolPermiso { PermisoId = rp.PermisoId });
+        }
+
+        _context.Roles.Add(nuevoRol);
+        await _context.SaveChangesAsync();
+
+        return nuevoRol;
+    }
 }
