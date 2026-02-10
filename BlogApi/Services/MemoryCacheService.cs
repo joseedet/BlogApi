@@ -6,7 +6,7 @@ using Microsoft.Extensions.Caching.Distributed;
 namespace BlogApi.Services;
 
 /// <summary>
-/// 
+/// Implementación de ICacheService utilizando IDistributedCache para almacenamiento en memoria.
 /// </summary>
 public class MemoryCacheService : ICacheService
 {
@@ -23,7 +23,14 @@ public class MemoryCacheService : ICacheService
         _cache = cache;
         _logger = logger;
     }
-
+    /// <summary>
+    /// Obtiene un valor de la caché o lo establece si no existe, con una expiración relativa.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="key"></param>
+    /// <param name="obtenerDatos"></param>
+    /// <param name="expiracion"></param>
+    /// <returns></returns>
     public async Task<T> GetOrSetAsync<T>(
         string key,
         Func<Task<T>> obtenerDatos,
@@ -51,7 +58,11 @@ public class MemoryCacheService : ICacheService
         );
         return valor;
     }
-
+    /// <summary>
+    /// Elimina un valor de la caché por su clave.
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns>Tarea de finalización</returns>
     public async Task RemoveAsync(string key)
     {
         await _cache.RemoveAsync(key);
