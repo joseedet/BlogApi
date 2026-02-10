@@ -1,7 +1,6 @@
 using BlogApi.DTO;
 using BlogApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlogApi.Controllers
