@@ -2,6 +2,7 @@ using System;
 using BlogApi.Data;
 using BlogApi.DTO;
 using BlogApi.Models;
+using BlogApi.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogApi.Services;
@@ -9,7 +10,7 @@ namespace BlogApi.Services;
 /// <summary>
 /// Servicio para gestionar la configuración de caché de la aplicación, incluyendo tiempos de expiración para diferentes tipos de datos. Este servicio interactúa con la base de datos a través del contexto `BlogDbContext` para almacenar y recuperar la configuración de caché. Permite que el cliente pueda obtener la configuración actual y actualizarla según sea necesario, facilitando así la gestión eficiente de los datos en caché en toda la aplicación.
 /// </summary>
-public class CacheConfigService
+public class CacheConfigService: ICacheConfigService
 {
     private readonly BlogDbContext _context;
 

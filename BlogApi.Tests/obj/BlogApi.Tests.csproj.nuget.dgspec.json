@@ -467,6 +467,10 @@
               "target": "Package",
               "version": "[10.0.1, )"
             },
+            "Microsoft.Extensions.Caching.StackExchangeRedis": {
+              "target": "Package",
+              "version": "[10.0.2, )"
+            },
             "SendGrid": {
               "target": "Package",
               "version": "[9.29.3, )"

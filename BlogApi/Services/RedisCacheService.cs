@@ -1,10 +1,11 @@
 using System;
 using System.Text.Json;
+using BlogApi.Services.Interfaces;
 using Microsoft.Extensions.Caching.Distributed;
 
 namespace BlogApi.Services;
 
-public class RedisCacheService
+public class RedisCacheService:ICacheService
 {
     private readonly IDistributedCache _cache;
     private readonly ILogger<RedisCacheService> _logger;

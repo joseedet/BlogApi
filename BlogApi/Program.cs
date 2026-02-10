@@ -93,6 +93,26 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddScoped<ICacheConfigService, CacheConfigService>();
+
+var cacheProvider = builder.Configuration["Cache:Provider"];
+
+if (cacheProvider == "Redis")
+{
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = builder.Configuration["Cache:RedisConnection"];
+    });
+
+    builder.Services.AddScoped<ICacheService, RedisCacheService>();
+}
+else
+{
+    builder.Services.AddMemoryCache();
+    builder.Services.AddScoped<ICacheService, MemoryCacheService>();
+}
+
+
 // Configuración de autenticación JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 builder
