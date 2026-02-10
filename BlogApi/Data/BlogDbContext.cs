@@ -31,6 +31,12 @@ public class BlogDbContext : DbContext
     public DbSet<Banner> Banners { get; set; }
 
     /// <summary>
+    /// Configuración de caché para la aplicación, incluyendo tiempos de expiración para diferentes tipos de datos.
+    /// </summary>
+    public DbSet<CacheConfig> CacheConfig { get; set; }
+
+
+    /// <summary>
     /// Tags del blog
     /// </summary>
     public DbSet<Categoria> Categorias { get; set; }
