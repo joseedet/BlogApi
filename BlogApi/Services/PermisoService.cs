@@ -84,4 +84,28 @@ public class PermisoService : IPermisoService
         await _context.SaveChangesAsync();
         return true;
     }
+
+    /// <summary>
+    /// Elimina un permiso existente en la base de datos utilizando el ID del permiso a eliminar, devuelve un booleano indicando si la operación fue exitosa o no, este método se utiliza para eliminar permisos existentes en el sistema desde la interfaz de administración o panel de control (solo accesible para usuarios con permisos de administración)
+    /// </summary>
+    /// <param name="permisoId"></param>
+    /// <returns>Booleano indicando si la operación fue exitosa o no</returns>
+    public async Task<bool> EliminarPermisoAsync(int permisoId)
+    {
+        var permiso = await _context
+            .Permisos.Include(p => p.RolPermisos)
+            .FirstOrDefaultAsync(p => p.Id == permisoId);
+
+        if (permiso == null)
+            return false;
+
+        // Eliminar relaciones con roles
+        _context.RolPermisos.RemoveRange(permiso.RolPermisos);
+
+        // Eliminar el permiso
+        _context.Permisos.Remove(permiso);
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }

@@ -28,5 +28,10 @@ public interface IPermisoService
     /// <returns>Booleano indicando si la operación fue exitosa o no</returns>
     Task<bool> EditarPermisoAsync(int permisoId, EditarPermisoDto dto);
 
-
+    /// <summary>
+    /// Elimina un permiso existente en la base de datos utilizando el ID del permiso a eliminar, devuelve un booleano indicando si la operación fue exitosa o no, este método se utiliza para eliminar permisos existentes en el sistema desde la interfaz de administración o panel de control (solo accesible para usuarios con permisos de administración)
+    /// </summary>
+    /// <param name="permisoId"></param>
+    /// <returns>Booleano indicando si la operación fue exitosa o no</returns>
+    Task<bool> EliminarPermisoAsync(int permisoId);
 }
