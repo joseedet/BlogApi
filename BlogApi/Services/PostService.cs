@@ -268,25 +268,34 @@ public class PostService : IPostService
     /// <param name="pagina"></param>
     /// <param name="tamano"></param>
     /// <returns>PaginationDto&lt;Post&gt;</returns>
-    public async Task<PaginationDto<Post>> GetPagedAsync(int pagina, int tamano)
+    public async Task<PaginationDto<Post>> GetListedAsync(int pagina, int tamano)
     {
-        var query = _repo
-            .Query()
-            .Include(p => p.Categoria)
-            .Include(p => p.Usuario)
-            .Include(p => p.Tags);
+        var config = await _cacheConfigService.ObtenerConfigAsync();
 
-        var total = await query.CountAsync();
+        return await _cacheService.GetOrSetAsync(
+            CacheKeys.PostListed(pagina, tamano),
+            async () =>
+            {
+                var query = _repo
+                    .Query()
+                    .Include(p => p.Categoria)
+                    .Include(p => p.Usuario)
+                    .Include(p => p.Tags);
 
-        var datos = await query.Skip((pagina - 1) * tamano).Take(tamano).ToListAsync();
+                var total = await query.CountAsync();
 
-        return new PaginationDto<Post>
-        {
-            Pagina = pagina,
-            Tamano = tamano,
-            Total = total,
-            Items = datos,
-        };
+                var datos = await query.Skip((pagina - 1) * tamano).Take(tamano).ToListAsync();
+
+                return new PaginationDto<Post>
+                {
+                    Pagina = pagina,
+                    Tamano = tamano,
+                    Total = total,
+                    Items = datos,
+                };
+            },
+            TimeSpan.FromSeconds(config.ExpiracionPostsListadoSegundos)
+        );
     }
 
     /// <summary>
@@ -823,9 +832,20 @@ public class PostService : IPostService
     /// <returns></returns>
     private async Task InvalidarCachePostsAsync(int? postId = null)
     {
+        // Listado general
         await _cacheService.RemoveAsync(CacheKeys.PostsListado);
 
+        // Post por ID
         if (postId != null)
             await _cacheService.RemoveAsync(CacheKeys.PostPorId(postId.Value));
+
+        // Listados paginados (antes llamados "paged")
+        for (int pagina = 1; pagina <= 20; pagina++)
+        {
+            for (int tamano = 5; tamano <= 50; tamano += 5)
+            {
+                await _cacheService.RemoveAsync(CacheKeys.PostListed(pagina, tamano));
+            }
+        }
     }
 }

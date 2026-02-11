@@ -29,6 +29,8 @@ public class CacheConfigService: ICacheConfigService
     /// <returns>La configuración de caché actual.</returns>
     public async Task<CacheConfig> ObtenerConfigAsync()
     {
+       
+
         return await _context.CacheConfig.FirstAsync();
     }
 
@@ -46,6 +48,8 @@ public class CacheConfigService: ICacheConfigService
         config.ExpiracionRolesSegundos = dto.ExpiracionRolesSegundos;
         config.ExpiracionPermisosSegundos = dto.ExpiracionPermisosSegundos;
         config.ExpiracionUsuariosSegundos = dto.ExpiracionUsuariosSegundos;
+        config.ExpiracionPostsListadoSegundos = dto.ExpiracionPostsListadoSegundos;
+
         await _context.SaveChangesAsync();
     }
 }

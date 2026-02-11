@@ -33,4 +33,9 @@ public class CacheConfigDto
     /// <summary> Tiempo de expiración en segundos para los usuarios en caché. Se establece en 60 segundos por defecto, lo que significa que los usuarios se actualizarán cada minuto.
     /// </summary>
     public int ExpiracionUsuariosSegundos { get; set; }
+
+    /// <summary> Tiempo de expiración en segundos para el listado completo de posts en caché. Se establece en 60 segundos por defecto, lo que significa que el listado de posts se actualizará cada minuto.
+    /// </summary>
+    public int ExpiracionPostsListadoSegundos { get; set; }
+
 }

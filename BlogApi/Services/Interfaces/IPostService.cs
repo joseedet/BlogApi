@@ -61,7 +61,8 @@ public interface IPostService
     /// <param name="pagina"></param>
     /// <param name="tamano"></param>
     /// <returns>PaginationDto&lt;Post&gt;</returns>
-    Task<PaginationDto<Post>> GetPagedAsync(int pagina, int tamano);
+    Task<PaginationDto<Post>> GetListedAsync(int pagina, int tamano);
+
 
     /// <summary>
     /// Obtiene un post por su slug

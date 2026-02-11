@@ -24,6 +24,7 @@ public class PostsController : ControllerBase
     /// </summary>
     /// <param name="service"></param>
     /// <param name="notificaciones"></param>
+   
     public PostsController(IPostService service, INotificacionesService notificaciones)
     {
         _service = service;
@@ -161,7 +162,7 @@ public class PostsController : ControllerBase
     [HttpGet("paged")]
     public async Task<IActionResult> GetPaged(int pagina = 1, int tamano = 10)
     {
-        var result = await _service.GetPagedAsync(pagina, tamano);
+        var result = await _service.GetListedAsync(pagina, tamano);
 
         return Ok(
             new PaginationDto<PostDto>
@@ -405,6 +406,7 @@ public class PostsController : ControllerBase
     public async Task<IActionResult> Destacar(int id)
     {
         int usuarioId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var result = await _service.DestacarAsync(id, usuarioId); return Ok(result.ToDto());
+        var result = await _service.DestacarAsync(id, usuarioId);
+        return Ok(result.ToDto());
     }
 }
