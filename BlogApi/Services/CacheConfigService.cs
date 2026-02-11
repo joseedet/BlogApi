@@ -49,6 +49,11 @@ public class CacheConfigService: ICacheConfigService
         config.ExpiracionPermisosSegundos = dto.ExpiracionPermisosSegundos;
         config.ExpiracionUsuariosSegundos = dto.ExpiracionUsuariosSegundos;
         config.ExpiracionPostsListadoSegundos = dto.ExpiracionPostsListadoSegundos;
+        config.ExpiracionPostPorSlugSegundos = dto.ExpiracionPostPorSlugSegundos;
+        config.ExpiracionPostsPorCategoriaSlugSegundos =  dto.ExpiracionPostsPorCategoriaSlugSegundos;
+
+
+        
 
         await _context.SaveChangesAsync();
     }

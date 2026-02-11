@@ -47,4 +47,17 @@ public class CacheConfig
     /// </summary>/
     public int ExpiracionPostsListadoSegundos { get; set; } = 60;
 
+    /// <summary>
+    /// Tiempo de expiración en segundos para post por slug en cache. Se establece en 60 segundos por defecto, lo que significa que slug se actualizará cada minuto.
+    /// </summary>
+    public int ExpiracionPostPorSlugSegundos { get; set; } = 60;
+
+    /// <summary>
+    /// Tiempo de expiración en segundos para post por categoria slug en cache. Se establece en 60 segundos por defecto, lo que significa que slug se actualizará cada minuto.
+    /// </summary>
+    public int ExpiracionPostsPorCategoriaSlugSegundos { get; set; } = 60;
+
+
+    
+
 }

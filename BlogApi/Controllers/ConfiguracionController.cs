@@ -38,6 +38,9 @@ namespace BlogApi.Controllers
                 ExpiracionPermisosSegundos = config.ExpiracionPermisosSegundos,
                 ExpiracionUsuariosSegundos = config.ExpiracionUsuariosSegundos,
                 ExpiracionPostsListadoSegundos = config.ExpiracionPostsListadoSegundos,
+                ExpiracionPostPorSlugSegundos = config.ExpiracionPostPorSlugSegundos,
+                ExpiracionPostsPorCategoriaSlugSegundos =
+                    config.ExpiracionPostsPorCategoriaSlugSegundos,
             };
             return Ok(dto);
         }

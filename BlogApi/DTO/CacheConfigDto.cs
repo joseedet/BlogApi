@@ -37,5 +37,17 @@ public class CacheConfigDto
     /// <summary> Tiempo de expiración en segundos para el listado completo de posts en caché. Se establece en 60 segundos por defecto, lo que significa que el listado de posts se actualizará cada minuto.
     /// </summary>
     public int ExpiracionPostsListadoSegundos { get; set; }
+    /// <summary>
+    /// Tiempo de expiración en segundos para el slug de post en caché.Se establece en 60 segundo por defecto.
+    /// </summary>
+    public int ExpiracionPostPorSlugSegundos { get; set; }
+
+    /// <summary>
+    /// Tiempo de expiración en segundos para post por categoria slug en cache. Se establece en 60 segundos por defecto, lo que significa que slug se actualizará cada minuto.
+    /// </summary>
+    public int ExpiracionPostsPorCategoriaSlugSegundos { get; set; }
+
+    
+
 
 }

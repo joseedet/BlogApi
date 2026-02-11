@@ -179,6 +179,10 @@ public class PostService : IPostService
         await _repo.AddAsync(post);
         await _repo.SaveChangesAsync();
         await InvalidarCachePostsAsync();
+        await InvalidarCachePostsAsync(null, post.Slug);
+        await InvalidarCachePostsAsync(null, post.Slug, post.Categoria?.Slug);
+
+
         return post;
     }
 
@@ -214,6 +218,9 @@ public class PostService : IPostService
                 throw new UnauthorizedAccessException("No puedes editar posts de otros usuarios.");
 
             SanitizarPost(post);
+            var oldSlug = existing.Slug;
+            var oldCategoriaSlug = existing.Categoria?.Slug;
+
 
             existing.Titulo = post.Titulo;
             existing.Contenido = post.Contenido;
@@ -229,6 +236,9 @@ public class PostService : IPostService
             _repo.Update(existing);
             await _repo.SaveChangesAsync();
             await InvalidarCachePostsAsync(id);
+            await InvalidarCachePostsAsync(id, oldSlug);
+            await InvalidarCachePostsAsync(id, oldSlug, oldCategoriaSlug);
+
             return true;
         }
     }
@@ -257,6 +267,9 @@ public class PostService : IPostService
         _repo.Remove(existing);
         await _repo.SaveChangesAsync();
         await InvalidarCachePostsAsync(id);
+        await InvalidarCachePostsAsync(id, existing.Slug);
+        await InvalidarCachePostsAsync(id, existing.Slug, existing.Categoria?.Slug);
+
         return true;
     }
 
@@ -302,16 +315,25 @@ public class PostService : IPostService
     /// Obtiene un post por su slug
     /// </summary>
     /// <param name="slug"></param>
-    /// <returns>Post</returns>
+    /// <returns>Post o nulo </returns>
     public async Task<Post?> GetBySlugAsync(string slug)
     {
-        return await _repo
-            .Query()
-            .Include(p => p.Categoria)
-            .Include(p => p.Usuario)
-            .Include(p => p.Tags)
-            .Include(p => p.Comentarios)
-            .FirstOrDefaultAsync(p => p.Slug == slug);
+        var config = await _cacheConfigService.ObtenerConfigAsync();
+
+        return await _cacheService.GetOrSetAsync(
+            CacheKeys.PostBySlug(slug),
+            async () =>
+            {
+                return await _repo
+                    .Query()
+                    .Include(p => p.Categoria)
+                    .Include(p => p.Usuario)
+                    .Include(p => p.Tags)
+                    .Include(p => p.Comentarios)
+                    .FirstOrDefaultAsync(p => p.Slug == slug);
+            },
+            TimeSpan.FromSeconds(config.ExpiracionPostPorSlugSegundos)
+        );
     }
 
     /// <summary>
@@ -399,13 +421,22 @@ public class PostService : IPostService
     /// <returns>IEnumerable&lt;Post&gt;</returns>
     public async Task<IEnumerable<Post>> GetByCategoriaSlugAsync(string slug)
     {
-        return await _repo
-            .Query()
-            .Where(p => p.Categoria.Slug == slug)
-            .Include(p => p.Categoria)
-            .Include(p => p.Usuario)
-            .Include(p => p.Tags)
-            .ToListAsync();
+        var config = await _cacheConfigService.ObtenerConfigAsync();
+
+        return await _cacheService.GetOrSetAsync(
+            CacheKeys.PostsByCategoriaSlug(slug),
+            async () =>
+            {
+                return await _repo
+                    .Query()
+                    .Where(p => p.Categoria.Slug == slug)
+                    .Include(p => p.Categoria)
+                    .Include(p => p.Usuario)
+                    .Include(p => p.Tags)
+                    .ToListAsync();
+            },
+            TimeSpan.FromSeconds(config.ExpiracionPostsPorCategoriaSlugSegundos)
+        );
     }
 
     /// <summary>
@@ -830,7 +861,11 @@ public class PostService : IPostService
     /// </summary>
     /// <param name="postId"></param>
     /// <returns></returns>
-    private async Task InvalidarCachePostsAsync(int? postId = null)
+    private async Task InvalidarCachePostsAsync(
+        int? postId = null,
+        string? slug = null,
+        string? categoriaSlug = null
+    )
     {
         // Listado general
         await _cacheService.RemoveAsync(CacheKeys.PostsListado);
@@ -839,7 +874,15 @@ public class PostService : IPostService
         if (postId != null)
             await _cacheService.RemoveAsync(CacheKeys.PostPorId(postId.Value));
 
-        // Listados paginados (antes llamados "paged")
+        // Post por slug
+        if (!string.IsNullOrWhiteSpace(slug))
+            await _cacheService.RemoveAsync(CacheKeys.PostBySlug(slug));
+
+        // Posts por categoría slug
+        if (!string.IsNullOrWhiteSpace(categoriaSlug))
+            await _cacheService.RemoveAsync(CacheKeys.PostsByCategoriaSlug(categoriaSlug));
+
+        // Listados paginados
         for (int pagina = 1; pagina <= 20; pagina++)
         {
             for (int tamano = 5; tamano <= 50; tamano += 5)

@@ -39,5 +39,20 @@ public class CacheKeys
     /// <param name="tamano"></param>
     /// <returns>Una cadena que representa la clave de caché para un listado de posts paginados.</returns>
     // Nuevo nombre correcto para paginación de posts
-     public static string PostListed(int pagina, int tamano) => $"posts_listed_{pagina}_{tamano}";
+    public static string PostListed(int pagina, int tamano) => $"posts_listed_{pagina}_{tamano}";
+
+    /// <summary>
+    /// Genera un clave caché para al almacenar slug en post.
+    /// </summary>
+    /// <param name="slug"></param>
+    /// <returns>Una cadena qu representa la clave de caché para un listado post por slug</returns>
+    public static string PostBySlug(string slug) => $"post_slug_{slug}";
+
+    /// <summary>
+    /// Genera un clave caché para al almacenar post por categoia slug .
+    /// </summary>
+    /// <param name="slug"></param>
+    /// <returns>Una cadena qu representa
+
+    public static string PostsByCategoriaSlug(string slug) => $"posts_categoria_slug_{slug}";
 }
