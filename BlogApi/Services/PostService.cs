@@ -46,6 +46,16 @@ public class PostService : IPostService
     private readonly IUsuarioService _usuarioService;
 
     /// <summary>
+    /// Servicio de caché para almacenar y recuperar datos de manera eficiente, mejorando el rendimiento de la aplicación al reducir la necesidad de acceder a la base de datos para información que se consulta con frecuencia.
+    /// </summary>
+    private readonly ICacheService _cacheService;
+
+    /// <summary>
+    /// Servicio de configuración de caché para obtener parámetros como tiempos de expiración, lo que permite una gestión más flexible y centralizada de la caché en la aplicación.
+    /// </summary>
+    private readonly ICacheConfigService _cacheConfigService;
+
+    /// <summary>
     /// Repositorio de categorías
     /// </summary>
     /// <summary>
@@ -56,13 +66,18 @@ public class PostService : IPostService
     /// <param name="categoriaRepository"></param>
     /// <param name="sanitizerService"></param>
     /// <param name="notificationService"></param>
+    /// <param name="usuarioService"></param>
+    /// <param name="cacheService"></param>
+    /// <param name="cacheConfigService"></param>
     public PostService(
         IPostRepository repo,
         ITagRepository tagRepo,
         ICategoriaRepository categoriaRepository,
         ISanitizerService sanitizerService,
         INotificacionesService notificationService,
-        IUsuarioService usuarioService
+        IUsuarioService usuarioService,
+        ICacheService cacheService,
+        ICacheConfigService cacheConfigService
     )
     {
         _repo = repo;
@@ -71,6 +86,9 @@ public class PostService : IPostService
         _sanitizerService = sanitizerService;
         _notificationService = notificationService;
         _usuarioService = usuarioService;
+
+        _cacheService = cacheService;
+        _cacheConfigService = cacheConfigService;
     }
 
     /// <summary>
@@ -79,16 +97,25 @@ public class PostService : IPostService
     /// <returns>IEnumerable&lt;Post&gt;</returns>
     public async Task<IEnumerable<Post>> GetAllAsync()
     {
-        return await _repo
-            .Query()
-            .Include(p => p.Categoria)
-            .Include(p => p.Usuario)
-            .Include(p => p.Tags)
-            .Include(p => p.Comentarios)
-                .ThenInclude(c => c.Usuario)
-            .Include(p => p.Comentarios)
-                .ThenInclude(c => c.Respuestas)
-            .ToListAsync();
+        var config = await _cacheConfigService.ObtenerConfigAsync();
+
+        return await _cacheService.GetOrSetAsync(
+            CacheKeys.PostsListado,
+            async () =>
+            {
+                return await _repo
+                    .Query()
+                    .Include(p => p.Categoria)
+                    .Include(p => p.Usuario)
+                    .Include(p => p.Tags)
+                    .Include(p => p.Comentarios)
+                        .ThenInclude(c => c.Usuario)
+                    .Include(p => p.Comentarios)
+                        .ThenInclude(c => c.Respuestas)
+                    .ToListAsync();
+            },
+            TimeSpan.FromSeconds(config.ExpiracionPostsSegundos)
+        );
     }
 
     /// <summary>
@@ -98,16 +125,25 @@ public class PostService : IPostService
     /// <returns>Post</returns>
     public async Task<Post?> GetByIdAsync(int id)
     {
-        return await _repo
-            .Query()
-            .Include(p => p.Categoria)
-            .Include(p => p.Usuario)
-            .Include(p => p.Tags)
-            .Include(p => p.Comentarios)
-                .ThenInclude(c => c.Usuario)
-            .Include(p => p.Comentarios)
-                .ThenInclude(c => c.Respuestas)
-            .FirstOrDefaultAsync(p => p.Id == id);
+        var config = await _cacheConfigService.ObtenerConfigAsync();
+
+        return await _cacheService.GetOrSetAsync(
+            CacheKeys.PostPorId(id),
+            async () =>
+            {
+                return await _repo
+                    .Query()
+                    .Include(p => p.Categoria)
+                    .Include(p => p.Usuario)
+                    .Include(p => p.Tags)
+                    .Include(p => p.Comentarios)
+                        .ThenInclude(c => c.Usuario)
+                    .Include(p => p.Comentarios)
+                        .ThenInclude(c => c.Respuestas)
+                    .FirstOrDefaultAsync(p => p.Id == id);
+            },
+            TimeSpan.FromSeconds(config.ExpiracionPostsSegundos)
+        );
     }
 
     /// <summary>
@@ -142,7 +178,7 @@ public class PostService : IPostService
 
         await _repo.AddAsync(post);
         await _repo.SaveChangesAsync();
-
+        await InvalidarCachePostsAsync();
         return post;
     }
 
@@ -192,7 +228,7 @@ public class PostService : IPostService
 
             _repo.Update(existing);
             await _repo.SaveChangesAsync();
-
+            await InvalidarCachePostsAsync(id);
             return true;
         }
     }
@@ -220,7 +256,7 @@ public class PostService : IPostService
 
         _repo.Remove(existing);
         await _repo.SaveChangesAsync();
-
+        await InvalidarCachePostsAsync(id);
         return true;
     }
 
@@ -778,5 +814,18 @@ public class PostService : IPostService
 
         await _repo.SaveChangesAsync();
         return post;
+    }
+
+    /// <summary>
+    /// Método privado para invalidar la caché relacionada con los posts. Este método se llama después de crear, actualizar o eliminar un post para asegurarse de que la información en caché esté actualizada y refleje los cambios realizados en la base de datos. Si se proporciona un postId, también se invalidará la caché específica de ese post
+    /// </summary>
+    /// <param name="postId"></param>
+    /// <returns></returns>
+    private async Task InvalidarCachePostsAsync(int? postId = null)
+    {
+        await _cacheService.RemoveAsync(CacheKeys.PostsListado);
+
+        if (postId != null)
+            await _cacheService.RemoveAsync(CacheKeys.PostPorId(postId.Value));
     }
 }
