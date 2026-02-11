@@ -10,7 +10,7 @@ namespace BlogApi.Services;
 /// <summary>
 /// Servicio para gestionar la configuración de caché de la aplicación, incluyendo tiempos de expiración para diferentes tipos de datos. Este servicio interactúa con la base de datos a través del contexto `BlogDbContext` para almacenar y recuperar la configuración de caché. Permite que el cliente pueda obtener la configuración actual y actualizarla según sea necesario, facilitando así la gestión eficiente de los datos en caché en toda la aplicación.
 /// </summary>
-public class CacheConfigService: ICacheConfigService
+public class CacheConfigService : ICacheConfigService
 {
     private readonly BlogDbContext _context;
 
@@ -29,8 +29,6 @@ public class CacheConfigService: ICacheConfigService
     /// <returns>La configuración de caché actual.</returns>
     public async Task<CacheConfig> ObtenerConfigAsync()
     {
-       
-
         return await _context.CacheConfig.FirstAsync();
     }
 
@@ -50,10 +48,9 @@ public class CacheConfigService: ICacheConfigService
         config.ExpiracionUsuariosSegundos = dto.ExpiracionUsuariosSegundos;
         config.ExpiracionPostsListadoSegundos = dto.ExpiracionPostsListadoSegundos;
         config.ExpiracionPostPorSlugSegundos = dto.ExpiracionPostPorSlugSegundos;
-        config.ExpiracionPostsPorCategoriaSlugSegundos =  dto.ExpiracionPostsPorCategoriaSlugSegundos;
-
-
-        
+        config.ExpiracionPostsPorCategoriaSlugSegundos =
+            dto.ExpiracionPostsPorCategoriaSlugSegundos;
+        config.ExpiracionPostsPorCategoriaIdSegundos = dto.ExpiracionPostsPorCategoriaIdSegundos;
 
         await _context.SaveChangesAsync();
     }

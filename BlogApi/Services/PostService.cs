@@ -181,7 +181,7 @@ public class PostService : IPostService
         await InvalidarCachePostsAsync();
         await InvalidarCachePostsAsync(null, post.Slug);
         await InvalidarCachePostsAsync(null, post.Slug, post.Categoria?.Slug);
-
+        await InvalidarCachePostsAsync(null, post.Slug, post.Categoria?.Slug, post.CategoriaId);
 
         return post;
     }
@@ -220,7 +220,7 @@ public class PostService : IPostService
             SanitizarPost(post);
             var oldSlug = existing.Slug;
             var oldCategoriaSlug = existing.Categoria?.Slug;
-
+            var oldCategoriaId = existing.CategoriaId;
 
             existing.Titulo = post.Titulo;
             existing.Contenido = post.Contenido;
@@ -238,6 +238,7 @@ public class PostService : IPostService
             await InvalidarCachePostsAsync(id);
             await InvalidarCachePostsAsync(id, oldSlug);
             await InvalidarCachePostsAsync(id, oldSlug, oldCategoriaSlug);
+            await InvalidarCachePostsAsync(id, oldSlug, oldCategoriaSlug, oldCategoriaId);
 
             return true;
         }
@@ -265,10 +266,17 @@ public class PostService : IPostService
             throw new UnauthorizedAccessException("No puedes eliminar posts de otros usuarios.");
 
         _repo.Remove(existing);
+        //Invalida la cache.
         await _repo.SaveChangesAsync();
         await InvalidarCachePostsAsync(id);
         await InvalidarCachePostsAsync(id, existing.Slug);
         await InvalidarCachePostsAsync(id, existing.Slug, existing.Categoria?.Slug);
+        await InvalidarCachePostsAsync(
+            id,
+            existing.Slug,
+            existing.Categoria?.Slug,
+            existing.CategoriaId
+        );
 
         return true;
     }
@@ -405,13 +413,22 @@ public class PostService : IPostService
     /// <returns>IEnumerable&lt;Post&gt;</returns>
     public async Task<IEnumerable<Post>> GetByCategoriaAsync(int categoriaId)
     {
-        return await _repo
-            .Query()
-            .Where(p => p.CategoriaId == categoriaId)
-            .Include(p => p.Categoria)
-            .Include(p => p.Usuario)
-            .Include(p => p.Tags)
-            .ToListAsync();
+        var config = await _cacheConfigService.ObtenerConfigAsync();
+
+        return await _cacheService.GetOrSetAsync(
+            CacheKeys.PostsByCategoriaId(categoriaId),
+            async () =>
+            {
+                return await _repo
+                    .Query()
+                    .Where(p => p.CategoriaId == categoriaId)
+                    .Include(p => p.Categoria)
+                    .Include(p => p.Usuario)
+                    .Include(p => p.Tags)
+                    .ToListAsync();
+            },
+            TimeSpan.FromSeconds(config.ExpiracionPostsPorCategoriaIdSegundos)
+        );
     }
 
     /// <summary>
@@ -860,11 +877,15 @@ public class PostService : IPostService
     /// Método privado para invalidar la caché relacionada con los posts. Este método se llama después de crear, actualizar o eliminar un post para asegurarse de que la información en caché esté actualizada y refleje los cambios realizados en la base de datos. Si se proporciona un postId, también se invalidará la caché específica de ese post
     /// </summary>
     /// <param name="postId"></param>
+    /// <param name="categoriaId"</param>
+    /// <param name="categoriaSlug"</param>
+    /// <param name="slug"</param>
     /// <returns></returns>
     private async Task InvalidarCachePostsAsync(
         int? postId = null,
         string? slug = null,
-        string? categoriaSlug = null
+        string? categoriaSlug = null,
+        int? categoriaId = null
     )
     {
         // Listado general
@@ -881,6 +902,10 @@ public class PostService : IPostService
         // Posts por categoría slug
         if (!string.IsNullOrWhiteSpace(categoriaSlug))
             await _cacheService.RemoveAsync(CacheKeys.PostsByCategoriaSlug(categoriaSlug));
+
+        // Posts por categoría ID
+        if (categoriaId != null)
+            await _cacheService.RemoveAsync(CacheKeys.PostsByCategoriaId(categoriaId.Value));
 
         // Listados paginados
         for (int pagina = 1; pagina <= 20; pagina++)

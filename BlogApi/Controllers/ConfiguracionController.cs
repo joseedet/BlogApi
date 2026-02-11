@@ -13,6 +13,7 @@ namespace BlogApi.Controllers
     public class ConfiguracionController : ControllerBase
     {
         private readonly ICacheConfigService _cacheConfigService;
+
         /// <summary>
         /// Constructor del controlador de configuración, inyectando el servicio de configuración de caché.
         /// </summary>
@@ -21,6 +22,7 @@ namespace BlogApi.Controllers
         {
             _cacheConfigService = cacheConfigService;
         }
+
         /// <summary>
         /// Obtiene la configuración de caché actual de la aplicación. Requiere el permiso "Configuracion.Ver".
         /// </summary>
@@ -41,9 +43,12 @@ namespace BlogApi.Controllers
                 ExpiracionPostPorSlugSegundos = config.ExpiracionPostPorSlugSegundos,
                 ExpiracionPostsPorCategoriaSlugSegundos =
                     config.ExpiracionPostsPorCategoriaSlugSegundos,
+                ExpiracionPostsPorCategoriaIdSegundos =
+                    config.ExpiracionPostsPorCategoriaIdSegundos,
             };
             return Ok(dto);
         }
+
         /// <summary>
         /// Actualiza la configuración de caché de la aplicación. Requiere el permiso "Configuracion.Editar".
         /// </summary>
