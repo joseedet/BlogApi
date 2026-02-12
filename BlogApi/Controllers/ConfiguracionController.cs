@@ -45,6 +45,7 @@ namespace BlogApi.Controllers
                     config.ExpiracionPostsPorCategoriaSlugSegundos,
                 ExpiracionPostsPorCategoriaIdSegundos =
                     config.ExpiracionPostsPorCategoriaIdSegundos,
+                ExpiracionPostsPorTagIdSegundos = config.ExpiracionPostsPorTagIdSegundos,
             };
             return Ok(dto);
         }

@@ -61,4 +61,11 @@ public class CacheKeys
     /// <param name="slug"></param>
     /// <returns>Una cadena qu representa
     public static string PostsByCategoriaId(int categoriaId) => $"posts_categoria_id_{categoriaId}";
+
+    /// <summary>
+    /// Genera un clave caché para al almacenar post por tag .
+    /// </summary>
+    /// <param name="tagId"></param>
+    /// <returns>Una cadena qu representa</returns>
+    public static string PostsByTagId(int tagId) => $"posts_tag_id_{tagId}";
 }

@@ -182,6 +182,13 @@ public class PostService : IPostService
         await InvalidarCachePostsAsync(null, post.Slug);
         await InvalidarCachePostsAsync(null, post.Slug, post.Categoria?.Slug);
         await InvalidarCachePostsAsync(null, post.Slug, post.Categoria?.Slug, post.CategoriaId);
+        await InvalidarCachePostsAsync(
+            null,
+            post.Slug,
+            post.Categoria?.Slug,
+            post.CategoriaId,
+            tagIds
+        );
 
         return post;
     }
@@ -221,6 +228,7 @@ public class PostService : IPostService
             var oldSlug = existing.Slug;
             var oldCategoriaSlug = existing.Categoria?.Slug;
             var oldCategoriaId = existing.CategoriaId;
+            var oldTagIds = existing.Tags.Select(t => t.Id).ToList();
 
             existing.Titulo = post.Titulo;
             existing.Contenido = post.Contenido;
@@ -239,6 +247,13 @@ public class PostService : IPostService
             await InvalidarCachePostsAsync(id, oldSlug);
             await InvalidarCachePostsAsync(id, oldSlug, oldCategoriaSlug);
             await InvalidarCachePostsAsync(id, oldSlug, oldCategoriaSlug, oldCategoriaId);
+            await InvalidarCachePostsAsync(
+                id,
+                oldSlug,
+                oldCategoriaSlug,
+                oldCategoriaId,
+                oldTagIds
+            );
 
             return true;
         }
@@ -267,6 +282,16 @@ public class PostService : IPostService
 
         _repo.Remove(existing);
         //Invalida la cache.
+        var oldTagIds = existing.Tags.Select(t => t.Id).ToList();
+
+        await InvalidarCachePostsAsync(
+            id,
+            existing.Slug,
+            existing.Categoria?.Slug,
+            existing.CategoriaId,
+            oldTagIds
+        );
+
         await _repo.SaveChangesAsync();
         await InvalidarCachePostsAsync(id);
         await InvalidarCachePostsAsync(id, existing.Slug);
@@ -463,13 +488,22 @@ public class PostService : IPostService
     /// <returns>IEnumerable&lt;Post&gt;</returns>
     public async Task<IEnumerable<Post>> GetByTagAsync(int tagId)
     {
-        return await _repo
-            .Query()
-            .Where(p => p.Tags.Any(t => t.Id == tagId))
-            .Include(p => p.Categoria)
-            .Include(p => p.Usuario)
-            .Include(p => p.Tags)
-            .ToListAsync();
+        var config = await _cacheConfigService.ObtenerConfigAsync();
+
+        return await _cacheService.GetOrSetAsync(
+            CacheKeys.PostsByTagId(tagId),
+            async () =>
+            {
+                return await _repo
+                    .Query()
+                    .Where(p => p.Tags.Any(t => t.Id == tagId))
+                    .Include(p => p.Categoria)
+                    .Include(p => p.Usuario)
+                    .Include(p => p.Tags)
+                    .ToListAsync();
+            },
+            TimeSpan.FromSeconds(config.ExpiracionPostsPorTagIdSegundos)
+        );
     }
 
     /// <summary>
@@ -885,7 +919,8 @@ public class PostService : IPostService
         int? postId = null,
         string? slug = null,
         string? categoriaSlug = null,
-        int? categoriaId = null
+        int? categoriaId = null,
+        List<int>? tagIds = null
     )
     {
         // Listado general
@@ -906,6 +941,13 @@ public class PostService : IPostService
         // Posts por categoría ID
         if (categoriaId != null)
             await _cacheService.RemoveAsync(CacheKeys.PostsByCategoriaId(categoriaId.Value));
+
+        // Posts por tag ID
+        if (tagIds != null)
+        {
+            foreach (var tagId in tagIds)
+                await _cacheService.RemoveAsync(CacheKeys.PostsByTagId(tagId));
+        }
 
         // Listados paginados
         for (int pagina = 1; pagina <= 20; pagina++)
