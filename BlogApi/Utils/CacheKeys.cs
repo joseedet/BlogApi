@@ -45,27 +45,34 @@ public class CacheKeys
     /// Genera un clave caché para al almacenar slug en post.
     /// </summary>
     /// <param name="slug"></param>
-    /// <returns>Una cadena qu representa la clave de caché para un listado post por slug</returns>
+    /// <returns>Una cadena qu representa la clave de caché para un post por slug</returns>
     public static string PostBySlug(string slug) => $"post_slug_{slug}";
 
     /// <summary>
     /// Genera un clave caché para al almacenar post por categoria slug .
     /// </summary>
     /// <param name="slug"></param>
-    /// <returns>Una cadena qu representa
+    /// <returns>Una cadena que representa la clave de cache para  post por categoria slug
     public static string PostsByCategoriaSlug(string slug) => $"posts_categoria_slug_{slug}";
 
     /// <summary>
     /// Genera un clave caché para al almacenar post categoria.
     /// </summary>
     /// <param name="slug"></param>
-    /// <returns>Una cadena qu representa
+    /// <returns>Una cadena que representa
     public static string PostsByCategoriaId(int categoriaId) => $"posts_categoria_id_{categoriaId}";
 
     /// <summary>
     /// Genera un clave caché para al almacenar post por tag .
     /// </summary>
     /// <param name="tagId"></param>
-    /// <returns>Una cadena qu representa</returns>
+    /// <returns>Una cadena que representa la clave para post por id de tag</returns>
     public static string PostsByTagId(int tagId) => $"posts_tag_id_{tagId}";
+
+    /// <summary>
+    /// Genera un clave caché para al almacenar tag por nombre .
+    /// </summary>
+    /// <param name="nombre"></param>
+    /// <returns>Una cadena que representa la clave para por nombre de tag</returns>
+    public static string PostsByTagNombre(string nombre) => $"posts_tag_nombre_{nombre}";
 }

@@ -189,6 +189,15 @@ public class PostService : IPostService
             post.CategoriaId,
             tagIds
         );
+        var tagNombres = post.Tags.Select(t => t.Nombre).ToList();
+        await InvalidarCachePostsAsync(
+            null,
+            post.Slug,
+            post.Categoria?.Slug,
+            post.CategoriaId,
+            tagIds,
+            tagNombres
+        );
 
         return post;
     }
@@ -229,6 +238,7 @@ public class PostService : IPostService
             var oldCategoriaSlug = existing.Categoria?.Slug;
             var oldCategoriaId = existing.CategoriaId;
             var oldTagIds = existing.Tags.Select(t => t.Id).ToList();
+            var oldTagNombres = existing.Tags.Select(t => t.Nombre).ToList();
 
             existing.Titulo = post.Titulo;
             existing.Contenido = post.Contenido;
@@ -243,6 +253,8 @@ public class PostService : IPostService
 
             _repo.Update(existing);
             await _repo.SaveChangesAsync();
+
+            //Invalidación de cacheé
             await InvalidarCachePostsAsync(id);
             await InvalidarCachePostsAsync(id, oldSlug);
             await InvalidarCachePostsAsync(id, oldSlug, oldCategoriaSlug);
@@ -253,6 +265,14 @@ public class PostService : IPostService
                 oldCategoriaSlug,
                 oldCategoriaId,
                 oldTagIds
+            );
+            await InvalidarCachePostsAsync(
+                id,
+                oldSlug,
+                oldCategoriaSlug,
+                oldCategoriaId,
+                oldTagIds,
+                oldTagNombres
             );
 
             return true;
@@ -301,6 +321,18 @@ public class PostService : IPostService
             existing.Slug,
             existing.Categoria?.Slug,
             existing.CategoriaId
+        );
+
+        //var oldTagIds = existing.Tags.Select(t => t.Id).ToList();
+        var oldTagNombres = existing.Tags.Select(t => t.Nombre).ToList();
+
+        await InvalidarCachePostsAsync(
+            id,
+            existing.Slug,
+            existing.Categoria?.Slug,
+            existing.CategoriaId,
+            oldTagIds,
+            oldTagNombres
         );
 
         return true;
@@ -510,19 +542,28 @@ public class PostService : IPostService
     /// Obtiene los posts por nombre de tag
     /// </summary>
     /// <param name="nombre"></param>
-    /// <returns>IEnumerable&lt;Post&gt;</returns>
-    public async Task<IEnumerable<Post>> GetByTagNombreAsync(string nombre)
-    {
-        nombre = nombre.ToLower().Trim();
+    /// <returns>IEnumerable&lt;Post&gt;</returns>  
+   public async Task<IEnumerable<Post>> GetByTagNombreAsync(string nombre)
+{
+    nombre = nombre.ToLower().Trim();
+    var config = await _cacheConfigService.ObtenerConfigAsync();
 
-        return await _repo
-            .Query()
-            .Where(p => p.Tags.Any(t => t.Nombre.ToLower() == nombre))
-            .Include(p => p.Categoria)
-            .Include(p => p.Usuario)
-            .Include(p => p.Tags)
-            .ToListAsync();
-    }
+    return await _cacheService.GetOrSetAsync(
+        CacheKeys.PostsByTagNombre(nombre),
+        async () =>
+        {
+            return await _repo
+                .Query()
+                .Where(p => p.Tags.Any(t => t.Nombre.ToLower() == nombre))
+                .Include(p => p.Categoria)
+                .Include(p => p.Usuario)
+                .Include(p => p.Tags)
+                .ToListAsync();
+        },
+        TimeSpan.FromSeconds(config.ExpiracionPostsPorTagNombreSegundos)
+    );
+}
+
 
     /// <summary>
     /// Obtiene los posts por autor
@@ -920,7 +961,8 @@ public class PostService : IPostService
         string? slug = null,
         string? categoriaSlug = null,
         int? categoriaId = null,
-        List<int>? tagIds = null
+        List<int>? tagIds = null,
+        List<string>? tagNombres = null
     )
     {
         // Listado general
@@ -947,6 +989,15 @@ public class PostService : IPostService
         {
             foreach (var tagId in tagIds)
                 await _cacheService.RemoveAsync(CacheKeys.PostsByTagId(tagId));
+        }
+
+        // Posts por tag nombre
+        if (tagNombres != null)
+        {
+            foreach (var nombre in tagNombres)
+                await _cacheService.RemoveAsync(
+                    CacheKeys.PostsByTagNombre(nombre.ToLower().Trim())
+                );
         }
 
         // Listados paginados

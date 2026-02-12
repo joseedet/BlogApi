@@ -17,8 +17,30 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Configuración de Serilog
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.Async(a =>
+        a.File(
+            "logs/app-.log",
+            rollingInterval: RollingInterval.Day,
+            retainedFileCountLimit: 14,
+            fileSizeLimitBytes: 10_000_000,
+            rollOnFileSizeLimit: true
+        )
+    )
+    .WriteTo.Async(a =>
+        a.File("logs/efcore-.log", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 14)
+    )
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.WebHost.ConfigureKestrel(options =>
 {
@@ -46,7 +68,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSignalR();
 builder.Services.AddDbContext<BlogDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+    options
+        .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+        .EnableSensitiveDataLogging()
+        .LogTo(Console.WriteLine, LogLevel.Information)
 );
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
@@ -111,7 +136,6 @@ else
     builder.Services.AddMemoryCache();
     builder.Services.AddScoped<ICacheService, MemoryCacheService>();
 }
-
 
 // Configuración de autenticación JWT
 var jwtSettings = builder.Configuration.GetSection("Jwt");
@@ -277,6 +301,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 app.UseCors("Default");
+
+app.UseSerilogRequestLogging();
 
 app.UseAuthentication();
 

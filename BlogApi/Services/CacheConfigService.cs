@@ -52,6 +52,8 @@ public class CacheConfigService : ICacheConfigService
             dto.ExpiracionPostsPorCategoriaSlugSegundos;
         config.ExpiracionPostsPorCategoriaIdSegundos = dto.ExpiracionPostsPorCategoriaIdSegundos;
         config.ExpiracionPostsPorTagIdSegundos = dto.ExpiracionPostsPorTagIdSegundos;
+        config.ExpiracionPostsPorTagNombreSegundos = dto.ExpiracionPostsPorTagNombreSegundos;
+
 
         await _context.SaveChangesAsync();
     }

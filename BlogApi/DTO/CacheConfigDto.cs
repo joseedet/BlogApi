@@ -57,4 +57,9 @@ public class CacheConfigDto
     /// Tiempo de expiración en segundos para post por tag en cache. Se establece en 60 segundos por defecto, lo que significa que slug se actualizará cada minuto.
     /// </summary>
     public int ExpiracionPostsPorTagIdSegundos { get; set; }
+
+    /// <summary>
+    /// Tiempo de expiración en segundos para post por tag nombre en cache. Se establece en 60 segundos por defecto, lo que significa que slug se actualizará cada minuto.
+    /// </summary>
+    public int ExpiracionPostsPorTagNombreSegundos { get; set; }
 }
