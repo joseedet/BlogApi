@@ -13,14 +13,20 @@ namespace BlogApi.Controllers
     public class ConfiguracionController : ControllerBase
     {
         private readonly ICacheConfigService _cacheConfigService;
+        private readonly IConfiguration _configuration;
 
         /// <summary>
         /// Constructor del controlador de configuración, inyectando el servicio de configuración de caché.
         /// </summary>
         /// <param name="cacheConfigService"></param>
-        public ConfiguracionController(ICacheConfigService cacheConfigService)
+        /// <param name="configuration"></param>
+        public ConfiguracionController(
+            ICacheConfigService cacheConfigService,
+            IConfiguration configuration
+        )
         {
             _cacheConfigService = cacheConfigService;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -56,12 +62,31 @@ namespace BlogApi.Controllers
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>
-        [Authorize(Policy = "Permiso:Configuracion.Editar")]
+        [Authorize(Policy = "Permiso:Cache.Editar")]
         [HttpPut("cache-config")]
         public async Task<IActionResult> ActualizarCacheConfig([FromBody] CacheConfigDto dto)
         {
             await _cacheConfigService.ActualizarConfigAsync(dto);
             return Ok("Configuración de caché actualizada correctamente.");
+        }
+
+        /// <summary>
+        /// Obtención de la caché
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Policy = "Permiso:Cache.Ver")]
+        [HttpGet("cache")]
+        public async Task<IActionResult> GetCacheConfig()
+        {
+            var config = await _cacheConfigService.ObtenerConfigAsync();
+
+            return Ok(
+                new
+                {
+                    ExpiracionPostsSegundos = config.ExpiracionPostsSegundos,
+                    Proveedor = _configuration["Cache:Provider"],
+                }
+            );
         }
     }
 }

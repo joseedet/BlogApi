@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using Serilog.Enrichers.Span;
+using Serilog.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +27,13 @@ var builder = WebApplication.CreateBuilder(args);
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .Enrich.FromLogContext()
+    .Enrich.WithEnvironmentName()
+    .Enrich.WithMachineName()
+    .Enrich.WithProcessId()
+    .Enrich.WithThreadId()
+    .Enrich.WithExceptionDetails()
+    .Enrich.WithSpan()
+    // correlación de trazas
     .WriteTo.Console()
     .WriteTo.Async(a =>
         a.File(
@@ -71,7 +80,7 @@ builder.Services.AddDbContext<BlogDbContext>(options =>
     options
         .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
         .EnableSensitiveDataLogging()
-        .LogTo(Console.WriteLine, LogLevel.Information)
+        .LogTo(Log.Information, LogLevel.Information)
 );
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
@@ -194,6 +203,9 @@ builder.Services.AddAuthorization(options =>
         "Permiso:Banners.Eliminar",
         p => p.RequireClaim("permiso", "Banners.Eliminar")
     );
+
+    //Caché
+    options.AddPolicy("Permiso:Cache.Editar", p => p.RequireClaim("permiso", "Cache.Editar"));
 
     // Categorías
     options.AddPolicy("Permiso:Categorias.Ver", p => p.RequireClaim("permiso", "Categorias.Ver"));

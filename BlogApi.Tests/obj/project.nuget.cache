@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "W1+sd9NxNIk=",
+  "dgSpecHash": "pqYLBEnxJzU=",
   "success": true,
   "projectFilePath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/BlogApi.Tests.csproj",
   "expectedPackageFiles": [
@@ -93,6 +93,11 @@
     "/home/tedekeya/.nuget/packages/sendgrid/9.29.3/sendgrid.9.29.3.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/serilog/4.3.0/serilog.4.3.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/serilog.aspnetcore/10.0.0/serilog.aspnetcore.10.0.0.nupkg.sha512",
+    "/home/tedekeya/.nuget/packages/serilog.enrichers.environment/3.0.1/serilog.enrichers.environment.3.0.1.nupkg.sha512",
+    "/home/tedekeya/.nuget/packages/serilog.enrichers.process/3.0.0/serilog.enrichers.process.3.0.0.nupkg.sha512",
+    "/home/tedekeya/.nuget/packages/serilog.enrichers.span/3.1.0/serilog.enrichers.span.3.1.0.nupkg.sha512",
+    "/home/tedekeya/.nuget/packages/serilog.enrichers.thread/4.0.0/serilog.enrichers.thread.4.0.0.nupkg.sha512",
+    "/home/tedekeya/.nuget/packages/serilog.exceptions/8.4.0/serilog.exceptions.8.4.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/serilog.extensions.hosting/10.0.0/serilog.extensions.hosting.10.0.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/serilog.extensions.logging/10.0.0/serilog.extensions.logging.10.0.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/serilog.formatting.compact/3.0.0/serilog.formatting.compact.3.0.0.nupkg.sha512",
@@ -126,6 +131,7 @@
     "/home/tedekeya/.nuget/packages/system.identitymodel.tokens.jwt/8.15.0/system.identitymodel.tokens.jwt.8.15.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/system.memory.data/8.0.1/system.memory.data.8.0.1.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/system.reflection.metadataloadcontext/7.0.0/system.reflection.metadataloadcontext.7.0.0.nupkg.sha512",
+    "/home/tedekeya/.nuget/packages/system.reflection.typeextensions/4.7.0/system.reflection.typeextensions.4.7.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/system.resources.extensions/9.0.0/system.resources.extensions.9.0.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/system.security.cryptography.pkcs/9.0.4/system.security.cryptography.pkcs.9.0.4.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/system.security.cryptography.protecteddata/9.0.4/system.security.cryptography.protecteddata.9.0.4.nupkg.sha512",
