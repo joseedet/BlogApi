@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using System.Text;
 using BlogApi.Authorization;
 using BlogApi.Data;
 using BlogApi.DTO;
@@ -11,15 +9,6 @@ using BlogApi.Repositories.Interfaces;
 using BlogApi.Services;
 using BlogApi.Services.Interfaces;
 using BlogApi.Services.Security;
-using FluentValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Serilog;
-using Serilog.Enrichers.Span;
-using Serilog.Exceptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -76,17 +65,38 @@ builder.Services.AddCors(options =>
 builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSignalR();
-builder.Services.AddDbContext<BlogDbContext>(options =>
+var provider = builder.Configuration["Database:Provider"];
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    if (provider == "SqlServer")
+    {
+        var connection = builder.Configuration["Database:SqlServer"];
+        options.UseSqlServer(connection)
+         .EnableSensitiveDataLogging()
+        .LogTo(Log.Information, LogLevel.Information);
+    }
+    else if (provider == "MariaDb")
+    {
+        var connection = builder.Configuration["Database:MariaDb"];
+        options.UseMySql(connection, ServerVersion.AutoDetect(connection))
+        .EnableSensitiveDataLogging()
+        .LogTo(Log.Information, LogLevel.Information);
+    }
+    else
+    {
+        throw new Exception("Proveedor de base de datos no soportado.");
+    }
+});
+
+
+/*builder.Services.AddDbContext<BlogDbContext>(options =>
     options
         .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
         .EnableSensitiveDataLogging()
         .LogTo(Log.Information, LogLevel.Information)
-);
-builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
-
-/*builder.Services.AddSingleton(resolver =>
-    resolver.GetRequiredService<IOptions<AppSettings>>().Value
 );*/
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
 // Repositorios
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
