@@ -13,7 +13,9 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Pomelo.EntityFrameworkCore.MySql;
 using Serilog;
 using Serilog.Enrichers.Span;
 using Serilog.Exceptions;
@@ -77,7 +79,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSignalR();
 var provider = builder.Configuration["Database:Provider"];
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<BlogDbContext>(options =>
 {
     if (provider == "SqlServer")
     {
@@ -134,6 +136,7 @@ builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 builder.Services.AddScoped<IEmailVerificationTokenService, EmailVerificationTokenService>();
 builder.Services.AddScoped<ILikeService, LikeService>();
 builder.Services.AddScoped<ILogService, LogService>();
+builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<INotificacionesService, NotificacionesService>();
 builder.Services.AddScoped<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
 builder.Services.AddScoped<IPasswordResetService, PasswordResetService>();
@@ -349,5 +352,7 @@ app.UseStaticFiles();
 app.MapControllers();
 
 app.MapHub<NotificacionesHub>("/hubs/notificaciones");
+app.MapHub<MenuHub>("/menuHub");
+
 
 app.Run();

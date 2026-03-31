@@ -77,6 +77,11 @@ public class BlogDbContext : DbContext
     public DbSet<LogAdmin> LogAdmins { get; set; }
 
     /// <summary>
+    /// Elementos del menú de la aplicación, que pueden incluir enlaces a diferentes secciones como publicaciones, categorías, autores, etc. Cada elemento del menú puede tener una jerarquía (padre-hijo) para organizar mejor la navegación.
+    /// </summary>
+    public DbSet<MenuItem> MenuItems { get; set; }    
+
+    /// <summary>
     ///  Notificaciones del blog
     /// </summary>
     public DbSet<Notificacion> Notificaciones { get; set; }
