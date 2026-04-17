@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogAdmin/BlogAdmin.csproj": {}
+    "/home/tedekeya/Documentos/BlogApi/BlogAdmin/BlogAdmin.csproj": {}
   },
   "projects": {
-    "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogAdmin/BlogAdmin.csproj": {
+    "/home/tedekeya/Documentos/BlogApi/BlogAdmin/BlogAdmin.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogAdmin/BlogAdmin.csproj",
+        "projectUniqueName": "/home/tedekeya/Documentos/BlogApi/BlogAdmin/BlogAdmin.csproj",
         "projectName": "BlogAdmin",
-        "projectPath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogAdmin/BlogAdmin.csproj",
+        "projectPath": "/home/tedekeya/Documentos/BlogApi/BlogAdmin/BlogAdmin.csproj",
         "packagesPath": "/home/tedekeya/.nuget/packages/",
-        "outputPath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogAdmin/obj/",
+        "outputPath": "/home/tedekeya/Documentos/BlogApi/BlogAdmin/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/tedekeya/.nuget/NuGet/NuGet.Config"
@@ -47,7 +47,7 @@
             "Microsoft.AspNetCore.App.Internal.Assets": {
               "suppressParent": "All",
               "target": "Package",
-              "version": "[10.0.1, )",
+              "version": "[10.0.4, )",
               "autoReferenced": true
             },
             "Microsoft.AspNetCore.SignalR.Client": {
@@ -74,7 +74,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/tedekeya/.dotnet/sdk/10.0.101/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/10.0.104/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

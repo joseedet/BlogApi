@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/BlogApi.Tests.csproj": {}
+    "/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/BlogApi.Tests.csproj": {}
   },
   "projects": {
-    "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/BlogApi.Tests.csproj": {
+    "/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/BlogApi.Tests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/BlogApi.Tests.csproj",
+        "projectUniqueName": "/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/BlogApi.Tests.csproj",
         "projectName": "BlogApi.Tests",
-        "projectPath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/BlogApi.Tests.csproj",
+        "projectPath": "/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/BlogApi.Tests.csproj",
         "packagesPath": "/home/tedekeya/.nuget/packages/",
-        "outputPath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/obj/",
+        "outputPath": "/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/tedekeya/.nuget/NuGet/NuGet.Config"
@@ -26,8 +26,8 @@
           "net10.0": {
             "targetAlias": "net10.0",
             "projectReferences": {
-              "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogApi.csproj": {
-                "projectPath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogApi.csproj"
+              "/home/tedekeya/Documentos/BlogApi/BlogApi/BlogApi.csproj": {
+                "projectPath": "/home/tedekeya/Documentos/BlogApi/BlogApi/BlogApi.csproj"
               }
             }
           }
@@ -89,7 +89,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/tedekeya/.dotnet/sdk/10.0.101/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/10.0.104/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -367,14 +367,14 @@
         }
       }
     },
-    "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogApi.csproj": {
+    "/home/tedekeya/Documentos/BlogApi/BlogApi/BlogApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogApi.csproj",
+        "projectUniqueName": "/home/tedekeya/Documentos/BlogApi/BlogApi/BlogApi.csproj",
         "projectName": "BlogApi",
-        "projectPath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/BlogApi.csproj",
+        "projectPath": "/home/tedekeya/Documentos/BlogApi/BlogApi/BlogApi.csproj",
         "packagesPath": "/home/tedekeya/.nuget/packages/",
-        "outputPath": "/home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi/obj/",
+        "outputPath": "/home/tedekeya/Documentos/BlogApi/BlogApi/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/tedekeya/.nuget/NuGet/NuGet.Config"
@@ -471,6 +471,10 @@
               "target": "Package",
               "version": "[10.0.2, )"
             },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
             "SendGrid": {
               "target": "Package",
               "version": "[9.29.3, )"
@@ -543,7 +547,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/home/tedekeya/.dotnet/sdk/10.0.101/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/10.0.104/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(,10.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(,10.0.32767]",

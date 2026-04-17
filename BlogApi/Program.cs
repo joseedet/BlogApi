@@ -117,6 +117,7 @@ builder.Services.AddScoped<IEmailVerificationTokenRepository, EmailVerificationT
 builder.Services.AddScoped<IComentarioRepository, ComentarioRepository>();
 builder.Services.AddScoped<ILikeComentarioRepository, LikeComentarioRepository>();
 builder.Services.AddScoped<ILikePostRepository, LikePostRepository>();
+builder.Services.AddScoped<IMensajeContactoRepository, MensajeContactoRepository>();
 builder.Services.AddScoped<INotificacionRepository, NotificacionRepository>();
 builder.Services.AddScoped<IPageRepository, PageRepository>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();
@@ -136,6 +137,7 @@ builder.Services.AddScoped<IEmailTemplateService, EmailTemplateService>();
 builder.Services.AddScoped<IEmailVerificationTokenService, EmailVerificationTokenService>();
 builder.Services.AddScoped<ILikeService, LikeService>();
 builder.Services.AddScoped<ILogService, LogService>();
+builder.Services.AddScoped<IMensajeContactoService, MensajeContactoService>();
 builder.Services.AddScoped<IMenuService, MenuService>();
 builder.Services.AddScoped<INotificacionesService, NotificacionesService>();
 builder.Services.AddScoped<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();

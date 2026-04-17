@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.AddSingleton<AuthService>();
 builder.Services.AddScoped<NotificacionesHubClient>();
+builder.Services.AddScoped<MenuServiceBlazor>();
 builder.Services.AddSingleton<ToastService>();
 
 builder.Services.AddHttpClient(

@@ -1,15 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using BlogApi.Data;
-using Microsoft.EntityFrameworkCore;
-using BlogApi.Services.Interfaces;
 using BlogApi.Models;
 
 namespace BlogApi.Services.Interfaces;
 
+/// <summary>
+/// Interface para menú servicio dónde se define el contrato para obtener los elementos del menú de la aplicación.
+/// </summary>
 public interface IMenuService
 {
+     /// <summary>
+     /// Método asíncrono para obtener la lista de elementos del menú.
+     /// </summary>
+     /// <returns></returns>
      Task<List<MenuItem>> GetMenuAsync();
 }

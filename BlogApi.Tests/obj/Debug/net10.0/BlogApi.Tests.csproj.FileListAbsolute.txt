@@ -333,3 +333,6 @@
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/bin/Debug/net10.0/Castle.Core.dll
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/bin/Debug/net10.0/Moq.dll
 /home/tedekeya/Documentos/ProyectosCSharp/APIBlog/BlogApi.Tests/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.InMemory.dll
+/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/obj/Debug/net10.0/BlogApi.Tests.dll
+/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/obj/Debug/net10.0/refint/BlogApi.Tests.dll
+/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/obj/Debug/net10.0/BlogApi.Tests.pdb
