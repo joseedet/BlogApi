@@ -8,11 +8,7 @@ namespace BlogApi.Repositories.Interfaces;
 /// </summary>
 public interface IMensajeContactoRepository
 {
-    /// <summary>
-    /// Crea un nuevo mensaje de contacto.
-    /// </summary>
-    public interface IMensajeContactoRepository
-    {
+    
         /// <summary>
         /// Crea un nuevo mensaje de contacto.  
         /// </summary>
@@ -38,5 +34,5 @@ public interface IMensajeContactoRepository
         /// Guarda los cambios realizados en los mensajes de contacto.
         /// </summary>       
         Task GuardarCambiosAsync();
-    }
+  
 }

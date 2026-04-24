@@ -7,13 +7,14 @@ public class MenuServiceBlazor
 {
     private readonly HttpClient _http;
 
-        public MenuServiceBlazor(HttpClient http)
-        {
-            _http = http;
-        }
+    public MenuServiceBlazor(HttpClient http)
+    {
+        _http = http;
+    }
 
-        public async Task<List<MenuItem>> GetMenuAsync()
-        {
-            return await _http.GetFromJsonAsync<List<MenuItem>>("api/menu");
-        }
+    public async Task<List<MenuItem>> GetMenuAsync()
+    {
+        return await _http.GetFromJsonAsync<List<MenuItem>>("api/menu")
+               ?? new List<MenuItem>();
+    }
 }

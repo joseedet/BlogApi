@@ -2,28 +2,22 @@ using BlogApi.Models;
 using BlogApi.Services;
 using BlogApi.Services.Interfaces;
 using Moq;
-using SendGrid;
-using SendGrid.Helpers.Mail;
 
 namespace BlogApi.Tests.Services.Email;
 
 public class EmailServiceTests
 {
     private readonly Mock<IEmailSettingsService> _settingsService = new();
-    private readonly Mock<ISendGridClientFactory> _factory = new();
-    private readonly Mock<SendGridClient> _sendGridMock;
     private readonly Mock<IEmailLogService> _logService = new();
-
-    public EmailServiceTests()
-    {
-        _sendGridMock = new Mock<SendGridClient>("FAKE_API_KEY");
-    }
+    private readonly Mock<IEmailTemplateService> _templateService = new();
 
     private EmailService CreateService()
     {
-        _factory.Setup(f => f.Create(It.IsAny<string>())).Returns(_sendGridMock.Object);
-
-        return new EmailService(_settingsService.Object, _factory.Object, _logService.Object);
+        return new EmailService(
+            _settingsService.Object,
+            _logService.Object,
+            _templateService.Object
+        );
     }
 
     // ------------------------------------------------------------
@@ -38,29 +32,22 @@ public class EmailServiceTests
                 new EmailSettings
                 {
                     Activo = true,
-                    Password = "API_KEY",
+                    Host = "smtp.test.com",
+                    Puerto = 587,
+                    Usuario = "user@test.com",
+                    Password = "123",
                     Remitente = "admin@test.com",
                     NombreRemitente = "Admin",
+                    UsarSSL = true
                 }
             );
-
-        _sendGridMock
-            .Setup(c => c.SendEmailAsync(It.IsAny<SendGridMessage>(), default))
-            .ReturnsAsync(new Response(System.Net.HttpStatusCode.Accepted, null, null));
 
         var service = CreateService();
 
         await service.EnviarAsync("dest@test.com", "Asunto", "Mensaje");
 
-        // Verifica que SendGrid fue llamado
-        _sendGridMock.Verify(
-            c => c.SendEmailAsync(It.IsAny<SendGridMessage>(), default),
-            Times.Once
-        );
-
-        // Verifica que se registró el log de éxito
         _logService.Verify(
-            l => l.RegistrarExitoAsync("dest@test.com", "Asunto", "SendGrid"),
+            l => l.RegistrarExitoAsync("dest@test.com", "Asunto", "SMTP"),
             Times.Once
         );
     }
@@ -81,25 +68,8 @@ public class EmailServiceTests
             service.EnviarAsync("dest@test.com", "Asunto", "Mensaje")
         );
 
-        // No debe intentar enviar email
-        _sendGridMock.Verify(
-            c => c.SendEmailAsync(It.IsAny<SendGridMessage>(), default),
-            Times.Never
-        );
-
-        // No debe registrar logs
         _logService.Verify(
             l => l.RegistrarExitoAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()),
-            Times.Never
-        );
-        _logService.Verify(
-            l =>
-                l.RegistrarErrorAsync(
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<string>()
-                ),
             Times.Never
         );
     }
@@ -116,36 +86,20 @@ public class EmailServiceTests
                 new EmailSettings
                 {
                     Activo = true,
-                    Password = "",
+                    Host = "",
                     Remitente = "",
+                    Password = ""
                 }
             );
 
         var service = CreateService();
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        await Assert.ThrowsAsync<Exception>(() =>
             service.EnviarAsync("dest@test.com", "Asunto", "Mensaje")
         );
 
-        // No debe enviar email
-        _sendGridMock.Verify(
-            c => c.SendEmailAsync(It.IsAny<SendGridMessage>(), default),
-            Times.Never
-        );
-
-        // No debe registrar logs
         _logService.Verify(
             l => l.RegistrarExitoAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()),
-            Times.Never
-        );
-        _logService.Verify(
-            l =>
-                l.RegistrarErrorAsync(
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<string>()
-                ),
             Times.Never
         );
     }

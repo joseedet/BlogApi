@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "fle1qc0DoGE=",
+  "dgSpecHash": "Wf8MFAGCSgE=",
   "success": true,
   "projectFilePath": "/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/BlogApi.Tests.csproj",
   "expectedPackageFiles": [
@@ -39,7 +39,7 @@
     "/home/tedekeya/.nuget/packages/microsoft.codeanalysis.csharp.workspaces/4.14.0/microsoft.codeanalysis.csharp.workspaces.4.14.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.codeanalysis.workspaces.common/4.14.0/microsoft.codeanalysis.workspaces.common.4.14.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.codeanalysis.workspaces.msbuild/4.14.0/microsoft.codeanalysis.workspaces.msbuild.4.14.0.nupkg.sha512",
-    "/home/tedekeya/.nuget/packages/microsoft.codecoverage/17.14.1/microsoft.codecoverage.17.14.1.nupkg.sha512",
+    "/home/tedekeya/.nuget/packages/microsoft.codecoverage/17.12.0/microsoft.codecoverage.17.12.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.data.sqlclient/6.1.1/microsoft.data.sqlclient.6.1.1.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.data.sqlclient.sni.runtime/6.0.2/microsoft.data.sqlclient.sni.runtime.6.0.2.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.data.sqlite.core/10.0.1/microsoft.data.sqlite.core.10.0.1.nupkg.sha512",
@@ -80,11 +80,11 @@
     "/home/tedekeya/.nuget/packages/microsoft.identitymodel.protocols.openidconnect/8.0.1/microsoft.identitymodel.protocols.openidconnect.8.0.1.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.identitymodel.tokens/8.15.0/microsoft.identitymodel.tokens.8.15.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.net.stringtools/17.14.28/microsoft.net.stringtools.17.14.28.nupkg.sha512",
-    "/home/tedekeya/.nuget/packages/microsoft.net.test.sdk/17.14.1/microsoft.net.test.sdk.17.14.1.nupkg.sha512",
+    "/home/tedekeya/.nuget/packages/microsoft.net.test.sdk/17.12.0/microsoft.net.test.sdk.17.12.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.openapi/2.3.0/microsoft.openapi.2.3.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/microsoft.sqlserver.server/1.0.0/microsoft.sqlserver.server.1.0.0.nupkg.sha512",
-    "/home/tedekeya/.nuget/packages/microsoft.testplatform.objectmodel/17.14.1/microsoft.testplatform.objectmodel.17.14.1.nupkg.sha512",
-    "/home/tedekeya/.nuget/packages/microsoft.testplatform.testhost/17.14.1/microsoft.testplatform.testhost.17.14.1.nupkg.sha512",
+    "/home/tedekeya/.nuget/packages/microsoft.testplatform.objectmodel/17.12.0/microsoft.testplatform.objectmodel.17.12.0.nupkg.sha512",
+    "/home/tedekeya/.nuget/packages/microsoft.testplatform.testhost/17.12.0/microsoft.testplatform.testhost.17.12.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/mimekit/4.11.0/mimekit.4.11.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/mono.texttemplating/3.0.0/mono.texttemplating.3.0.0.nupkg.sha512",
     "/home/tedekeya/.nuget/packages/moq/4.20.72/moq.4.20.72.nupkg.sha512",
@@ -153,7 +153,7 @@
     {
       "code": "NU1608",
       "level": "Warning",
-      "message": "Detected package version outside of dependency constraint: Pomelo.EntityFrameworkCore.MySql 9.0.0 requires Microsoft.EntityFrameworkCore.Relational (>= 9.0.0 && <= 9.0.999) but version Microsoft.EntityFrameworkCore.Relational 10.0.1 was resolved.",
+      "message": "Se detectó una versión del paquete fuera de la restricción de dependencia: Pomelo.EntityFrameworkCore.MySql 9.0.0 requiere Microsoft.EntityFrameworkCore.Relational (>= 9.0.0 && <= 9.0.999), pero la versión Microsoft.EntityFrameworkCore.Relational 10.0.1 ya se resolvió.",
       "projectPath": "/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/BlogApi.Tests.csproj",
       "warningLevel": 1,
       "filePath": "/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/BlogApi.Tests.csproj",
@@ -165,11 +165,47 @@
     {
       "code": "NU1902",
       "level": "Warning",
-      "message": "Package 'MimeKit' 4.11.0 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-g7hc-96xr-gvvx",
+      "message": "El paquete \"MailKit\" 4.11.0 tiene una vulnerabilidad de gravedad moderada conocida, https://github.com/advisories/GHSA-9j88-vvj5-vhgr",
+      "projectPath": "/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/BlogApi.Tests.csproj",
+      "warningLevel": 1,
+      "filePath": "/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/BlogApi.Tests.csproj",
+      "libraryId": "MailKit",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    },
+    {
+      "code": "NU1902",
+      "level": "Warning",
+      "message": "El paquete \"MimeKit\" 4.11.0 tiene una vulnerabilidad de gravedad moderada conocida, https://github.com/advisories/GHSA-g7hc-96xr-gvvx",
       "projectPath": "/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/BlogApi.Tests.csproj",
       "warningLevel": 1,
       "filePath": "/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/BlogApi.Tests.csproj",
       "libraryId": "MimeKit",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "El paquete \"System.Security.Cryptography.Xml\" 9.0.0 tiene una vulnerabilidad de gravedad alta conocida, https://github.com/advisories/GHSA-37gx-xxp4-5rgx",
+      "projectPath": "/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/BlogApi.Tests.csproj",
+      "warningLevel": 1,
+      "filePath": "/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/BlogApi.Tests.csproj",
+      "libraryId": "System.Security.Cryptography.Xml",
+      "targetGraphs": [
+        "net10.0"
+      ]
+    },
+    {
+      "code": "NU1903",
+      "level": "Warning",
+      "message": "El paquete \"System.Security.Cryptography.Xml\" 9.0.0 tiene una vulnerabilidad de gravedad alta conocida, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf",
+      "projectPath": "/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/BlogApi.Tests.csproj",
+      "warningLevel": 1,
+      "filePath": "/home/tedekeya/Documentos/BlogApi/BlogApi.Tests/BlogApi.Tests.csproj",
+      "libraryId": "System.Security.Cryptography.Xml",
       "targetGraphs": [
         "net10.0"
       ]
