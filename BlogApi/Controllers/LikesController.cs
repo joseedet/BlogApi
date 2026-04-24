@@ -40,7 +40,13 @@ public class LikesController : ControllerBase
     // ---------------------------------------------------------
     //  Helpers
     // ---------------------------------------------------------
-
+    /// <summary>
+    /// Obtiene el ID del usuario autenticado a partir del token JWT. Lanza UnauthorizedAccessException si no se encuentra el ID.
+     /// Este método asume que el token contiene un claim "id" o "sub" con el ID del usuario.
+     /// Se puede mejorar para manejar otros formatos de token o claims personalizados.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="UnauthorizedAccessException"></exception>
     private int GetUsuarioIdFromToken()
     {
         var claim = User.FindFirst("id") ?? User.FindFirst("sub");

@@ -251,6 +251,11 @@ public class AuthController : ControllerBase
         return Ok(new { message = "Contraseña actualizada correctamente" });
     }
     // --------------------------------------------------------- // 1. REGISTRO + ENVÍO DE TOKEN // --------------------------------------------------------- 
+    /// <summary>
+    /// Registra un nuevo usuario y envía un token de verificación por correo electrónico. El token se genera utilizando el servicio de verificación de correo electrónico y se asocia al usuario registrado. Además, se registra la dirección IP y el user-agent para fines de seguridad y auditoría. Si el registro es exitoso, se devuelve un mensaje indicando que el usuario ha sido registrado y que debe revisar su correo para verificar la cuenta. Si el correo ya está registrado, se devuelve un error indicando que el correo ya existe en el sistema.
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] RegistroDto dto)
     {
@@ -262,15 +267,26 @@ public class AuthController : ControllerBase
         return Ok("Usuario registrado. Revisa tu correo para verificar la cuenta.");
     }
     // --------------------------------------------------------- // 2. VERIFICAR EMAIL // ---------------------------------------------------------
-    [HttpGet("verify-email")] 
-    public async Task<IActionResult> VerifyEmail([FromQuery] string token) {
+    /// <summary>
+    /// Verifica el correo electrónico del usuario utilizando un token de verificación. El token se recibe como un parámetro de consulta y se valida utilizando el servicio de verificación de correo electrónico. Si el token es válido, se marca el correo del usuario como verificado y se devuelve un mensaje indicando que el correo ha sido verificado correctamente. Si el token es inválido o ha expirado, se devuelve un error indicando que el token no es válido o ha expirado.
+    /// </summary>
+    /// <param name="token"></param>
+    /// <returns></returns>
+    [HttpGet("verify-email")]
+    public async Task<IActionResult> VerifyEmail([FromQuery] string token)
+    {
         var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
         var userAgent = Request.Headers["User-Agent"].ToString();
         var ok = await _emailVerificationService.VerificarTokenAsync(token, ip, userAgent);
         if (!ok) return BadRequest("Token inválido o expirado.");
         return Ok("Correo verificado correctamente.");
-      }
+    }
     // --------------------------------------------------------- // 3. REENVIAR TOKEN // --------------------------------------------------------- 
+    /// <summary>
+    /// Reenvía un token de verificación de correo electrónico a un usuario específico. El método recibe el identificador del usuario en el cuerpo de la solicitud y utiliza el servicio de verificación de correo electrónico para generar y enviar un nuevo token al correo electrónico asociado con ese usuario. Además, se registra la dirección IP y el user-agent para fines de seguridad y auditoría. Si el token se reenvía correctamente, se devuelve un mensaje indicando que el token ha sido reenviado. Si no se puede reenviar el token (por ejemplo, si se ha alcanzado el límite de reenvíos o si el usuario es inválido), se devuelve un error indicando que no se puede reenviar el token.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <returns></returns>
     [HttpPost("resend-verification")]
      public async Task<IActionResult> ResendVerification([FromBody] int userId)
     {

@@ -76,9 +76,9 @@ public class CategoriasController : ControllerBase
     /// Actualiza una categoría existente por su ID.
     /// </summary>
     /// <param name="id"></param>
-    /// <param name="categoria"></param>
+    /// <param name="dto"></param>
     /// <returns></returns>
-    /// </summary>
+ 
 
     //[Authorize(Roles = "Administrador,Editor")]
     [Authorize(Policy = "Permiso:Categorias.Editar")]

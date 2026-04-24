@@ -76,6 +76,11 @@ public class BannerController : ControllerBase
     // ------------------------------------------------------------
     // POST /api/banner
     // ------------------------------------------------------------
+    /// <summary>
+    /// Crear un nuevo banner
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>/
     [Authorize(Policy = "Permiso:Banners.Crear")]
     [HttpPost]
     [Consumes("multipart/form-data")]
