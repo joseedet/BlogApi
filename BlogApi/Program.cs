@@ -60,7 +60,7 @@ builder.WebHost.ConfigureKestrel(options =>
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidationFilter>();
-    options.Filters.Add<GlobalExceptionFilter>();
+   
 });
 builder.Services.AddValidatorsFromAssemblyContaining<CrearPageDtoValidator>();
 builder.Services.AddCors(options =>
