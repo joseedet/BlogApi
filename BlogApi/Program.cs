@@ -350,6 +350,11 @@ app.UseAuthentication();
 
 app.UseMiddleware<UsuarioBloqueadoMiddleware>();
 
+app.UseMiddleware<SecurityHeadersMiddleware>();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+
 app.UseAuthorization();
 
 app.UseSecurityHeaders();
