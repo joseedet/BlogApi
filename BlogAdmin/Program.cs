@@ -7,7 +7,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 builder.Services.AddSingleton<AuthService>();
 builder.Services.AddScoped<NotificacionesHubClient>();
-builder.Services.AddScoped<MenuServiceBlazor>();
 builder.Services.AddSingleton<ToastService>();
 
 builder.Services.AddHttpClient(
@@ -17,6 +16,12 @@ builder.Services.AddHttpClient(
         client.BaseAddress = new Uri("https://localhost:7020");
     }
 );
+builder.Services.AddHttpClient<MenuServiceBlazor>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7020");
+});
+
+builder.Services.AddScoped<MenuServiceBlazor>();
 
 var app = builder.Build();
 

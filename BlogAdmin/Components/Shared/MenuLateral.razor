@@ -1,0 +1,49 @@
+@using BlogAdmin.Models
+@inject MenuServiceBlazor MenuService
+
+<div class="menu-lateral">
+    @if (menu.Count == 0)
+    {
+        <p>Cargando menú...</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var item in menu)
+            {
+                @RenderMenuItem(item)
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    private List<MenuItem> menu = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        menu = await MenuService.GetMenuAsync();
+    }
+
+    private RenderFragment RenderMenuItem(MenuItem item) => builder =>
+    {
+        builder.OpenElement(0, "li");
+
+        builder.OpenElement(1, "a");
+        builder.AddAttribute(2, "href", item.Url);
+        builder.AddContent(3, item.Title);
+        builder.CloseElement(); // a
+
+        if (item.Children?.Count > 0)
+        {
+            builder.OpenElement(4, "ul");
+            foreach (var child in item.Children)
+            {
+                builder.AddContent(5, RenderMenuItem(child));
+            }
+            builder.CloseElement(); // ul
+        }
+
+        builder.CloseElement(); // li
+    };
+}
